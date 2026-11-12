@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"easel/internal/accounts"
@@ -19,20 +20,50 @@ import (
 	"easel/internal/server"
 )
 
+var commands = map[string]func(context.Context, []string) error{
+	"backup":   backupCommand,
+	"restore":  restoreCommand,
+	"games":    gamesCommand,
+	"schema":   schemaCommand,
+	"files":    filesCommand,
+	"export":   exportCommand,
+	"import":   importCommand,
+	"accounts": accountsCommand,
+}
+
 func main() {
-	if err := run(); err != nil {
+	args := os.Args[1:]
+	if len(args) > 0 && !strings.HasPrefix(args[0], "-") && args[0] != "serve" {
+		command := commands[args[0]]
+		if command == nil {
+			fmt.Fprintf(os.Stderr, "easel: unknown command %q\n", args[0])
+			os.Exit(2)
+		}
+		if err := command(context.Background(), args[1:]); err != nil {
+			if !errors.Is(err, flag.ErrHelp) {
+				fmt.Fprintln(os.Stderr, "easel "+args[0]+":", err)
+			}
+			os.Exit(1)
+		}
+		return
+	}
+	if len(args) > 0 && args[0] == "serve" {
+		args = args[1:]
+	}
+	if err := run(args); err != nil {
 		slog.Error("server stopped", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run() error {
+func run(args []string) error {
+	flag := flag.NewFlagSet("easel", flag.ExitOnError)
 	addr := flag.String("addr", "127.0.0.1:5000", "HTTP listen address")
 	databaseConfigPath := flag.String("database-config", "config/database.json", "database settings file")
 	authConfigPath := flag.String("auth-config", "config/auth.json", "sign-in settings file; optional")
 	easelDir := flag.String("easel-dir", "easel", "Easel resources directory")
 	gamesDir := flag.String("games-dir", "games", "folder holding one folder per game")
-	flag.Parse()
+	_ = flag.Parse(args)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

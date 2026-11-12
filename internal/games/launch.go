@@ -115,19 +115,25 @@ func (m *Manager) Start(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
+	release, err := m.Claim(ctx, id)
+	if err != nil {
+		return err
+	}
 	runtime, err := m.boot(ctx, id, "game "+game.Name, packages, plan, nil)
 	if err != nil {
+		release()
 		return err
 	}
 	client, ok := runtime.(session.ClientRuntime)
 	if !ok {
 		runtime.Close()
+		release()
 		return fmt.Errorf("game %s cannot serve clients", game.Name)
 	}
 	if m.running == nil {
 		m.running = map[string]*runningGame{}
 	}
-	m.running[id] = &runningGame{runtime: client, departure: map[string]map[chan struct{}]bool{}}
+	m.running[id] = &runningGame{runtime: client, release: release, departure: map[string]map[chan struct{}]bool{}}
 	return nil
 }
 
@@ -153,17 +159,31 @@ func (m *Manager) StartServer(ctx context.Context, definition *platform.Definiti
 	if err != nil {
 		return nil, err
 	}
-	m.mu.Lock()
-	m.storage = id
-	m.mu.Unlock()
-	runtime, err := m.boot(ctx, id, "server application "+definition.Server.ID(), packages, plan, &host)
+	release, err := m.Claim(ctx, id)
+	if errors.Is(err, ErrOwnedElsewhere) {
+		return nil, fmt.Errorf("another Easel process is already running this server on the same database")
+	}
 	if err != nil {
 		return nil, err
+	}
+	m.mu.Lock()
+	m.storage, m.storageRelease = id, release
+	m.mu.Unlock()
+	fail := func(err error) (session.ServerRuntime, error) {
+		m.mu.Lock()
+		m.storageRelease = nil
+		m.mu.Unlock()
+		release()
+		return nil, err
+	}
+	runtime, err := m.boot(ctx, id, "server application "+definition.Server.ID(), packages, plan, &host)
+	if err != nil {
+		return fail(err)
 	}
 	server, ok := runtime.(session.ServerRuntime)
 	if !ok {
 		runtime.Close()
-		return nil, fmt.Errorf("server application %s cannot serve clients", definition.Server.ID())
+		return fail(fmt.Errorf("server application %s cannot serve clients", definition.Server.ID()))
 	}
 	return server, nil
 }

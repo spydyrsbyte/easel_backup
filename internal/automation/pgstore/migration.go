@@ -2,6 +2,7 @@ package pgstore
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"easel/internal/automation"
@@ -14,7 +15,10 @@ type SchemaMigration struct {
 	FromRevision string
 	Rules        []schema.Contribution
 	Transform    func(context.Context, automation.Record) (*automation.Record, error)
+	DryRun       bool
 }
+
+var ErrDryRun = errors.New("schema migration was validated and not applied")
 
 func (revisions *Revisions) Migrate(ctx context.Context, gameID string, plan manifest.Plan, migration SchemaMigration) (string, *schema.Schema, error) {
 	if migration.FromRevision == "" {

@@ -2,6 +2,7 @@ package games
 
 import (
 	"context"
+	"errors"
 
 	"easel/internal/automation/pgstore"
 	"easel/internal/manifest"
@@ -32,15 +33,23 @@ func (m *Manager) MigrateSchema(ctx context.Context, id string, migration pgstor
 	if err != nil {
 		return err
 	}
+	_, err = m.migrate(ctx, game, migration)
+	return err
+}
+
+func (m *Manager) migrate(ctx context.Context, game Game, migration pgstore.SchemaMigration) (string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	if m.running[id] != nil {
-		return ErrRunning
+	if m.running[game.ID] != nil {
+		return "", ErrRunning
 	}
 	_, plan, err := m.resolveSaved(ctx, game)
 	if err != nil {
-		return err
+		return "", err
 	}
-	_, _, err = (&pgstore.Revisions{Pool: m.Pool}).Migrate(ctx, id, plan, migration)
-	return err
+	revision, _, err := (&pgstore.Revisions{Pool: m.Pool}).Migrate(ctx, game.ID, plan, migration)
+	if errors.Is(err, pgstore.ErrDryRun) {
+		return "", nil
+	}
+	return revision, err
 }

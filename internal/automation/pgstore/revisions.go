@@ -65,7 +65,19 @@ func (revisions *Revisions) Publish(ctx context.Context, gameID string, plan man
 	return revisions.publish(ctx, gameID, plan, composed, nil)
 }
 
+func (revisions *Revisions) Preview(ctx context.Context, gameID string, plan manifest.Plan) error {
+	_, err := revisions.publishWith(ctx, gameID, plan, &schema.Schema{}, nil, true)
+	if errors.Is(err, ErrDryRun) {
+		return nil
+	}
+	return err
+}
+
 func (revisions *Revisions) publish(ctx context.Context, gameID string, plan manifest.Plan, composed *schema.Schema, migration *SchemaMigration) (string, error) {
+	return revisions.publishWith(ctx, gameID, plan, composed, migration, migration != nil && migration.DryRun)
+}
+
+func (revisions *Revisions) publishWith(ctx context.Context, gameID string, plan manifest.Plan, composed *schema.Schema, migration *SchemaMigration, dry bool) (string, error) {
 	tx, err := database.BeginSerializable(ctx, revisions.Pool)
 	if err != nil {
 		return "", err
@@ -158,6 +170,9 @@ func (revisions *Revisions) publish(ctx context.Context, gameID string, plan man
 	}
 	if _, err := tx.Exec(ctx, `UPDATE game_data.games SET active_revision_id=$2 WHERE game_id=$1`, gameID, p.revisionID); err != nil {
 		return "", fmt.Errorf("activate revision %s: %w", p.revisionID, err)
+	}
+	if dry {
+		return "", ErrDryRun
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return "", fmt.Errorf("commit revision %s: %w", p.revisionID, err)

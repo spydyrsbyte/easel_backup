@@ -61,8 +61,12 @@ type Manager struct {
 	FileLimit int64
 	FileTypes []string
 
+	OwnershipLost func(games []string, cause error)
+
 	mu                 sync.Mutex
 	storage            string
+	storageRelease     func()
+	owned              ownership
 	filesMu            sync.Mutex
 	files              map[string]*files.Store
 	running            map[string]*runningGame
@@ -70,6 +74,7 @@ type Manager struct {
 }
 
 type runningGame struct {
+	release   func()
 	runtime   session.ClientRuntime
 	departure map[string]map[chan struct{}]bool
 }
@@ -278,7 +283,11 @@ func (m *Manager) Stop(id string) error {
 			close(departed)
 		}
 	}
-	return game.runtime.Close()
+	err := game.runtime.Close()
+	if game.release != nil {
+		game.release()
+	}
+	return err
 }
 
 func (m *Manager) Delete(ctx context.Context, id string) error {
@@ -324,6 +333,14 @@ func (m *Manager) Close() {
 	for _, id := range ids {
 		_ = m.Stop(id)
 	}
+	m.mu.Lock()
+	release := m.storageRelease
+	m.storageRelease = nil
+	m.mu.Unlock()
+	if release != nil {
+		release()
+	}
+	m.releaseOwnership()
 }
 
 func (m *Manager) runtime(id string) (session.ClientRuntime, bool) {
