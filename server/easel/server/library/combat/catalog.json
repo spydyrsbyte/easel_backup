@@ -309,7 +309,7 @@
       "contract": "interfaces/tracker.json",
       "renderer": "tracker",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/tracker.client.md",
       "events": [

@@ -31,8 +31,13 @@
           "easel.board.games"
         ],
         "interfaces": [
-          "easel.board.table@1",
-          "easel.board.controller@1"
+          "easel.board.controller@1",
+          "easel.layout.gametable@1",
+          "easel.layout.sidebar@1",
+          "easel.surfaces.gameboard@1",
+          "easel.display.seat@1",
+          "easel.display.movelist@1",
+          "easel.narrative.chat@1"
         ]
       }
     },

@@ -137,9 +137,50 @@
       "contract": "interfaces/players.json",
       "renderer": "players",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/players.client.md",
+      "events": [
+        "select"
+      ]
+    },
+    {
+      "name": "seat",
+      "side": "client",
+      "version": 1,
+      "description": "Player seat: who sits there, whose turn it is, a running clock, captured pieces, and sit or leave controls.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/seat.mjs",
+      "contract": "interfaces/seat.json",
+      "renderer": "seat",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/seat.client.md",
+      "events": [
+        "sit",
+        "leave"
+      ]
+    },
+    {
+      "name": "movelist",
+      "side": "client",
+      "version": 1,
+      "description": "Numbered move record laid out in one column per player, following the latest move.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/movelist.mjs",
+      "contract": "interfaces/movelist.json",
+      "renderer": "movelist",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/movelist.client.md",
       "events": [
         "select"
       ]

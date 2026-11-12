@@ -84,7 +84,9 @@ export class Base {
   }
   begin(props) {
     this.props = props;
-    this.remember();
+    try {
+      this.remember();
+    } catch {}
     this.content.replaceChildren();
     this.element.hidden = props.open === false;
     this.element.setAttribute("aria-disabled", String(!!props.disabled));

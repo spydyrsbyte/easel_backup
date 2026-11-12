@@ -365,7 +365,7 @@
       "contract": "interfaces/browser2.json",
       "renderer": "browser",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/browser2.client.md",
       "events": [

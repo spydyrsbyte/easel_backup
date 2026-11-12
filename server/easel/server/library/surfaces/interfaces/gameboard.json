@@ -1,0 +1,77 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "columns": {
+      "type": "Integer",
+      "default": 8
+    },
+    "rows": {
+      "type": "Integer",
+      "default": 8
+    },
+    "pattern": {
+      "type": "String",
+      "default": "checker"
+    },
+    "theme": {
+      "type": "String",
+      "default": "walnut"
+    },
+    "pieces": {
+      "type": "Array",
+      "default": []
+    },
+    "selected": {
+      "type": "Integer",
+      "default": -1
+    },
+    "targets": {
+      "type": "Array",
+      "default": []
+    },
+    "last": {
+      "type": "Array",
+      "default": []
+    },
+    "marks": {
+      "type": "Array",
+      "default": []
+    },
+    "flipped": {
+      "type": "Boolean",
+      "default": false
+    },
+    "interactive": {
+      "type": "Boolean",
+      "default": false
+    },
+    "coordinates": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "square": {
+      "payload": {
+        "index": "Integer",
+        "name": "String"
+      }
+    },
+    "pick": {
+      "payload": {
+        "index": "Integer"
+      }
+    },
+    "move": {
+      "payload": {
+        "from": "Integer",
+        "to": "Integer"
+      }
+    }
+  },
+  "slots": {}
+}

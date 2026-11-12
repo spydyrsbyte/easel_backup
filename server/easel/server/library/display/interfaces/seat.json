@@ -1,0 +1,94 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "name": {
+      "type": "String",
+      "default": ""
+    },
+    "image": {
+      "type": "String",
+      "default": ""
+    },
+    "color": {
+      "type": "String",
+      "default": ""
+    },
+    "label": {
+      "type": "String",
+      "default": ""
+    },
+    "swatch": {
+      "type": "String",
+      "default": ""
+    },
+    "status": {
+      "type": "String",
+      "default": ""
+    },
+    "open": {
+      "type": "Boolean",
+      "default": false
+    },
+    "you": {
+      "type": "Boolean",
+      "default": false
+    },
+    "turn": {
+      "type": "Boolean",
+      "default": false
+    },
+    "canSit": {
+      "type": "Boolean",
+      "default": false
+    },
+    "canLeave": {
+      "type": "Boolean",
+      "default": false
+    },
+    "sitLabel": {
+      "type": "String",
+      "default": "Sit here"
+    },
+    "clock": {
+      "type": "Boolean",
+      "default": true
+    },
+    "elapsed": {
+      "type": "Number",
+      "default": 0
+    },
+    "running": {
+      "type": "Boolean",
+      "default": false
+    },
+    "startedAt": {
+      "type": "Number",
+      "default": 0
+    },
+    "limit": {
+      "type": "Number",
+      "default": 0
+    },
+    "captured": {
+      "type": "Array",
+      "default": []
+    },
+    "advantage": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "sit": {
+      "payload": {}
+    },
+    "leave": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

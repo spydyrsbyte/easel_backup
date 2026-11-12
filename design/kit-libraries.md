@@ -1,6 +1,6 @@
-﻿# Kit tool libraries
+# Kit tool libraries
 
-The server library directory contains 28 Kit catalogs with 202 implemented v1 members: 85 server interfaces and 117 browser components. The installed paths are `server/easel/server/library/<host>/`; `server/easel/server/server.json` makes their catalogs available to the server and hosted games. Public members use `easel.<host>.<member>@1` independently of their containing package's release version and package name.
+The server library directory contains 28 Kit catalogs. Beyond the original 202 v1 members (85 server interfaces and 117 browser components) there is a second generation of 18 browser components and two server interfaces built on a shared UI layer; see `kit-ui.md`. The installed paths are `server/easel/server/library/<host>/`; `server/easel/server/server.json` makes their catalogs available to the server and hosted games. Public members use `easel.<host>.<member>@1` independently of their containing package's release version and package name.
 
 [The library index](../server/easel/server/library/README.md) links each category's inventory, individual contracts and implementation files. Every member is marked `tested`; the camera controls and card inspector are marked `used` by MTG Table. The catalogs contain working tools rather than planned names or placeholder implementations.
 
@@ -30,7 +30,7 @@ The application retains its existing authoritative table model. Adding general c
 
 - `node --test scripts/test-kits.mjs scripts/test-client.mjs` checks each server member's contract/failure examples, input preservation, random-source use, coordinate round trips, manifests and component runtime behavior.
 - `go test ./internal/session -run Kit` runs the same member examples through actual Sobek interfaces, proves no server member file loads on catalog import, checks independent member loading/caching and game isolation, and tests the native random service.
-- `node scripts/test-kit-browser.mjs` renders all 117 components in Edge, validates their emitted events and teardown, checks lazy browser imports, face-down presentation, camera focus and pointer-anchored zoom, shortcut focus handling and cleanup, and phone-width hand layout.
+- `node scripts/test-kit-browser.mjs` renders every catalogued browser component (154 with the kit UI generation) in Edge, validates their emitted events and teardown, checks lazy browser imports, face-down presentation, camera focus and pointer-anchored zoom, shortcut focus handling and cleanup, and phone-width hand layout.
 - `scripts/test-security.ps1` runs PostgreSQL, game, security and browser acceptance tests with an isolated database when Playwright is configured.
 
 ## Partition experiment

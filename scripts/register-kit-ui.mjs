@@ -66,7 +66,7 @@ const members = [
   {
     kit: "narrative", name: "chat", version: 1, entry: "client/chat.mjs",
     description: "Chat log and composer with grouped messages, roll cards, whisper and roll modes, quick dice, message history, and a new-messages jump.",
-    properties: { messages: A(), members: A(), userId: S(), mode: S("public"), modes: A(["public", "gm", "blind", "self"]), quickDice: A(), readOnly: B() },
+    properties: { messages: A(), members: A(), userId: S(), mode: S("public"), modes: A(["public", "gm", "blind", "self"]), quickDice: A(), readOnly: B(), placeholder: S(), emptyText: S() },
     events: { send: { text: "String", mode: "String" }, mode: { mode: "String" }, cardAction: { messageId: "String", action: "String", payload: "Object" } },
   },
   {
@@ -99,6 +99,31 @@ const members = [
     properties: { players: A() },
     events: { select: id },
   },
+  {
+    kit: "surfaces", name: "gameboard", version: 1, entry: "client/gameboard.mjs",
+    description: "Grid game board with sliding pieces, click or drag moves, legal-move hints, last-move and marked squares, coordinates, keyboard play, and a flipped view.",
+    properties: { columns: I(8), rows: I(8), pattern: S("checker"), theme: S("walnut"), pieces: A(), selected: I(-1), targets: A(), last: A(), marks: A(), flipped: B(), interactive: B(), coordinates: B(true) },
+    events: { square: { index: "Integer", name: "String" }, pick: { index: "Integer" }, move: { from: "Integer", to: "Integer" } },
+  },
+  {
+    kit: "layout", name: "gametable", version: 1, entry: "client/gametable.mjs",
+    description: "Board game frame: a board that fills the space between two seats, a side panel with a status line and action buttons, a result card, and toasts.",
+    properties: { status: S(), detail: S(), statusIcon: S(), statusTone: S(), actions: A(), result: O(), toasts: A() },
+    events: { action: id, resultAction: id, toastDismiss: id },
+    slots: ["top", "board", "bottom", "sidebar"],
+  },
+  {
+    kit: "display", name: "seat", version: 1, entry: "client/seat.mjs",
+    description: "Player seat: who sits there, whose turn it is, a running clock, captured pieces, and sit or leave controls.",
+    properties: { name: S(), image: S(), color: S(), label: S(), swatch: S(), status: S(), open: B(), you: B(), turn: B(), canSit: B(), canLeave: B(), sitLabel: S("Sit here"), clock: B(true), elapsed: N(), running: B(), startedAt: N(), limit: N(), captured: A(), advantage: S() },
+    events: { sit: {}, leave: {} },
+  },
+  {
+    kit: "display", name: "movelist", version: 1, entry: "client/movelist.mjs",
+    description: "Numbered move record laid out in one column per player, following the latest move.",
+    properties: { moves: A(), columns: I(2), current: S(), emptyText: S() },
+    events: { select: id },
+  },
 ];
 
 for (const member of members) {
@@ -121,7 +146,7 @@ for (const member of members) {
   const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
   catalog.members = catalog.members.filter((entry) => !(entry.name === member.name && entry.side === "client" && (entry.version || 1) === member.version));
   const contractDoc = "contracts/" + (member.file || member.name) + ".client.md";
-  catalog.members.push({ name: member.name, side: "client", version: member.version, description: member.description, status: "used", dependencies: ["browser DOM"], entry: member.entry, contract: "interfaces/" + file, renderer: member.name, checks: ["scripts/test-kit-ui.mjs"], documentation: contractDoc, events: Object.keys(member.events) });
+  catalog.members.push({ name: member.name, side: "client", version: member.version, description: member.description, status: "used", dependencies: ["browser DOM"], entry: member.entry, contract: "interfaces/" + file, renderer: member.name, checks: ["scripts/test-kit-browser.mjs"], documentation: contractDoc, events: Object.keys(member.events) });
   fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2) + "\n");
   const lines = ["# easel." + member.kit + "." + member.name + "@" + member.version, "", member.description, "", "## Properties", "", "| Property | Type | Default |", "|---|---|---|"];
   for (const [key, rule] of Object.entries(contract.properties)) lines.push("| `" + key + "` | " + rule.type + " | `" + JSON.stringify(rule.default) + "` |");

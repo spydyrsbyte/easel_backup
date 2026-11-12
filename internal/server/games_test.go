@@ -109,7 +109,7 @@ func TestServerApplicationRunsGames(t *testing.T) {
 	if state["type"] != "event" || state["name"] != "lobby.state" {
 		t.Fatalf("ready connection receives the lobby: %v", state)
 	}
-	if payload := state["payload"].(map[string]any); payload["admin"] != true || len(payload["games"].([]any)) != 1 || len(payload["applications"].([]any)) != 6 {
+	if payload := state["payload"].(map[string]any); payload["admin"] != true || len(payload["games"].([]any)) != 1 || len(payload["applications"].([]any)) != 7 {
 		t.Fatalf("lobby state: %v", payload)
 	}
 	c.WriteJSON(map[string]any{"type": "event", "id": "j", "name": "lobby.join", "payload": map[string]any{"game": demo.ID}})

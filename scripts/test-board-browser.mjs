@@ -45,8 +45,18 @@ const signup = async (username) => {
   await page.getByRole("heading", { name: "Easel", exact: true }).waitFor();
   return page;
 };
-const match = (page) =>
-  page.evaluate(() => Easel.Components.get("board").props.match);
+const state = (page) =>
+  page.evaluate(
+    () =>
+      new Promise((done) => {
+        const off = Application.events.on("easel.board.state", (value) => {
+          off();
+          done(value);
+        });
+        Application.events.emit("easel.board.refresh", {});
+      }),
+  );
+const match = async (page) => (await state(page)).match;
 const emit = (page, event, payload) =>
   page.evaluate(
     async ({ event, payload }) => {
@@ -54,35 +64,24 @@ const emit = (page, event, payload) =>
     },
     { event, payload },
   );
-const waitRevision = (page, revision) =>
-  page.waitForFunction(
-    (revision) =>
-      Easel.Components.get("board")?.props.match.revision === revision,
-    revision,
-  );
-const clickSquare = async (page, index, flipped = false) => {
-  const canvas = page.locator(".board-canvas canvas");
-  const bounds = await canvas.boundingBox();
-  const x = index % 8,
-    y = Math.floor(index / 8);
-  await canvas.click({
-    position: {
-      x: (((flipped ? 7 - x : x) + 0.5) * bounds.width) / 8,
-      y: (((flipped ? 7 - y : y) + 0.5) * bounds.height) / 8,
-    },
-  });
+const waitRevision = async (page, revision) => {
+  for (let attempt = 0; attempt < 100; attempt++) {
+    if ((await match(page)).revision === revision) return;
+    await page.waitForTimeout(100);
+  }
+  throw new Error("revision " + revision + " was not reached");
 };
-const join = async (page, name) => {
+const clickSquare = (page, index) =>
+  page.locator(`.ez-gb-square[data-index="${index}"]`).click();
+const join = async (page, name, game = name) => {
   await emit(page, "lobby.refresh", {});
   await page
     .locator(".lobby-game")
     .filter({ hasText: name })
     .getByRole("button", { name: "Join", exact: true })
     .click();
-  await page.locator(".board-canvas canvas").waitFor({ timeout: 10000 });
-  await page.waitForFunction(
-    () => Easel.Components.get("board")?.props.match.squares?.length === 64,
-  );
+  await page.locator(".ez-gameboard .ez-gb-piece").first().waitFor({ timeout: 10000 });
+  assert.equal(await page.locator(".ez-gameboard .ez-gb-piece").count(), game.includes("heckers") ? 24 : 32);
 };
 const createTable = async (page, game, name, access = "open") => {
   await page.getByRole("button", { name: "Applications", exact: true }).click();
@@ -143,12 +142,14 @@ try {
     await waitRevision(black, 3);
     assert.equal((await match(black)).squares[to].side, "white");
     await black.reload();
-    await black.locator(".board-canvas canvas").waitFor();
+    await black.locator(".ez-gameboard .ez-gb-piece").first().waitFor();
     await waitRevision(black, 3);
+    assert.equal(await black.locator(".ez-gameboard").getAttribute("data-kit"), "easel.surfaces.gameboard");
+    assert.equal(await black.locator(".ez-moves .ez-move").count(), 1);
     const blackFrom = game === "chess" ? 12 : 17,
       blackTo = game === "chess" ? 28 : 24;
-    await clickSquare(black, blackFrom, true);
-    await clickSquare(black, blackTo, true);
+    await clickSquare(black, blackFrom);
+    await clickSquare(black, blackTo);
     await waitRevision(white, 4);
     await waitRevision(black, 4);
     await white.getByRole("link", { name: "Easel", exact: true }).click();
@@ -170,9 +171,10 @@ try {
             user.displayName === "browser-black" && user.role === "spectator",
         ),
     );
-    await black.waitForFunction(
-      () => Easel.Components.get("board").props.canPlay === false,
-    );
+    for (let attempt = 0; (await state(black)).canPlay !== false; attempt++) {
+      assert.ok(attempt < 100, "spectator role did not reach the board");
+      await black.waitForTimeout(100);
+    }
     assert.equal(
       await black.getByRole("button", { name: "Reset match" }).isVisible(),
       false,
@@ -260,7 +262,7 @@ try {
   await white.screenshot({ path: "bin/mobile-lobby.png", fullPage: true });
   assert.deepEqual(errors, []);
   console.log(
-    "Two-account chess/checkers, Pixi input, synchronization, reconnect, game roles, members-only tables and mobile layout passed.",
+    "Two-account chess/checkers, board input, synchronization, reconnect, game roles, members-only tables and mobile layout passed.",
   );
 } catch (error) {
   console.error("Browser errors:", errors);
@@ -268,9 +270,9 @@ try {
     for (const page of context.pages()) {
       console.error((await page.locator("body").innerText()).slice(0, 3000));
       console.error(
-        await page.locator(".board-canvas").evaluateAll((nodes) =>
+        await page.locator(".ez-gameboard").evaluateAll((nodes) =>
           nodes.map((node) => ({
-            html: node.outerHTML,
+            html: node.outerHTML.slice(0, 600),
             bounds: node.getBoundingClientRect().toJSON(),
           })),
         ),

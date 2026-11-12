@@ -765,7 +765,7 @@ export function createRuntime(root, status = () => {}, options = {}) {
           return;
         }
         if (frame.type === "welcome" && frame.replyTo === undefined) {
-          move(frame).catch(() => {});
+          move(frame).catch((error) => status(error.message));
           return;
         }
         if (frame.type === "event") {

@@ -234,7 +234,7 @@
       "contract": "interfaces/tabletop.json",
       "renderer": "tabletop",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/tabletop.client.md",
       "events": [
@@ -256,7 +256,7 @@
       "contract": "interfaces/window2.json",
       "renderer": "window",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/window2.client.md",
       "events": [
@@ -280,11 +280,33 @@
       "contract": "interfaces/sidebar.json",
       "renderer": "sidebar",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/sidebar.client.md",
       "events": [
         "select"
+      ]
+    },
+    {
+      "name": "gametable",
+      "side": "client",
+      "version": 1,
+      "description": "Board game frame: a board that fills the space between two seats, a side panel with a status line and action buttons, a result card, and toasts.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/gametable.mjs",
+      "contract": "interfaces/gametable.json",
+      "renderer": "gametable",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/gametable.client.md",
+      "events": [
+        "action",
+        "resultAction",
+        "toastDismiss"
       ]
     }
   ]

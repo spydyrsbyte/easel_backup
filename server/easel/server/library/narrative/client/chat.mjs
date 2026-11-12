@@ -111,6 +111,8 @@ export default class Chat extends Component {
 
   render(props, previous) {
     const mode = MODES.find((entry) => entry.id === props.mode) || MODES[0];
+    this.modeButton.parentElement.hidden = (props.modes || MODES).length < 2;
+    this.input.placeholder = props.placeholder || "Message, or /r 2d6+3 to roll";
     this.modeButton.replaceChildren(icon(mode.icon, 13), h("span", { text: mode.label }), icon("chevronUp", 12));
     this.modeButton.classList.toggle("ez-chip-primary", mode.id !== "public");
     if (this.changed(props, "quickDice")) {
@@ -156,7 +158,7 @@ export default class Chat extends Component {
         node.replaceChildren(message.system ? "" : avatar(speaker, message.speaker?.image || names[message.userId]?.image, 30, names[message.userId]?.color), body);
       },
     );
-    if (!messages.length && !this.log.querySelector(".ez-empty")) this.log.append(h("div", { class: "ez-empty", style: { margin: "auto" } }, icon("chat", 30), h("strong", { text: "No messages yet" }), h("span", { text: "Say hello, or roll some dice." })));
+    if (!messages.length && !this.log.querySelector(".ez-empty")) this.log.append(h("div", { class: "ez-empty", style: { margin: "auto" } }, icon("chat", 30), h("strong", { text: "No messages yet" }), h("span", { text: props.emptyText || "Say hello, or roll some dice." })));
     else if (messages.length) this.log.querySelector(".ez-empty")?.remove();
     const latest = messages[messages.length - 1]?.id;
     if (latest !== last) {

@@ -1,0 +1,33 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "moves": {
+      "type": "Array",
+      "default": []
+    },
+    "columns": {
+      "type": "Integer",
+      "default": 2
+    },
+    "current": {
+      "type": "String",
+      "default": ""
+    },
+    "emptyText": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

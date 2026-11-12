@@ -1,3 +1,3 @@
-export function initialize() {
-  Easel.Interfaces.create("easel.board.controller@1").mount("Chess");
+export async function initialize() {
+  await Easel.Interfaces.create("easel.board.controller@1").mount("Chess");
 }

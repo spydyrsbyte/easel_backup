@@ -50,10 +50,17 @@
         "name": "placement@1",
         "file": "interfaces/placement.json",
         "http-entry": "client/placement.mjs"
+      },
+      {
+        "name": "gameboard@1",
+        "file": "interfaces/gameboard.json",
+        "http-entry": "client/gameboard.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

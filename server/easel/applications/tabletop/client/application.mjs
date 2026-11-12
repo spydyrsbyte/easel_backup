@@ -21,6 +21,14 @@ export async function initialize({ Easel, Application }) {
           badges: view.gm && !actor.ownerUserIds.length ? [{ label: "Unassigned" }] : [],
         })),
       canCreateActor: () => true,
+      actorActions: (view) => (view.gm ? [{ id: "assign", label: "Give to a player", icon: "users" }] : []),
+      actorAction: (id, action, view) => {
+        if (action !== "assign") return;
+        const players = (view.state.members || []).filter((member) => member.role !== "administrator");
+        view.choose("Who plays " + (find(id)?.name || "this character") + "?", [...players.map((member) => ({ id: member.id, label: member.name, icon: "user" })), { id: "none", label: "No one", icon: "close" }]).then((choice) => {
+          if (choice) send("actorUpdate", { actorId: id, changes: { ownerUserIds: choice === "none" ? [] : [choice] } });
+        });
+      },
       createActor: () => table.prompt("Name the character", "New character").then((name) => name && send("actorCreate", { name })),
       deleteActor: (id) => send("actorDelete", { actorId: id }),
       sheet: (id) => {

@@ -550,7 +550,7 @@
       "contract": "interfaces/statsheet.json",
       "renderer": "statsheet",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/statsheet.client.md",
       "events": [

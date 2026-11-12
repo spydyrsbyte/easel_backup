@@ -63,6 +63,11 @@ export function definitions() {
       set(p("state", "history"), []),
       set(p("state", "chain"), -1),
       set(p("state", "winner"), ""),
+      set(p("state", "result"), ""),
+      set(p("state", "drawOffer"), ""),
+      set(p("state", "captured"), []),
+      set(p("state", "clock"), { white: 0, black: 0 }),
+      set(p("state", "turnStarted"), 0),
       set(p("state", "seats"), { white: "", black: "" }),
       set(p("state", "names"), { white: "", black: "" }),
       { op: "delta", target: p("state", "revision"), value: 1 },
@@ -240,6 +245,9 @@ export function definitions() {
         "You cannot capture your own piece.",
       ),
       letValue("capture", -1),
+      letValue("mover", p("source", "kind")),
+      letValue("taken", p("target", "kind")),
+      letValue("promoted", false),
       letValue("continued", false),
       letValue("crowned", false),
       branch(
@@ -393,10 +401,35 @@ export function definitions() {
       set(p("state", "squares", a("from"), "side"), ""),
       set(p("state", "squares", a("from"), "kind"), ""),
       branch(ne(v("capture"), -1), [
+        set(v("taken"), p("state", "squares", v("capture"), "kind")),
         set(p("state", "squares", v("capture"), "side"), ""),
         set(p("state", "squares", v("capture"), "kind"), ""),
       ]),
       set(p("state", "chain"), -1),
+      set(p("state", "drawOffer"), ""),
+      branch(ne(v("taken"), ""), [
+        branch(
+          white,
+          [{ op: "append", target: p("state", "captured"), value: { side: "black", kind: v("taken") } }],
+          [{ op: "append", target: p("state", "captured"), value: { side: "white", kind: v("taken") } }],
+        ),
+      ]),
+      branch(eq(p("state", "game"), "chess"), [
+        branch(
+          and(
+            eq(v("mover"), "pawn"),
+            or(eq(p("target", "y"), 0), eq(p("target", "y"), 7)),
+          ),
+          [
+            set(p("state", "squares", a("to"), "kind"), "queen"),
+            set(v("promoted"), true),
+          ],
+        ),
+        branch(eq(v("taken"), "king"), [
+          set(p("state", "winner"), p("state", "turn")),
+          set(p("state", "result"), "capture"),
+        ]),
+      ]),
       branch(eq(p("state", "game"), "checkers"), [
         branch(
           and(
@@ -432,7 +465,14 @@ export function definitions() {
       {
         op: "append",
         target: p("state", "history"),
-        value: { from: a("from"), to: a("to"), side: p("state", "turn") },
+        value: {
+          from: a("from"),
+          to: a("to"),
+          side: p("state", "turn"),
+          piece: v("mover"),
+          taken: v("taken"),
+          promoted: or(v("promoted"), v("crowned")),
+        },
       },
       branch(e("not", v("continued")), [
         branch(

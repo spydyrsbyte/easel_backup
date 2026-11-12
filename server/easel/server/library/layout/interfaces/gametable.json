@@ -1,0 +1,60 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "status": {
+      "type": "String",
+      "default": ""
+    },
+    "detail": {
+      "type": "String",
+      "default": ""
+    },
+    "statusIcon": {
+      "type": "String",
+      "default": ""
+    },
+    "statusTone": {
+      "type": "String",
+      "default": ""
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "result": {
+      "type": "Object",
+      "default": {}
+    },
+    "toasts": {
+      "type": "Array",
+      "default": []
+    }
+  },
+  "events": {
+    "action": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "resultAction": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "toastDismiss": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {
+    "top": {},
+    "board": {},
+    "bottom": {},
+    "sidebar": {}
+  }
+}

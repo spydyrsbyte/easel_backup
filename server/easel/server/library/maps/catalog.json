@@ -514,7 +514,7 @@
       "contract": "interfaces/scenenav.json",
       "renderer": "scenenav",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/scenenav.client.md",
       "events": [
@@ -537,7 +537,7 @@
       "contract": "interfaces/layertree.json",
       "renderer": "layertree",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/layertree.client.md",
       "events": [

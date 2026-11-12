@@ -30,12 +30,12 @@ for (const library of libraryIndex.libraries) {
     members.push({
       ...m,
       host: library.host,
-      id: "easel." + library.host + "." + m.name + "@1",
+      id: "easel." + library.host + "." + m.name + "@" + (m.version || 1),
       url: "/library/" + library.host + "/" + m.entry,
       requires:
         (Array.isArray(manifest.client?.interfaces)
           ? manifest.client.interfaces.find(
-              (i) => i.name === m.name || i.name === m.name + "@1",
+              (i) => i.name === m.name || i.name === m.name + "@" + (m.version || 1),
             )?.required?.interfaces
           : manifest.client?.interfaces?.[m.name]?.required?.interfaces) || [],
       definition: JSON.parse(
@@ -220,7 +220,7 @@ try {
       const root = document.getElementById("root");
       root.replaceChildren();
       const manager = createKitComponents(kitRegistry, root),
-        props = { title: m.id },
+        props = m.definition.properties.title ? { title: m.id } : {},
         events = [];
       const sample = [
         {

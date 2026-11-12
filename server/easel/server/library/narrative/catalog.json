@@ -306,7 +306,7 @@
       "contract": "interfaces/chat.json",
       "renderer": "chat",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/chat.client.md",
       "events": [
@@ -328,7 +328,7 @@
       "contract": "interfaces/journal2.json",
       "renderer": "journal",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/journal2.client.md",
       "events": [

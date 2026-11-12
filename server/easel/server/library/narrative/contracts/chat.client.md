@@ -14,6 +14,8 @@ Chat log and composer with grouped messages, roll cards, whisper and roll modes,
 | `modes` | Array | `["public","gm","blind","self"]` |
 | `quickDice` | Array | `[]` |
 | `readOnly` | Boolean | `false` |
+| `placeholder` | String | `""` |
+| `emptyText` | String | `""` |
 
 ## Events
 

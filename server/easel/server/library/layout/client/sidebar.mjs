@@ -39,7 +39,7 @@ export default class Sidebar extends Component {
         const selected = tab.id === props.active;
         node.setAttribute("aria-selected", String(selected));
         node.tabIndex = selected ? 0 : -1;
-        node.title = tab.label || "";
+        node.dataset.tip = tab.label || "";
         node.setAttribute("aria-label", tab.label || tab.id);
         const signature = (tab.icon || "") + "|" + (tab.badge || "");
         if (node.dataset.signature !== signature) {

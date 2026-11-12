@@ -72,6 +72,11 @@
         "name": "sidebar@1",
         "file": "interfaces/sidebar.json",
         "http-entry": "client/sidebar.mjs"
+      },
+      {
+        "name": "gametable@1",
+        "file": "interfaces/gametable.json",
+        "http-entry": "client/gametable.mjs"
       }
     ],
     "assets": {

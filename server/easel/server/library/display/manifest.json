@@ -44,6 +44,16 @@
         "name": "players@1",
         "file": "interfaces/players.json",
         "http-entry": "client/players.mjs"
+      },
+      {
+        "name": "seat@1",
+        "file": "interfaces/seat.json",
+        "http-entry": "client/seat.mjs"
+      },
+      {
+        "name": "movelist@1",
+        "file": "interfaces/movelist.json",
+        "http-entry": "client/movelist.mjs"
       }
     ],
     "assets": {

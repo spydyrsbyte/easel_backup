@@ -37,6 +37,14 @@
     "readOnly": {
       "type": "Boolean",
       "default": false
+    },
+    "placeholder": {
+      "type": "String",
+      "default": ""
+    },
+    "emptyText": {
+      "type": "String",
+      "default": ""
     }
   },
   "events": {

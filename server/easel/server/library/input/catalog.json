@@ -195,7 +195,7 @@
       "contract": "interfaces/toolrail.json",
       "renderer": "toolrail",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/toolrail.client.md",
       "events": [
@@ -217,7 +217,7 @@
       "contract": "interfaces/hotbar.json",
       "renderer": "hotbar",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/hotbar.client.md",
       "events": [
@@ -240,7 +240,7 @@
       "contract": "interfaces/form.json",
       "renderer": "form",
       "checks": [
-        "scripts/test-kit-ui.mjs"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/form.client.md",
       "events": [

@@ -75,6 +75,37 @@
         "winner": {
           ".type": "string",
           ".default": ""
+        },
+        "result": {
+          ".type": "string",
+          ".default": ""
+        },
+        "drawOffer": {
+          ".type": "string",
+          ".default": ""
+        },
+        "captured": {
+          ".type": "array",
+          ".default": []
+        },
+        "clock": {
+          ".type": "field",
+          "white": {
+            ".type": "integer",
+            ".default": 0
+          },
+          "black": {
+            ".type": "integer",
+            ".default": 0
+          }
+        },
+        "turnStarted": {
+          ".type": "integer",
+          ".default": 0
+        },
+        "chat": {
+          ".type": "array",
+          ".default": []
         }
       }
     ]
@@ -82,27 +113,9 @@
   "client": {
     "interfaces": [
       {
-        "name": "table@1",
-        "file": "interfaces/table.json",
-        "http-entry": "client/table.mjs",
-        "required": {
-          "modules": [
-            "easel.graphics.pixi"
-          ],
-          "interfaces": [
-            "easel.graphics.pixi@1"
-          ]
-        }
-      },
-      {
         "name": "controller@1",
         "file": "interfaces/controller.json",
-        "http-entry": "client/controller.mjs",
-        "required": {
-          "interfaces": [
-            "easel.board.table@1"
-          ]
-        }
+        "http-entry": "client/controller.mjs"
       }
     ],
     "assets": {

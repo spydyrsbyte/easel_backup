@@ -42,8 +42,13 @@ export default class Game {
       revision: "integer",
     });
     Application.events.register("easel.board.reset", { valid: 2 });
+    Application.events.register("easel.board.resign", { valid: 2 });
+    Application.events.register("easel.board.draw", { valid: 2, action: "string" });
+    Application.events.register("easel.board.leave", { valid: 2 });
+    Application.events.register("easel.board.rematch", { valid: 2 });
+    Application.events.register("easel.board.chat", { valid: 2, text: "string" });
     Application.events.register("easel.board.changed", {
-      valid: 4,
+      valid: 5,
       revision: "integer",
     });
     Application.events.register("easel.board.state", {
@@ -52,6 +57,7 @@ export default class Game {
       user: "string",
       canPlay: "boolean",
       canManage: "boolean",
+      now: "number",
     });
     Application.events.register("easel.board.error", { valid: 1, message: "string" });
     Server.events.on("Load.Data.Ready", () => {
@@ -83,7 +89,14 @@ export default class Game {
           revision: match.revision,
           chain: match.chain,
           winner: match.winner,
+          result: match.result,
+          drawOffer: match.drawOffer,
+          captured: match.captured,
+          clock: match.clock,
+          turnStarted: match.turnStarted,
+          chat: match.chat,
         },
+        now: Date.now(),
         user: connection.user.id,
         canPlay: Application.security.can({
           resource: matchID,
@@ -104,6 +117,104 @@ export default class Game {
         });
       }
     };
+    const sideOf = (match, user) =>
+      match.seats.white === user ? "white" : match.seats.black === user ? "black" : "";
+    const stopClock = (match, side) => {
+      const now = Date.now();
+      if (side && match.turnStarted)
+        match.clock[side] = match.clock[side] + Math.max(0, now - match.turnStarted);
+      match.turnStarted = match.winner ? 0 : now;
+    };
+    const edit = (connection, work) =>
+      attempt(connection, () => {
+        Application.security.require({ resource: matchID, action: "play" });
+        const match = new easel.board.Match(matchID);
+        work(match, sideOf(match, connection.user.id));
+        match.save();
+        Application.events.emit("easel.board.changed", { revision: match.revision });
+      });
+    const playing = (match, side) => {
+      if (!side) throw new Error("Take a seat to do that.");
+      if (match.winner) throw new Error("This game has finished.");
+      if (!match.seats.white || !match.seats.black)
+        throw new Error("Both players must take a seat.");
+    };
+    Application.events.on("easel.board.resign", (_, connection) =>
+      edit(connection, (match, side) => {
+        playing(match, side);
+        match.winner = side === "white" ? "black" : "white";
+        match.result = "resignation";
+        match.drawOffer = "";
+        stopClock(match, match.turn);
+        match.revision += 1;
+      }),
+    );
+    Application.events.on("easel.board.draw", ({ action }, connection) =>
+      edit(connection, (match, side) => {
+        playing(match, side);
+        if (action === "offer") match.drawOffer = side;
+        else if (action === "decline" || action === "withdraw") match.drawOffer = "";
+        else if (action === "accept") {
+          if (!match.drawOffer || match.drawOffer === side)
+            throw new Error("There is no draw offer to accept.");
+          match.winner = "draw";
+          match.result = "agreement";
+          match.drawOffer = "";
+          stopClock(match, match.turn);
+        } else throw new Error("Choose offer, accept or decline.");
+        match.revision += 1;
+      }),
+    );
+    Application.events.on("easel.board.leave", (_, connection) =>
+      edit(connection, (match, side) => {
+        if (!side) throw new Error("You are not seated.");
+        if (match.history.length && !match.winner && match.seats.white && match.seats.black)
+          throw new Error("Resign before leaving a game in progress.");
+        match.seats[side] = "";
+        match.names[side] = "";
+        match.revision += 1;
+      }),
+    );
+    Application.events.on("easel.board.rematch", (_, connection) =>
+      edit(connection, (match, side) => {
+        if (!match.winner) throw new Error("Finish this game first.");
+        if (!side) Application.security.require({ resource: matchID, action: "manage" });
+        match.squares = initialSquares(game);
+        const seat = match.seats.white;
+        const name = match.names.white;
+        match.seats.white = match.seats.black;
+        match.seats.black = seat;
+        match.names.white = match.names.black;
+        match.names.black = name;
+        match.turn = "white";
+        match.history = [];
+        match.captured = [];
+        match.chain = -1;
+        match.winner = "";
+        match.result = "";
+        match.drawOffer = "";
+        match.clock.white = 0;
+        match.clock.black = 0;
+        match.turnStarted = 0;
+        match.revision += 1;
+      }),
+    );
+    Application.events.on("easel.board.chat", ({ text }, connection) =>
+      edit(connection, (match) => {
+        const clean = String(text).trim().slice(0, 500);
+        if (!clean) throw new Error("Write a message first.");
+        match.chat = [
+          ...match.chat.slice(-99),
+          {
+            id: "m" + Date.now() + "-" + Easel.Random.integer(1, 1000000),
+            userId: connection.user.id,
+            name: connection.user.displayName,
+            text: clean,
+            timestamp: Date.now(),
+          },
+        ];
+      }),
+    );
     Application.events.on("easel.board.refresh", (_, connection) =>
       state(connection),
     );
@@ -126,6 +237,10 @@ export default class Game {
           to,
           revision,
         ]);
+        const match = new easel.board.Match(matchID);
+        const last = match.history[match.history.length - 1];
+        stopClock(match, last ? last.side : "");
+        match.save();
       }),
     );
     Application.events.on("easel.board.reset", (_, connection) =>
