@@ -64,6 +64,9 @@ func NewHandler(config Config) http.Handler {
 	mux.HandleFunc("GET /api/fetch", h.fetch)
 	mux.HandleFunc("GET /client/{type}", h.clientSocket)
 	mux.HandleFunc("GET /assets/{package}/{file...}", h.clientAsset)
+	mux.HandleFunc("POST /files/{game}", h.uploadFile)
+	mux.HandleFunc("PUT /files/{game}/{file}", h.uploadFile)
+	mux.HandleFunc("GET /files/{game}/{file}", h.downloadFile)
 	return h.protect(mux)
 }
 

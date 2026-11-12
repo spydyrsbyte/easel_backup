@@ -54,9 +54,12 @@ type User struct {
 }
 
 type Service struct {
-	Pool *pgxpool.Pool
-	Now  func() time.Time
+	Pool     *pgxpool.Pool
+	ServerID string
+	Now      func() time.Time
 }
+
+func (s *Service) server() string { return database.ServerID(s.ServerID) }
 
 func (s *Service) now() time.Time {
 	if s.Now != nil {
@@ -132,10 +135,10 @@ func (s *Service) CreatePassword(ctx context.Context, account PasswordAccount) (
 	}
 	defer tx.Rollback(context.Background())
 	user := User{DisplayName: account.DisplayName}
-	if err := tx.QueryRow(ctx, `INSERT INTO accounts.users(display_name) VALUES($1) RETURNING user_id::text`, account.DisplayName).Scan(&user.ID); err != nil {
+	if err := tx.QueryRow(ctx, `INSERT INTO accounts.users(display_name,server_id) VALUES($1,$2) RETURNING user_id::text`, account.DisplayName, s.server()).Scan(&user.ID); err != nil {
 		return User{}, fmt.Errorf("create account: %w", err)
 	}
-	if _, err := tx.Exec(ctx, `INSERT INTO accounts.passwords(user_id,username,hash) VALUES($1,$2,$3)`, user.ID, account.Username, account.hash); err != nil {
+	if _, err := tx.Exec(ctx, `INSERT INTO accounts.passwords(user_id,username,hash,server_id) VALUES($1,$2,$3,$4)`, user.ID, account.Username, account.hash, s.server()); err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == uniqueViolation {
 			return User{}, ErrUsernameTaken
@@ -151,7 +154,7 @@ func (s *Service) CreatePassword(ctx context.Context, account PasswordAccount) (
 func (s *Service) Login(ctx context.Context, name, password string) (User, error) {
 	var user User
 	var hash string
-	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name,p.hash FROM accounts.passwords p JOIN accounts.users u USING(user_id) WHERE lower(p.username)=lower($1)`, name).Scan(&user.ID, &user.DisplayName, &hash)
+	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name,p.hash FROM accounts.passwords p JOIN accounts.users u USING(user_id) WHERE lower(p.username)=lower($1) AND p.server_id=$2`, name, s.server()).Scan(&user.ID, &user.DisplayName, &hash)
 	if errors.Is(err, pgx.ErrNoRows) {
 		_, _ = VerifyPassword(dummyHash, password)
 		return User{}, ErrInvalidCredentials
@@ -175,8 +178,12 @@ func (s *Service) StartSession(ctx context.Context, userID string) (string, time
 		return "", time.Time{}, err
 	}
 	expires := s.now().Add(sessionLifetime)
-	if _, err := s.Pool.Exec(ctx, `INSERT INTO accounts.sessions(token_hash,user_id,expires_at) VALUES($1,$2,$3)`, hash, userID, expires); err != nil {
+	started, err := s.Pool.Exec(ctx, `INSERT INTO accounts.sessions(token_hash,user_id,expires_at) SELECT $1,user_id,$3 FROM accounts.users WHERE user_id::text=$2 AND server_id=$4`, hash, userID, expires, s.server())
+	if err != nil {
 		return "", time.Time{}, fmt.Errorf("start session: %w", err)
+	}
+	if started.RowsAffected() != 1 {
+		return "", time.Time{}, ErrNoAccount
 	}
 	return token, expires, nil
 }
@@ -186,7 +193,7 @@ func (s *Service) SessionUser(ctx context.Context, token string) (User, error) {
 		return User{}, ErrNoSession
 	}
 	var user User
-	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.sessions s JOIN accounts.users u USING(user_id) WHERE s.token_hash=$1 AND s.expires_at>$2`, hashToken(token), s.now()).Scan(&user.ID, &user.DisplayName)
+	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.sessions s JOIN accounts.users u USING(user_id) WHERE s.token_hash=$1 AND s.expires_at>$2 AND u.server_id=$3`, hashToken(token), s.now(), s.server()).Scan(&user.ID, &user.DisplayName)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return User{}, ErrNoSession
 	}
@@ -197,7 +204,7 @@ func (s *Service) SessionUser(ctx context.Context, token string) (User, error) {
 }
 
 func (s *Service) EndSession(ctx context.Context, token string) error {
-	if _, err := s.Pool.Exec(ctx, `DELETE FROM accounts.sessions WHERE token_hash=$1`, hashToken(token)); err != nil {
+	if _, err := s.Pool.Exec(ctx, `DELETE FROM accounts.sessions s USING accounts.users u WHERE s.user_id=u.user_id AND s.token_hash=$1 AND u.server_id=$2`, hashToken(token), s.server()); err != nil {
 		return fmt.Errorf("end session: %w", err)
 	}
 	return nil
@@ -212,7 +219,7 @@ func (s *Service) SaveState(ctx context.Context, provider, verifier, linkUserID 
 	if linkUserID != "" {
 		link = &linkUserID
 	}
-	if _, err := s.Pool.Exec(ctx, `INSERT INTO accounts.oauth_states(state_hash,provider,verifier,link_user_id,expires_at) VALUES($1,$2,$3,$4::uuid,$5)`, hash, provider, verifier, link, s.now().Add(stateLifetime)); err != nil {
+	if _, err := s.Pool.Exec(ctx, `INSERT INTO accounts.oauth_states(state_hash,provider,verifier,link_user_id,expires_at,server_id) VALUES($1,$2,$3,$4::uuid,$5,$6)`, hash, provider, verifier, link, s.now().Add(stateLifetime), s.server()); err != nil {
 		return "", fmt.Errorf("save sign-in state: %w", err)
 	}
 	return state, nil
@@ -221,7 +228,7 @@ func (s *Service) SaveState(ctx context.Context, provider, verifier, linkUserID 
 func (s *Service) TakeState(ctx context.Context, provider, state string) (string, string, error) {
 	var verifier string
 	var link *string
-	err := s.Pool.QueryRow(ctx, `DELETE FROM accounts.oauth_states WHERE state_hash=$1 AND provider=$2 AND expires_at>$3 RETURNING verifier,link_user_id::text`, hashToken(state), provider, s.now()).Scan(&verifier, &link)
+	err := s.Pool.QueryRow(ctx, `DELETE FROM accounts.oauth_states WHERE state_hash=$1 AND provider=$2 AND expires_at>$3 AND server_id=$4 RETURNING verifier,link_user_id::text`, hashToken(state), provider, s.now(), s.server()).Scan(&verifier, &link)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return "", "", ErrInvalidState
 	}
@@ -236,7 +243,7 @@ func (s *Service) TakeState(ctx context.Context, provider, state string) (string
 
 func (s *Service) FindIdentity(ctx context.Context, provider, subject string) (User, error) {
 	var user User
-	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.identities i JOIN accounts.users u USING(user_id) WHERE i.provider=$1 AND i.subject=$2`, provider, subject).Scan(&user.ID, &user.DisplayName)
+	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.identities i JOIN accounts.users u USING(user_id) WHERE i.provider=$1 AND i.subject=$2 AND i.server_id=$3`, provider, subject, s.server()).Scan(&user.ID, &user.DisplayName)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return User{}, ErrNoIdentity
 	}
@@ -248,7 +255,7 @@ func (s *Service) FindIdentity(ctx context.Context, provider, subject string) (U
 
 func (s *Service) User(ctx context.Context, userID string) (User, error) {
 	var user User
-	if err := s.Pool.QueryRow(ctx, `SELECT user_id::text,display_name FROM accounts.users WHERE user_id=$1`, userID).Scan(&user.ID, &user.DisplayName); err != nil {
+	if err := s.Pool.QueryRow(ctx, `SELECT user_id::text,display_name FROM accounts.users WHERE user_id::text=$1 AND server_id=$2`, userID, s.server()).Scan(&user.ID, &user.DisplayName); err != nil {
 		return User{}, fmt.Errorf("find account: %w", err)
 	}
 	return user, nil
@@ -257,7 +264,7 @@ func (s *Service) User(ctx context.Context, userID string) (User, error) {
 func (s *Service) Account(ctx context.Context, userID string) (User, bool, error) {
 	var user User
 	var admin bool
-	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name,a.user_id IS NOT NULL FROM accounts.users u LEFT JOIN accounts.administrators a USING(user_id) WHERE u.user_id::text=$1`, userID).Scan(&user.ID, &user.DisplayName, &admin)
+	err := s.Pool.QueryRow(ctx, `SELECT u.user_id::text,u.display_name,a.user_id IS NOT NULL FROM accounts.users u LEFT JOIN accounts.administrators a USING(user_id) WHERE u.user_id::text=$1 AND u.server_id=$2`, userID, s.server()).Scan(&user.ID, &user.DisplayName, &admin)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return User{}, false, ErrNoAccount
 	}
@@ -268,7 +275,7 @@ func (s *Service) Account(ctx context.Context, userID string) (User, bool, error
 }
 
 func (s *Service) Admins(ctx context.Context) ([]User, error) {
-	rows, err := s.Pool.Query(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.administrators a JOIN accounts.users u USING(user_id) ORDER BY a.granted_at,u.user_id`)
+	rows, err := s.Pool.Query(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.administrators a JOIN accounts.users u USING(user_id) WHERE u.server_id=$1 ORDER BY a.granted_at,u.user_id`, s.server())
 	if err != nil {
 		return nil, fmt.Errorf("list administrators: %w", err)
 	}
@@ -288,11 +295,11 @@ func (s *Service) SetAdmin(ctx context.Context, userID string, admin bool) error
 	if _, _, err := s.Account(ctx, userID); err != nil {
 		return err
 	}
-	statement := `DELETE FROM accounts.administrators WHERE user_id::text=$1`
+	statement := `DELETE FROM accounts.administrators a USING accounts.users u WHERE a.user_id=u.user_id AND a.user_id::text=$1 AND u.server_id=$2`
 	if admin {
-		statement = `INSERT INTO accounts.administrators(user_id) SELECT user_id FROM accounts.users WHERE user_id::text=$1 ON CONFLICT DO NOTHING`
+		statement = `INSERT INTO accounts.administrators(user_id) SELECT user_id FROM accounts.users WHERE user_id::text=$1 AND server_id=$2 ON CONFLICT DO NOTHING`
 	}
-	if _, err := s.Pool.Exec(ctx, statement, userID); err != nil {
+	if _, err := s.Pool.Exec(ctx, statement, userID, s.server()); err != nil {
 		return fmt.Errorf("set administrator: %w", err)
 	}
 	return nil
@@ -305,7 +312,7 @@ func (s *Service) IdentityLogin(ctx context.Context, provider string, profile Pr
 	}
 	defer tx.Rollback(context.Background())
 	var user User
-	err = tx.QueryRow(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.identities i JOIN accounts.users u USING(user_id) WHERE i.provider=$1 AND i.subject=$2`, provider, profile.Subject).Scan(&user.ID, &user.DisplayName)
+	err = tx.QueryRow(ctx, `SELECT u.user_id::text,u.display_name FROM accounts.identities i JOIN accounts.users u USING(user_id) WHERE i.provider=$1 AND i.subject=$2 AND i.server_id=$3`, provider, profile.Subject, s.server()).Scan(&user.ID, &user.DisplayName)
 	switch {
 	case err == nil:
 		if linkUserID != "" && linkUserID != user.ID {
@@ -313,7 +320,7 @@ func (s *Service) IdentityLogin(ctx context.Context, provider string, profile Pr
 		}
 	case errors.Is(err, pgx.ErrNoRows):
 		if linkUserID != "" {
-			if err := tx.QueryRow(ctx, `SELECT user_id::text,display_name FROM accounts.users WHERE user_id=$1`, linkUserID).Scan(&user.ID, &user.DisplayName); err != nil {
+			if err := tx.QueryRow(ctx, `SELECT user_id::text,display_name FROM accounts.users WHERE user_id::text=$1 AND server_id=$2`, linkUserID, s.server()).Scan(&user.ID, &user.DisplayName); err != nil {
 				return User{}, fmt.Errorf("find account to link: %w", err)
 			}
 		} else {
@@ -322,11 +329,11 @@ func (s *Service) IdentityLogin(ctx context.Context, provider string, profile Pr
 				return User{}, err
 			}
 			user.DisplayName = display
-			if err := tx.QueryRow(ctx, `INSERT INTO accounts.users(display_name) VALUES($1) RETURNING user_id::text`, display).Scan(&user.ID); err != nil {
+			if err := tx.QueryRow(ctx, `INSERT INTO accounts.users(display_name,server_id) VALUES($1,$2) RETURNING user_id::text`, display, s.server()).Scan(&user.ID); err != nil {
 				return User{}, fmt.Errorf("create account: %w", err)
 			}
 		}
-		if _, err := tx.Exec(ctx, `INSERT INTO accounts.identities(provider,subject,user_id) VALUES($1,$2,$3)`, provider, profile.Subject, user.ID); err != nil {
+		if _, err := tx.Exec(ctx, `INSERT INTO accounts.identities(provider,subject,user_id,server_id) VALUES($1,$2,$3,$4)`, provider, profile.Subject, user.ID, s.server()); err != nil {
 			return User{}, fmt.Errorf("link identity: %w", err)
 		}
 	default:

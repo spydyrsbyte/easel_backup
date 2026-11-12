@@ -51,6 +51,7 @@ type Game struct {
 	Records           automation.Records
 	Debug             bool
 	EmitServerEvent   func(ctx context.Context, gameID string, eventName string, payload json.RawMessage) error
+	Files             *jsapi.FilesConfig
 }
 
 type request struct {
@@ -180,6 +181,10 @@ func (s *session) run(ctx context.Context, game Game, plan manifest.Plan, global
 			ready <- err
 			return
 		}
+	}
+	if err := s.bridge.InstallFiles(game.Files); err != nil {
+		ready <- err
+		return
 	}
 	if err := s.bridge.InstallRecords(s.schema, game.Records, game.Debug); err != nil {
 		ready <- err

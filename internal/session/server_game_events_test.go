@@ -23,18 +23,18 @@ type mockServerGames struct {
 func (m *mockServerGames) Create(ctx context.Context, name, application string, modules []string, access string) (any, error) {
 	return nil, nil
 }
-func (m *mockServerGames) List(ctx context.Context) (any, error)        { return nil, nil }
+func (m *mockServerGames) List(ctx context.Context) (any, error)           { return nil, nil }
 func (m *mockServerGames) Get(ctx context.Context, id string) (any, error) { return nil, nil }
 func (m *mockServerGames) SetAccess(ctx context.Context, id, access string) error {
 	return nil
 }
-func (m *mockServerGames) Start(ctx context.Context, id string) error           { return nil }
-func (m *mockServerGames) Stop(id string) error                                  { return nil }
-func (m *mockServerGames) Delete(ctx context.Context, id string) error          { return nil }
+func (m *mockServerGames) Start(ctx context.Context, id string) error             { return nil }
+func (m *mockServerGames) Stop(id string) error                                   { return nil }
+func (m *mockServerGames) Delete(ctx context.Context, id string) error            { return nil }
 func (m *mockServerGames) AddMember(ctx context.Context, id, userID string) error { return nil }
-func (m *mockServerGames) Members(ctx context.Context, id string) (any, error)   { return nil, nil }
+func (m *mockServerGames) Members(ctx context.Context, id string) (any, error)    { return nil, nil }
 func (m *mockServerGames) Remove(ctx context.Context, id, userID string) error    { return nil }
-func (m *mockServerGames) Installed() any                                        { return nil }
+func (m *mockServerGames) Installed() any                                         { return nil }
 
 func (m *mockServerGames) OnEvent(eventName string, handler func(gameID string, payload json.RawMessage)) {
 	m.mu.Lock()
@@ -66,11 +66,11 @@ Games.on("gameHello", (id, payload) => {
 `,
 	})
 	serverSession, err := NewGame(context.Background(), Game{
-		GameID:    "server",
-		SessionID: "server-sess",
-		Server:    true,
-		Games:     mockGames,
-		Packages:  []manifest.Package{serverPkg},
+		GameID:          "server",
+		SessionID:       "server-sess",
+		Server:          true,
+		Games:           mockGames,
+		Packages:        []manifest.Package{serverPkg},
 		AuthorizeClient: func(context.Context, string, json.RawMessage, bool) error { return nil },
 	})
 	if err != nil {
@@ -97,10 +97,10 @@ export function handleMessage(message) {
 	var emittedUpwardPayload json.RawMessage
 
 	gameSession, err := NewGame(context.Background(), Game{
-		GameID:    "table-1234",
-		SessionID: "table-sess-1",
-		Server:    false,
-		Packages:  []manifest.Package{gamePkg},
+		GameID:          "table-1234",
+		SessionID:       "table-sess-1",
+		Server:          false,
+		Packages:        []manifest.Package{gamePkg},
 		AuthorizeClient: func(context.Context, string, json.RawMessage, bool) error { return nil },
 		EmitServerEvent: func(ctx context.Context, gameID string, eventName string, payload json.RawMessage) error {
 			emittedUpwardGameID = gameID

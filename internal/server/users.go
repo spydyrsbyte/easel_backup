@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"easel/internal/accounts"
+	"easel/internal/database"
 	"easel/internal/jsapi"
 	"easel/internal/security"
 )
@@ -16,10 +17,13 @@ func SignedInClient(ctx context.Context, _ string, _ json.RawMessage, _ bool) er
 	return nil
 }
 
-type scriptedUsers struct{ accounts *accounts.Service }
+type scriptedUsers struct {
+	accounts *accounts.Service
+	changed  func(context.Context, string) error
+}
 
 func (s scriptedUsers) List(ctx context.Context) (any, error) {
-	rows, err := s.accounts.Pool.Query(ctx, `SELECT u.user_id::text,u.display_name,a.user_id IS NOT NULL FROM accounts.users u LEFT JOIN accounts.administrators a USING(user_id) ORDER BY u.display_name,u.user_id`)
+	rows, err := s.accounts.Pool.Query(ctx, `SELECT u.user_id::text,u.display_name,a.user_id IS NOT NULL FROM accounts.users u LEFT JOIN accounts.administrators a USING(user_id) WHERE u.server_id=$1 ORDER BY u.display_name,u.user_id`, database.ServerID(s.accounts.ServerID))
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +40,13 @@ func (s scriptedUsers) List(ctx context.Context) (any, error) {
 	return users, rows.Err()
 }
 
-func ScriptedUsers(service *accounts.Service) jsapi.ServerUsers { return scriptedUsers{service} }
+func ScriptedUsers(service *accounts.Service) jsapi.ServerUsers {
+	return scriptedUsers{accounts: service}
+}
+
+func ScriptedUsersNotifying(service *accounts.Service, changed func(context.Context, string) error) jsapi.ServerUsers {
+	return scriptedUsers{accounts: service, changed: changed}
+}
 
 func (s scriptedUsers) Get(ctx context.Context, id string) (any, error) {
 	user, admin, err := s.accounts.Account(ctx, id)
@@ -49,5 +59,11 @@ func (s scriptedUsers) Get(ctx context.Context, id string) (any, error) {
 func (s scriptedUsers) Admins(ctx context.Context) (any, error) { return s.accounts.Admins(ctx) }
 
 func (s scriptedUsers) SetAdmin(ctx context.Context, id string, admin bool) error {
-	return s.accounts.SetAdmin(ctx, id, admin)
+	if err := s.accounts.SetAdmin(ctx, id, admin); err != nil {
+		return err
+	}
+	if s.changed != nil {
+		return s.changed(ctx, id)
+	}
+	return nil
 }

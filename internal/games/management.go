@@ -26,7 +26,7 @@ func (m *Manager) Roles(ctx context.Context, id string) (any, error) {
 		return nil, ErrUnknownGame
 	}
 	var exists bool
-	if err := m.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM game_data.games WHERE game_id=$1)`, id).Scan(&exists); err != nil {
+	if err := m.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM game_data.games WHERE game_id=$1 AND kind='game' AND server_id=$2)`, id, m.server()).Scan(&exists); err != nil {
 		return nil, err
 	}
 	if !exists {
@@ -52,8 +52,11 @@ func (m *Manager) SetRole(ctx context.Context, id, user, role string) error {
 	if role != "administrator" && role != "player" && role != "spectator" {
 		return fmt.Errorf("unknown game role")
 	}
-	if !validID(id) || !validID(user) {
+	if !validID(user) {
 		return ErrUnknownUser
+	}
+	if _, err := m.Get(ctx, id); err != nil {
+		return err
 	}
 	result, err := m.Pool.Exec(ctx, `UPDATE game_data.security_principals p SET attributes=jsonb_set(attributes,'{role}',to_jsonb($3::text)) WHERE game_id=$1 AND id=$2 AND EXISTS(SELECT 1 FROM game_data.members m WHERE m.game_id=p.game_id AND m.user_id=p.id)`, id, user, role)
 	if err != nil {

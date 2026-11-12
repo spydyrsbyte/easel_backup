@@ -26,6 +26,10 @@ type Revisions struct {
 }
 
 func (revisions *Revisions) CreateGame(ctx context.Context, name string, application manifest.Package) (string, error) {
+	return revisions.CreateStorage(ctx, database.DefaultServerID, "game", name, application)
+}
+
+func (revisions *Revisions) CreateStorage(ctx context.Context, serverID, kind, name string, application manifest.Package) (string, error) {
 	if application.Manifest.Type != manifest.TypeApplication {
 		return "", fmt.Errorf("package %s is not an application", application.ID())
 	}
@@ -35,7 +39,7 @@ func (revisions *Revisions) CreateGame(ctx context.Context, name string, applica
 	}
 	defer tx.Rollback(context.Background())
 	var gameID, applicationID string
-	if err := tx.QueryRow(ctx, `INSERT INTO game_data.games(name,application_id) VALUES($1,gen_random_uuid()) RETURNING game_id::text,application_id::text`, name).Scan(&gameID, &applicationID); err != nil {
+	if err := tx.QueryRow(ctx, `INSERT INTO game_data.games(name,application_id,server_id,kind) VALUES($1,gen_random_uuid(),$2,$3) RETURNING game_id::text,application_id::text`, name, database.ServerID(serverID), kind).Scan(&gameID, &applicationID); err != nil {
 		return "", fmt.Errorf("create game %s: %w", name, err)
 	}
 	if _, err := tx.Exec(ctx, `INSERT INTO game_data.contributors(game_id,contributor_id,kind,name) VALUES($1,$2,'application',$3)`, gameID, applicationID, application.ID()); err != nil {

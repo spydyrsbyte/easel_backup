@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 
 	"easel/internal/events"
+	"easel/internal/files"
+	"easel/internal/jsapi"
 	"easel/internal/manifest"
 	"easel/internal/security"
 )
@@ -15,6 +17,25 @@ type ClientRuntime interface {
 	EmitAuthorizedClient(context.Context, string, json.RawMessage) error
 	SubscribeClient(context.Context, string, func(json.RawMessage)) (func(), error)
 	DeliverServerEvent(eventName string, payload json.RawMessage) error
+	EvaluateUpload(context.Context, map[string]any) (jsapi.UploadDecision, error)
+	FileUploaded(context.Context, files.File, map[string]any) error
+}
+
+func (s *session) EvaluateUpload(ctx context.Context, fields map[string]any) (jsapi.UploadDecision, error) {
+	var decision jsapi.UploadDecision
+	_, err := s.submit(ctx, events.Client, "application", func() (json.RawMessage, error) {
+		var err error
+		decision, err = s.bridge.EvaluateUpload(s.bridge.Context(), fields)
+		return nil, err
+	})
+	return decision, err
+}
+
+func (s *session) FileUploaded(ctx context.Context, file files.File, user map[string]any) error {
+	_, err := s.submit(ctx, events.Client, "application", func() (json.RawMessage, error) {
+		return nil, s.bridge.FileUploaded(s.bridge.Context(), file, user)
+	})
+	return err
 }
 
 func (s *session) ClientPlan() manifest.Plan { return s.plan }

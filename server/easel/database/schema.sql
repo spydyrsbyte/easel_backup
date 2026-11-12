@@ -1,27 +1,53 @@
 BEGIN;
 
+CREATE SCHEMA hosting;
+
+CREATE TABLE hosting.installation (
+    singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton),
+    schema_version integer NOT NULL CHECK (schema_version > 0)
+);
+INSERT INTO hosting.installation(schema_version) VALUES (2);
+
+CREATE TABLE hosting.servers (
+    server_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name text NOT NULL CHECK (name ~ '^[a-z0-9][a-z0-9_-]{0,31}$'),
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX servers_name ON hosting.servers (name);
+INSERT INTO hosting.servers(server_id, name)
+    VALUES ('00000000-0000-0000-0000-000000000000', 'default');
+
 CREATE SCHEMA accounts;
 
 CREATE TABLE accounts.users (
     user_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    server_id uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+        REFERENCES hosting.servers ON DELETE CASCADE,
     display_name text NOT NULL CHECK (btrim(display_name) <> ''),
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at timestamptz NOT NULL DEFAULT now(),
+    UNIQUE (server_id, user_id)
 );
 
 CREATE TABLE accounts.passwords (
-    user_id uuid PRIMARY KEY REFERENCES accounts.users ON DELETE CASCADE,
+    user_id uuid PRIMARY KEY,
+    server_id uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
     username text NOT NULL CHECK (username ~ '^[A-Za-z0-9_.-]{3,32}$'),
     hash text NOT NULL CHECK (hash LIKE '$argon2id$%'),
-    updated_at timestamptz NOT NULL DEFAULT now()
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    FOREIGN KEY (server_id, user_id)
+        REFERENCES accounts.users (server_id, user_id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX passwords_username ON accounts.passwords (lower(username));
+CREATE UNIQUE INDEX passwords_username ON accounts.passwords (server_id, lower(username));
 
 CREATE TABLE accounts.identities (
+    server_id uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000',
     provider text NOT NULL CHECK (btrim(provider) <> ''),
     subject text NOT NULL CHECK (btrim(subject) <> ''),
-    user_id uuid NOT NULL REFERENCES accounts.users ON DELETE CASCADE,
+    user_id uuid NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
-    PRIMARY KEY (provider, subject)
+    PRIMARY KEY (server_id, provider, subject),
+    FOREIGN KEY (server_id, user_id)
+        REFERENCES accounts.users (server_id, user_id) ON DELETE CASCADE
 );
 CREATE INDEX identities_by_user ON accounts.identities (user_id);
 
@@ -35,6 +61,8 @@ CREATE INDEX sessions_by_user ON accounts.sessions (user_id);
 
 CREATE TABLE accounts.oauth_states (
     state_hash bytea PRIMARY KEY CHECK (octet_length(state_hash) = 32),
+    server_id uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+        REFERENCES hosting.servers ON DELETE CASCADE,
     provider text NOT NULL,
     verifier text NOT NULL,
     link_user_id uuid REFERENCES accounts.users ON DELETE CASCADE,
@@ -50,14 +78,23 @@ CREATE SCHEMA game_data;
 
 CREATE TABLE game_data.games (
     game_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    server_id uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'
+        REFERENCES hosting.servers ON DELETE CASCADE,
+    kind text NOT NULL DEFAULT 'game' CHECK (kind IN ('game', 'server')),
     name text NOT NULL CHECK (btrim(name) <> ''),
     application_id uuid NOT NULL,
     application_kind text NOT NULL DEFAULT 'application' CHECK (application_kind = 'application'),
     active_revision_id uuid,
     access text NOT NULL DEFAULT 'invite' CHECK (access IN ('open', 'invite')),
     modules text[] NOT NULL DEFAULT '{}',
-    created_at timestamptz NOT NULL DEFAULT now()
+    lifecycle text NOT NULL DEFAULT 'auto' CHECK (lifecycle IN ('auto', 'stopped', 'suspended')),
+    suspended_at timestamptz,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    CHECK ((lifecycle = 'suspended') = (suspended_at IS NOT NULL))
 );
+CREATE INDEX games_by_server ON game_data.games (server_id, created_at);
+CREATE UNIQUE INDEX one_storage_per_server_application
+    ON game_data.games (server_id, name) WHERE kind = 'server';
 
 CREATE TABLE game_data.automations (
     game_id uuid NOT NULL REFERENCES game_data.games ON DELETE CASCADE,
@@ -354,5 +391,37 @@ CREATE TABLE game_data.members (
     PRIMARY KEY (game_id, user_id)
 );
 CREATE INDEX members_by_user ON game_data.members (user_id);
+
+CREATE TABLE game_data.files (
+    game_id uuid NOT NULL REFERENCES game_data.games ON DELETE CASCADE,
+    file_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    sha256 bytea NOT NULL CHECK (octet_length(sha256) = 32),
+    media_type text NOT NULL CHECK (btrim(media_type) <> ''),
+    size bigint NOT NULL CHECK (size >= 0),
+    name text NOT NULL DEFAULT '',
+    owner_id uuid,
+    file_version bigint NOT NULL DEFAULT 1 CHECK (file_version > 0),
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (game_id, file_id)
+);
+CREATE INDEX files_by_content ON game_data.files (game_id, sha256);
+
+CREATE TABLE game_data.scheduled_events (
+    game_id uuid NOT NULL REFERENCES game_data.games ON DELETE CASCADE,
+    schedule_id uuid NOT NULL DEFAULT gen_random_uuid(),
+    owner text NOT NULL,
+    name text NOT NULL CHECK (btrim(name) <> ''),
+    payload jsonb NOT NULL DEFAULT '{}',
+    remaining_ms bigint NOT NULL CHECK (remaining_ms >= 0),
+    PRIMARY KEY (game_id, schedule_id)
+);
+
+CREATE TABLE game_data.runtime_owners (
+    game_id uuid PRIMARY KEY REFERENCES game_data.games ON DELETE CASCADE,
+    instance_id uuid NOT NULL,
+    claimed_at timestamptz NOT NULL DEFAULT now(),
+    heartbeat_at timestamptz NOT NULL DEFAULT now()
+);
 
 COMMIT;

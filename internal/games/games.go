@@ -13,11 +13,9 @@ import (
 	"sync"
 
 	"easel/internal/accounts"
-	"easel/internal/automation"
 	"easel/internal/automation/pgstore"
 	"easel/internal/database"
-	"easel/internal/events"
-	"easel/internal/jsapi"
+	"easel/internal/files"
 	"easel/internal/manifest"
 	"easel/internal/platform"
 	"easel/internal/schema"
@@ -51,15 +49,22 @@ type Game struct {
 	Modules     []string `json:"modules"`
 	Access      string   `json:"access"`
 	Running     bool     `json:"running"`
+	Lifecycle   string   `json:"lifecycle"`
 }
 
 type Manager struct {
-	Pool    *pgxpool.Pool
-	Catalog *platform.Catalog
-	Globals []manifest.Package
-	Folder  string
+	Pool      *pgxpool.Pool
+	Catalog   *platform.Catalog
+	Globals   []manifest.Package
+	Folder    string
+	ServerID  string
+	FileLimit int64
+	FileTypes []string
 
 	mu                 sync.Mutex
+	storage            string
+	filesMu            sync.Mutex
+	files              map[string]*files.Store
 	running            map[string]*runningGame
 	gameEventListeners map[string][]func(gameID string, payload json.RawMessage)
 }
@@ -81,6 +86,14 @@ func (m *Manager) resolve(application string, modules []string) ([]manifest.Pack
 	if err != nil {
 		return nil, manifest.Plan{}, err
 	}
+	plan, err := m.plan(packages)
+	if err != nil {
+		return nil, manifest.Plan{}, err
+	}
+	return packages, plan, nil
+}
+
+func (m *Manager) plan(packages []manifest.Package) (manifest.Plan, error) {
 	listed := map[string]bool{}
 	for _, pkg := range packages {
 		listed[pkg.ID()] = true
@@ -100,9 +113,9 @@ func (m *Manager) resolve(application string, modules []string) ([]manifest.Pack
 	}
 	plan, err := manifest.Resolve(all)
 	if err != nil {
-		return nil, manifest.Plan{}, fmt.Errorf("resolve packages: %w", err)
+		return manifest.Plan{}, fmt.Errorf("resolve packages: %w", err)
 	}
-	return packages, plan, nil
+	return plan, nil
 }
 
 func (m *Manager) compose(application string, modules []string) ([]manifest.Package, manifest.Plan, *schema.Schema, error) {
@@ -118,6 +131,8 @@ func (m *Manager) compose(application string, modules []string) ([]manifest.Pack
 }
 
 func (m *Manager) folder(id string) string { return filepath.Join(m.Folder, id) }
+
+func (m *Manager) server() string { return database.ServerID(m.ServerID) }
 
 func (m *Manager) Create(ctx context.Context, name, application string, modules []string, access string) (Game, error) {
 	name = strings.TrimSpace(name)
@@ -135,7 +150,7 @@ func (m *Manager) Create(ctx context.Context, name, application string, modules 
 		return Game{}, err
 	}
 	revisions := &pgstore.Revisions{Pool: m.Pool}
-	id, err := revisions.CreateGame(ctx, name, packages[0])
+	id, err := revisions.CreateStorage(ctx, m.server(), "game", name, packages[0])
 	if err != nil {
 		return Game{}, err
 	}
@@ -146,8 +161,12 @@ func (m *Manager) Create(ctx context.Context, name, application string, modules 
 		return Game{}, err
 	}
 	if principal := security.Principal(ctx); principal != "" {
-		if _, err := m.Pool.Exec(ctx, `INSERT INTO game_data.members(game_id,user_id) VALUES($1,$2);`, id, principal); err != nil {
+		added, err := m.Pool.Exec(ctx, `INSERT INTO game_data.members(game_id,user_id) SELECT $1,user_id FROM accounts.users WHERE user_id::text=$2 AND server_id=$3`, id, principal, m.server())
+		if err != nil {
 			return Game{}, err
+		}
+		if added.RowsAffected() != 1 {
+			return Game{}, ErrUnknownUser
 		}
 		if _, err := m.Pool.Exec(ctx, `INSERT INTO game_data.security_principals(game_id,id,principal_type,attributes) VALUES($1,$2,$3,'{"role":"administrator"}')`, id, principal, security.UserType); err != nil {
 			return Game{}, err
@@ -159,14 +178,14 @@ func (m *Manager) Create(ctx context.Context, name, application string, modules 
 	return m.Get(ctx, id)
 }
 
-const selectGames = `SELECT g.game_id::text,g.name,c.name,g.modules,g.access FROM game_data.games g JOIN game_data.contributors c ON c.game_id=g.game_id AND c.contributor_id=g.application_id`
+const selectGames = `SELECT g.game_id::text,g.name,c.name,g.modules,g.access,g.lifecycle FROM game_data.games g JOIN game_data.contributors c ON c.game_id=g.game_id AND c.contributor_id=g.application_id WHERE g.kind='game' AND g.server_id=$1`
 
 func (m *Manager) scan(rows pgx.Rows) ([]Game, error) {
 	defer rows.Close()
 	found := []Game{}
 	for rows.Next() {
 		var game Game
-		if err := rows.Scan(&game.ID, &game.Name, &game.Application, &game.Modules, &game.Access); err != nil {
+		if err := rows.Scan(&game.ID, &game.Name, &game.Application, &game.Modules, &game.Access, &game.Lifecycle); err != nil {
 			return nil, fmt.Errorf("read game: %w", err)
 		}
 		_, game.Running = m.runtime(game.ID)
@@ -179,7 +198,7 @@ func (m *Manager) scan(rows pgx.Rows) ([]Game, error) {
 }
 
 func (m *Manager) List(ctx context.Context) ([]Game, error) {
-	rows, err := m.Pool.Query(ctx, selectGames+` ORDER BY g.created_at,g.game_id`)
+	rows, err := m.Pool.Query(ctx, selectGames+` ORDER BY g.created_at,g.game_id`, m.server())
 	if err != nil {
 		return nil, fmt.Errorf("list games: %w", err)
 	}
@@ -190,7 +209,7 @@ func (m *Manager) Get(ctx context.Context, id string) (Game, error) {
 	if !validID(id) {
 		return Game{}, ErrUnknownGame
 	}
-	rows, err := m.Pool.Query(ctx, selectGames+` WHERE g.game_id=$1`, id)
+	rows, err := m.Pool.Query(ctx, selectGames+` AND g.game_id=$2`, m.server(), id)
 	if err != nil {
 		return Game{}, fmt.Errorf("read game %s: %w", id, err)
 	}
@@ -228,7 +247,7 @@ func (m *Manager) SetAccess(ctx context.Context, id, access string) error {
 	if !validID(id) {
 		return ErrUnknownGame
 	}
-	command, err := m.Pool.Exec(ctx, `UPDATE game_data.games SET access=$2 WHERE game_id=$1`, id, access)
+	command, err := m.Pool.Exec(ctx, `UPDATE game_data.games SET access=$2 WHERE game_id=$1 AND kind='game' AND server_id=$3`, id, access, m.server())
 	if err != nil {
 		return fmt.Errorf("set access of game %s: %w", id, err)
 	}
@@ -244,95 +263,6 @@ func newSessionID() (string, error) {
 		return "", fmt.Errorf("generate session id: %w", err)
 	}
 	return hex.EncodeToString(raw), nil
-}
-
-func (m *Manager) Start(ctx context.Context, id string) error {
-	game, err := m.Get(ctx, id)
-	if err != nil {
-		return err
-	}
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	if m.running[id] != nil {
-		return ErrRunning
-	}
-	packages, plan, err := m.resolveSaved(ctx, game)
-	if err != nil {
-		return err
-	}
-	composed := &schema.Schema{}
-	revision, err := (&pgstore.Revisions{Pool: m.Pool}).CurrentRevision(ctx, id, plan, composed)
-	if err != nil {
-		return err
-	}
-	if err := os.MkdirAll(m.folder(id), 0o755); err != nil {
-		return fmt.Errorf("create folder of game %s: %w", game.Name, err)
-	}
-	sessionID, err := newSessionID()
-	if err != nil {
-		return err
-	}
-	store := &security.PostgresStore{Pool: m.Pool, GameID: id, ResolveRecord: security.RecordResolver(pgstore.RecordView)}
-	service := &security.SecurityService{}
-	records := &pgstore.Records{Pool: m.Pool, GameID: id, Schema: composed, IsDenied: func(err error) bool { return errors.Is(err, security.ErrDenied) }, AuthorizeRecord: func(ctx context.Context, tx pgx.Tx, action string, record automation.Record) error {
-		if security.Execution(ctx).Origin == events.Server.String() {
-			return nil
-		}
-		resource := record.ID
-		if action == "create" {
-			resource = "type:" + record.Type
-		}
-		return service.RequireIn(ctx, store.ViewTransaction(tx), security.AuthorizationRequest{ResourceID: resource, Action: action, Context: map[string]any{"record": record.Data}})
-	}}
-	authorizeClient := func(ctx context.Context, _ string, _ json.RawMessage, _ bool) error {
-		member, err := m.IsMember(ctx, id, security.Principal(ctx))
-		if err != nil {
-			return err
-		}
-		if !member {
-			return security.ErrDenied
-		}
-		return nil
-	}
-	automationRequest := func(action string, saved automation.Saved) (security.AuthorizationRequest, error) {
-		return security.AuthorizationRequest{ResourceID: "type:" + security.UserType, Action: "automation." + action, Context: map[string]any{"name": saved.Definition.Name}}, nil
-	}
-	repository := &pgstore.Repository{Pool: m.Pool, GameID: id, AuthorizeWrite: func(ctx context.Context, tx pgx.Tx, action string, saved automation.Saved) error {
-		if security.Execution(ctx).Origin == events.Server.String() && security.Principal(ctx) == "" && saved.Creator.Kind == automation.CreatorSystem {
-			return nil
-		}
-		return security.ErrDenied
-	}}
-	access := hostedAutomationAccess{service: service, request: automationRequest}
-	runtime, err := session.NewGame(security.WithPrincipal(context.WithoutCancel(ctx), ""), session.Game{
-		GameID:            id,
-		SessionID:         sessionID,
-		Packages:          packages,
-		Schema:            composed,
-		Globals:           m.Globals,
-		Security:          &jsapi.SecurityConfig{Service: service, Store: store, BuildID: revision},
-		Records:           records,
-		Members:           func(ctx context.Context) (any, error) { return m.Roles(ctx, id) },
-		AutomationService: automation.New(repository, records, access),
-		RecordType:        records.RecordType,
-		AuthorizeClient:   authorizeClient,
-		EmitServerEvent: func(ctx context.Context, gameID string, eventName string, payload json.RawMessage) error {
-			return m.HandleGameEvent(gameID, eventName, payload)
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("start game %s: %w", game.Name, err)
-	}
-	client, ok := runtime.(session.ClientRuntime)
-	if !ok {
-		runtime.Close()
-		return fmt.Errorf("game %s cannot serve clients", game.Name)
-	}
-	if m.running == nil {
-		m.running = map[string]*runningGame{}
-	}
-	m.running[id] = &runningGame{runtime: client, departure: map[string]map[chan struct{}]bool{}}
-	return nil
 }
 
 func (m *Manager) Stop(id string) error {
@@ -352,8 +282,8 @@ func (m *Manager) Stop(id string) error {
 }
 
 func (m *Manager) Delete(ctx context.Context, id string) error {
-	if !validID(id) {
-		return ErrUnknownGame
+	if _, err := m.Get(ctx, id); err != nil {
+		return err
 	}
 	if err := m.Stop(id); err != nil && !errors.Is(err, ErrNotRunning) {
 		return err
@@ -458,7 +388,7 @@ func (m *Manager) IsMember(ctx context.Context, id, userID string) (bool, error)
 		return false, nil
 	}
 	var member bool
-	if err := m.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM game_data.members WHERE game_id=$1 AND user_id=$2)`, id, userID).Scan(&member); err != nil {
+	if err := m.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM game_data.members m JOIN game_data.games g USING(game_id) WHERE m.game_id=$1 AND m.user_id=$2 AND g.server_id=$3 AND g.kind='game')`, id, userID, m.server()).Scan(&member); err != nil {
 		return false, fmt.Errorf("check membership: %w", err)
 	}
 	return member, nil
@@ -485,6 +415,13 @@ func (m *Manager) Members(ctx context.Context, id string) ([]accounts.User, erro
 }
 
 func addMember(ctx context.Context, tx pgx.Tx, id, userID string) error {
+	var known bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM accounts.users u JOIN game_data.games g USING(server_id) WHERE g.game_id=$1 AND u.user_id=$2)`, id, userID).Scan(&known); err != nil {
+		return fmt.Errorf("add member: %w", err)
+	}
+	if !known {
+		return ErrUnknownUser
+	}
 	_, err := tx.Exec(ctx, `INSERT INTO game_data.members(game_id,user_id) VALUES($1,$2) ON CONFLICT DO NOTHING`, id, userID)
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) && pgErr.Code == foreignKeyViolation {
@@ -533,7 +470,7 @@ func (m *Manager) Join(ctx context.Context, id string, user accounts.User) error
 	}
 	defer tx.Rollback(context.Background())
 	var access string
-	if err := tx.QueryRow(ctx, `SELECT access FROM game_data.games WHERE game_id=$1`, id).Scan(&access); errors.Is(err, pgx.ErrNoRows) {
+	if err := tx.QueryRow(ctx, `SELECT access FROM game_data.games WHERE game_id=$1 AND kind='game' AND server_id=$2`, id, m.server()).Scan(&access); errors.Is(err, pgx.ErrNoRows) {
 		return ErrUnknownGame
 	} else if err != nil {
 		return fmt.Errorf("read game %s: %w", id, err)

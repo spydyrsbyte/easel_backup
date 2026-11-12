@@ -39,6 +39,11 @@ func NewServerRouter(manager *games.Manager, application session.ServerRuntime) 
 	if err != nil {
 		return nil, err
 	}
+	if manager != nil {
+		if storage := manager.ServerStorage(); storage != "" {
+			server.Files = manager.Files(storage)
+		}
+	}
 	return &ServerRouter{Games: manager, Application: application, server: server}, nil
 }
 
@@ -67,13 +72,20 @@ func (r *ServerRouter) client(id string, runtime session.ClientRuntime) (*Client
 		return nil, err
 	}
 	game.ID = id
+	game.Files = r.Games.Files(id)
 	game.Departure = func(userID string) (<-chan struct{}, func()) { return r.Games.Departure(id, userID) }
 	r.clients[id] = game
 	return game, nil
 }
 
 func (r *ServerRouter) Connect(ctx context.Context, event string, connection *jsapi.Connection) error {
-	return r.Application.Connect(ctx, event, connection)
+	if err := r.Application.Connect(ctx, event, connection); err != nil {
+		return err
+	}
+	if id, ok := connection.User["id"].(string); ok && event == "signedIn" && r.Games != nil {
+		return r.Games.SyncServerPrincipal(ctx, id)
+	}
+	return nil
 }
 
 func (r *ServerRouter) Join(ctx context.Context, user accounts.User, id string) (*ClientGame, error) {

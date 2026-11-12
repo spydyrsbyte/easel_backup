@@ -17,7 +17,6 @@ import (
 	"easel/internal/games"
 	"easel/internal/platform"
 	"easel/internal/server"
-	"easel/internal/session"
 )
 
 func main() {
@@ -78,14 +77,8 @@ func run() error {
 	manager := &games.Manager{Pool: databasePool, Catalog: catalog, Globals: definition.Libraries, Folder: *gamesDir}
 	defer manager.Close()
 	accountService := &accounts.Service{Pool: databasePool}
-	serverApplication, err := session.NewGame(ctx, session.Game{
-		GameID:          "server",
-		SessionID:       "server",
-		Server:          true,
-		Games:           manager.Scripting(),
-		Users:           server.ScriptedUsers(accountService),
-		Packages:        definition.Packages(),
-		Globals:         definition.Libraries,
+	serverApplication, err := manager.StartServer(ctx, definition, games.ServerHost{
+		Users:           server.ScriptedUsersNotifying(accountService, manager.SyncServerPrincipal),
 		AuthorizeClient: server.SignedInClient,
 	})
 	if err != nil {
@@ -93,7 +86,7 @@ func run() error {
 	}
 	defer serverApplication.Close()
 	slog.Info("server application started", "server", definition.Server.ID(), "libraries", len(definition.Libraries), "applications", len(catalog.Applications), "modules", len(catalog.Modules), "running games", len(manager.Running()))
-	router, err := server.NewServerRouter(manager, serverApplication.(session.ServerRuntime))
+	router, err := server.NewServerRouter(manager, serverApplication)
 	if err != nil {
 		return fmt.Errorf("serve server application %s: %w", definition.Server.ID(), err)
 	}

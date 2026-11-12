@@ -14,6 +14,7 @@ import (
 	"unicode/utf8"
 
 	"easel/internal/accounts"
+	"easel/internal/files"
 	"easel/internal/jsapi"
 	"easel/internal/manifest"
 	"easel/internal/security"
@@ -26,6 +27,7 @@ type ClientGame struct {
 	Runtime   session.ClientRuntime
 	Access    func(context.Context, accounts.User) error
 	Departure func(userID string) (<-chan struct{}, func())
+	Files     *files.Store
 	plans     map[string]manifest.Delivery
 }
 

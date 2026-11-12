@@ -38,6 +38,8 @@ type EventBridge struct {
 	serverEventListeners map[string][]sobek.Callable
 	serverGameListeners  map[string][]sobek.Callable
 	submit               func(context.Context, events.Origin, string, func() (json.RawMessage, error)) (json.RawMessage, error)
+	files                *FilesConfig
+	fileHooks            map[string][]sobek.Callable
 }
 
 func newBridge(vm *sobek.Runtime) *EventBridge {

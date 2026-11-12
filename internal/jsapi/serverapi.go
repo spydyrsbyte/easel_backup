@@ -103,8 +103,8 @@ func (bridge *EventBridge) InstallServerAPI(games ServerGames, users ServerUsers
 		"start": bridge.startGame, "stop": bridge.stopGame, "delete": bridge.deleteGame, "addMember": bridge.addGameMember, "members": bridge.gameMembers, "remove": bridge.removeFromGame,
 		"installed": bridge.installedPackages,
 		"roles":     bridge.gameRoles, "setRole": bridge.setGameRole,
-		"on":        bridge.onGameServerEvent,
-		"emit":      bridge.emitToGameFromGames,
+		"on":   bridge.onGameServerEvent,
+		"emit": bridge.emitToGameFromGames,
 	}
 	for method, implementation := range methods {
 		if err := gamesObject.DefineDataProperty(method, bridge.vm.ToValue(implementation), sobek.FLAG_FALSE, sobek.FLAG_FALSE, sobek.FLAG_TRUE); err != nil {
