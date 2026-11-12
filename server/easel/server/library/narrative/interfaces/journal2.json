@@ -1,0 +1,27 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "entry": {
+      "type": "Object",
+      "default": {}
+    },
+    "canEdit": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {
+    "save": {
+      "payload": {
+        "name": "String",
+        "content": "String",
+        "playerVisible": "Boolean"
+      }
+    }
+  },
+  "slots": {}
+}

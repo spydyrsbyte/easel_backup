@@ -57,10 +57,27 @@
         "name": "toolstrip@1",
         "file": "interfaces/toolstrip.json",
         "http-entry": "client/toolstrip.mjs"
+      },
+      {
+        "name": "tabletop@1",
+        "file": "interfaces/tabletop.json",
+        "http-entry": "client/tabletop.mjs"
+      },
+      {
+        "name": "window@2",
+        "file": "interfaces/window2.json",
+        "http-entry": "client/window2.mjs"
+      },
+      {
+        "name": "sidebar@1",
+        "file": "interfaces/sidebar.json",
+        "http-entry": "client/sidebar.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

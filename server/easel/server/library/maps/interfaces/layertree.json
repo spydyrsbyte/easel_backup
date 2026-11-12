@@ -1,0 +1,51 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "nodes": {
+      "type": "Array",
+      "default": []
+    },
+    "selected": {
+      "type": "String",
+      "default": ""
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "emptyText": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String",
+        "kind": "String"
+      }
+    },
+    "visibility": {
+      "payload": {
+        "id": "String",
+        "visible": "Boolean"
+      }
+    },
+    "preview": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String",
+        "action": "String"
+      }
+    }
+  },
+  "slots": {}
+}

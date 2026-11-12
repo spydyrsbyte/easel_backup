@@ -1,0 +1,63 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "messages": {
+      "type": "Array",
+      "default": []
+    },
+    "members": {
+      "type": "Array",
+      "default": []
+    },
+    "userId": {
+      "type": "String",
+      "default": ""
+    },
+    "mode": {
+      "type": "String",
+      "default": "public"
+    },
+    "modes": {
+      "type": "Array",
+      "default": [
+        "public",
+        "gm",
+        "blind",
+        "self"
+      ]
+    },
+    "quickDice": {
+      "type": "Array",
+      "default": []
+    },
+    "readOnly": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {
+    "send": {
+      "payload": {
+        "text": "String",
+        "mode": "String"
+      }
+    },
+    "mode": {
+      "payload": {
+        "mode": "String"
+      }
+    },
+    "cardAction": {
+      "payload": {
+        "messageId": "String",
+        "action": "String",
+        "payload": "Object"
+      }
+    }
+  },
+  "slots": {}
+}

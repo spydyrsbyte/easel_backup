@@ -39,10 +39,17 @@
         "name": "portrait@1",
         "file": "interfaces/portrait.json",
         "http-entry": "client/portrait.mjs"
+      },
+      {
+        "name": "players@1",
+        "file": "interfaces/players.json",
+        "http-entry": "client/players.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

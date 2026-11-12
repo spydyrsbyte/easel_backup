@@ -1,0 +1,28 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "tabs": {
+      "type": "Array",
+      "default": []
+    },
+    "active": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {
+    "panels": {},
+    "actions": {}
+  }
+}

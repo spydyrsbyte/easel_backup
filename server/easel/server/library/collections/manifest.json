@@ -59,10 +59,17 @@
         "name": "compendium@1",
         "file": "interfaces/compendium.json",
         "http-entry": "client/compendium.mjs"
+      },
+      {
+        "name": "browser@2",
+        "file": "interfaces/browser2.json",
+        "http-entry": "client/browser2.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

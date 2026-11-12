@@ -35,6 +35,27 @@ const withDoors = (layers, doors) =>
 
 const isDoor = (wall) => wall && (wall.door || wall.kind === "door" || wall.kind === "secretDoor");
 
+const shownElements = (elements) =>
+  (Array.isArray(elements) ? elements : [])
+    .filter((element) => element && element.visible !== false)
+    .map((element) => (Array.isArray(element.children) ? { ...element, children: shownElements(element.children) } : element));
+
+const findElement = (elements, id) => {
+  for (const element of Array.isArray(elements) ? elements : []) {
+    if (element.id === id) return element;
+    const nested = findElement(element.children, id);
+    if (nested) return nested;
+  }
+  return null;
+};
+
+const eachElement = (elements, visit) => {
+  for (const element of Array.isArray(elements) ? elements : []) {
+    visit(element);
+    eachElement(element.children, visit);
+  }
+};
+
 export default class Table {
   constructor() {
     this.hooks = {};
@@ -44,6 +65,7 @@ export default class Table {
     this.hooks = hooks;
     this.geometry = Easel.Interfaces.create("easel.maps.geometry@1");
     this.projection = Easel.Interfaces.create("easel.visibility.projection@1");
+    this.sight = hooks.lineOfSight ? Easel.Interfaces.create("easel.maps.sight@1") : null;
     const register = (name, fields, handler) => {
       Application.events.register("easel.vtt." + name, { valid: 2, ...fields });
       Application.events.on("easel.vtt." + name, (payload, connection) => {
@@ -61,6 +83,25 @@ export default class Table {
     Application.events.register("easel.vtt.turnEnded", { valid: 1, combatId: "string", combatantId: "string", round: "integer" });
     Application.events.register("easel.vtt.roundStarted", { valid: 1, combatId: "string", round: "integer" });
 
+    Application.events.register("easel.vtt.pinged", { valid: 1, sceneId: "string", x: "number", y: "number", userId: "string" });
+    Application.events.register("easel.vtt.ruled", { valid: 1, sceneId: "string", userId: "string", points: "array" });
+    register("view", { sceneId: "string" }, this.view);
+    register("stageCreate", { name: "string" }, this.stageCreate);
+    register("stageSave", { sceneId: "*easel.vtt.Scene", stage: "field" }, this.stageSave);
+    register("stageToggle", { sceneId: "*easel.vtt.Scene", toggleId: "string", on: "boolean" }, this.stageToggle);
+    register("stageSpeak", { sceneId: "*easel.vtt.Scene", elementId: "string", text: "string", speaker: "string" }, this.stageSpeak);
+    register("ping", { sceneId: "string", x: "number", y: "number" }, this.ping);
+    register("ruler", { sceneId: "string", points: "array" }, this.ruler);
+    register("drawingAdd", { sceneId: "*easel.vtt.Scene", groundId: "string", drawing: "field" }, this.drawingAdd);
+    register("drawingsClear", { sceneId: "*easel.vtt.Scene" }, this.drawingsClear);
+    if (hooks.uploads !== false && Application.files) {
+      Application.files.on("upload", (upload) => {
+        const member = Application.users.list().some((user) => user.id === upload.user.id && user.role !== "spectator");
+        if (!member) return upload.refuse("Only players at this table can add files.");
+        if (!/^image\//.test(upload.mediaType) && !this.isGM(upload.user.id)) return upload.refuse("Players can add images only.");
+        return upload.allow();
+      });
+    }
     register("refresh", {}, this.refresh);
     register("sceneCreate", { name: "string" }, this.sceneCreate);
     register("sceneUpdate", { sceneId: "*easel.vtt.Scene", name: "string", navigation: "boolean", folderId: "string" }, this.sceneUpdate);
@@ -128,11 +169,21 @@ export default class Table {
   canSee(userId, token, scene) {
     if (this.isGM(userId)) return true;
     if (token.hidden) return false;
-    return this.hooks.visible ? Boolean(this.hooks.visible(userId, this.tokenData(token), this.sceneData(scene))) : true;
+    if (this.hooks.visible) return Boolean(this.hooks.visible(userId, this.tokenData(token), this.sceneData(scene)));
+    if (!this.sight || scene.map?.fogEnabled === false) return true;
+    if (tokenAccess(token, userId).control) return true;
+    const key = userId + "/" + scene.id + "/" + token.groundId;
+    if (!this.sightCache || this.sightCache.key !== key) {
+      const observers = all(easel.vtt.Token)
+        .filter((entry) => entry.sceneId === scene.id && !entry.isDefault && !entry.hidden && entry.groundId === token.groundId && entry.vision?.sight !== false && tokenAccess(entry, userId).control)
+        .map((entry) => ({ x: entry.x, y: entry.y, range: Number(entry.vision?.range) || 0 }));
+      this.sightCache = { key, observers, walls: this.walls(scene, token.groundId) };
+    }
+    return this.sight.visible(this.sightCache.observers, { x: token.x, y: token.y, width: token.width, height: token.height }, this.sightCache.walls);
   }
 
   sceneData(scene) {
-    return { id: scene.id, name: scene.name, folderId: scene.folderId, active: scene.active, navigation: scene.navigation, sort: scene.sort };
+    return { id: scene.id, name: scene.name, folderId: scene.folderId, active: scene.active, navigation: scene.navigation, sort: scene.sort, kind: scene.kind || "map" };
   }
 
   tokenData(token) {
@@ -179,18 +230,24 @@ export default class Table {
     return data;
   }
 
-  state(userId) {
+  state(userId, viewSceneId = "") {
     const gm = this.isGM(userId);
+    this.sightCache = null;
     const scenes = all(easel.vtt.Scene).sort((a, b) => a.sort - b.sort || a.name.localeCompare(b.name));
-    const active = scenes.find((scene) => scene.active) ?? null;
+    const shown = scenes.find((scene) => scene.active) ?? null;
+    const active = (gm && viewSceneId && scenes.find((scene) => scene.id === viewSceneId)) || shown;
     const activeMap = active ? this.sceneMap(active) : null;
     let activeView = active
       ? {
           ...this.sceneData(active),
           map: gm ? activeMap : { ...activeMap, layers: stripHidden(activeMap.layers) },
+          stage: (active.kind || "map") === "stage" ? (gm ? copy(active.stage) : { ...copy(active.stage), elements: shownElements(copy(active.stage).elements) }) : null,
           tokens: all(easel.vtt.Token)
             .filter((token) => token.sceneId === active.id && !token.isDefault && this.canSee(userId, token, active))
-            .map((token) => ({ ...this.tokenData(token), canControl: tokenAccess(token, userId).control })),
+            .map((token) => {
+              const data = this.tokenData(token);
+              return { ...data, canControl: tokenAccess(token, userId).control, bars: this.hooks.tokenBars ? this.hooks.tokenBars(data, userId, gm) ?? [] : [] };
+            }),
         }
       : null;
     if (activeView && this.hooks.sceneView) activeView = this.hooks.sceneView(activeView, userId, gm);
@@ -212,6 +269,8 @@ export default class Table {
               actorId: entry.actorId,
               canControl: entry.actorId ? access(new easel.vtt.Actor(entry.actorId), userId).control : gm,
               name: entry.name,
+              image: easel.vtt.Token.ids().includes(entry.tokenId) ? new easel.vtt.Token(entry.tokenId).image : "",
+              bar: this.hooks.tokenBars && easel.vtt.Token.ids().includes(entry.tokenId) ? (this.hooks.tokenBars(this.tokenData(new easel.vtt.Token(entry.tokenId)), userId, gm) ?? [])[0] ?? null : null,
               hasInitiative: entry.hasInitiative,
               initiative: entry.initiative,
               defeated: entry.defeated,
@@ -233,6 +292,7 @@ export default class Table {
     return {
       userId,
       isGM: gm,
+      shownSceneId: shown?.id ?? "",
       scenes: scenes.filter((scene) => gm || scene.active || scene.navigation).map((scene) => this.sceneData(scene)),
       activeScene: activeView,
       combat: combatView,
@@ -240,7 +300,7 @@ export default class Table {
       journals,
       folders,
       diceSettings: dice ? copy(dice.settings) : {},
-      members: Application.users.list().map((user) => ({ id: user.id, name: user.displayName || user.id })),
+      members: Application.users.list().map((user) => ({ id: user.id, name: user.displayName || user.id, role: user.role || "player" })),
       actors: all(easel.vtt.Actor)
         .map((actor) => ({ actor, rights: access(actor, userId) }))
         .filter(({ rights }) => rights.read)
@@ -258,6 +318,121 @@ export default class Table {
 
   refresh(_, connection) {
     connection.send("easel.vtt.state", { state: this.state(connection.user.id) });
+  }
+
+  view({ sceneId }, connection) {
+    connection.send("easel.vtt.state", { state: this.state(connection.user.id, sceneId) });
+  }
+
+  stageCreate({ name }, connection) {
+    this.requireGM(connection);
+    const scene = new easel.vtt.Scene();
+    scene.name = text(name) || "New Stage";
+    scene.kind = "stage";
+    scene.map = this.geometry.emptyBattleMap((prefix) => prefix);
+    scene.stage = { width: 1600, ratio: { width: 16, height: 9 }, elements: [], toggles: [] };
+    scene.active = !this.activeScene();
+    scene.sort = easel.vtt.Scene.ids().length;
+    scene.save();
+    this.changed();
+  }
+
+  checkStage(stage) {
+    if (!stage || typeof stage !== "object" || !Array.isArray(stage.elements)) throw new Error("A stage needs a list of elements.");
+    const ids = new Set();
+    let count = 0;
+    eachElement(stage.elements, (element) => {
+      count += 1;
+      if (!element || typeof element.id !== "string" || !element.id || ids.has(element.id)) throw new Error("Every stage element needs its own id.");
+      if (!["image", "dialogue", "group"].includes(element.kind)) throw new Error("Stage elements are images, dialogue boxes, or groups.");
+      if (element.kind !== "group" && Array.isArray(element.children)) throw new Error("Only groups hold other elements.");
+      ids.add(element.id);
+    });
+    if (count > 400) throw new Error("A stage holds at most 400 elements.");
+    if (!Array.isArray(stage.toggles ?? [])) throw new Error("Stage toggles must be a list.");
+    const width = Number(stage.width);
+    if (!Number.isFinite(width) || width < 100 || width > 8000) throw new Error("A stage is between 100 and 8000 pixels wide.");
+    return { ...copy(stage), toggles: copy(stage.toggles ?? []) };
+  }
+
+  stageSave({ sceneId, stage }, connection) {
+    this.requireGM(connection);
+    const scene = new easel.vtt.Scene(sceneId);
+    if ((scene.kind || "map") !== "stage") throw new Error("That scene is not a stage.");
+    scene.stage = this.checkStage(stage);
+    scene.save();
+    this.changed();
+  }
+
+  stageToggle({ sceneId, toggleId, on }, connection) {
+    this.requireGM(connection);
+    const scene = new easel.vtt.Scene(sceneId);
+    const stage = copy(scene.stage);
+    const toggle = (stage.toggles ?? []).find((entry) => String(entry.id) === toggleId);
+    if (!toggle) throw new Error("That toggle was not found.");
+    toggle.on = on;
+    const targets = new Set((toggle.targets ?? []).map(String));
+    eachElement(stage.elements, (element) => {
+      if (targets.has(element.id)) element.visible = on;
+    });
+    scene.stage = stage;
+    scene.save();
+    this.changed();
+  }
+
+  stageSpeak({ sceneId, elementId, text: line, speaker }, connection) {
+    this.requireGM(connection);
+    const scene = new easel.vtt.Scene(sceneId);
+    const stage = copy(scene.stage);
+    const element = findElement(stage.elements, elementId);
+    if (!element || element.kind !== "dialogue") throw new Error("That dialogue box was not found.");
+    element.text = String(line).slice(0, 2000);
+    element.speaker = text(speaker, 80);
+    element.visible = true;
+    scene.stage = stage;
+    scene.save();
+    this.changed();
+  }
+
+  ping({ sceneId, x, y }, connection) {
+    if (!Application.users.list().some((user) => user.id === connection.user.id && user.role !== "spectator")) throw new Error("Spectators cannot ping.");
+    Application.events.emit("easel.vtt.pinged", { sceneId, x, y, userId: connection.user.id });
+  }
+
+  ruler({ sceneId, points }, connection) {
+    const clean = points.slice(0, 12).map((point) => ({ x: Number(point?.x) || 0, y: Number(point?.y) || 0 }));
+    Application.events.emit("easel.vtt.ruled", { sceneId, userId: connection.user.id, points: clean });
+  }
+
+  drawingAdd({ sceneId, groundId, drawing }, connection) {
+    if (!Application.users.list().some((user) => user.id === connection.user.id && user.role !== "spectator")) throw new Error("Spectators cannot draw.");
+    const points = Array.isArray(drawing?.points) ? drawing.points.slice(0, 2000).map((point) => ({ x: Math.round(Number(point?.x) || 0), y: Math.round(Number(point?.y) || 0) })) : [];
+    if (points.length < 2) throw new Error("A drawing needs at least two points.");
+    const scene = new easel.vtt.Scene(sceneId);
+    const map = copy(scene.map);
+    const ground = this.geometry.activeGround(map, groundId);
+    if (!ground) throw new Error("That map level was not found.");
+    ground.children = ground.children ?? [];
+    let layer = ground.children.find((entry) => entry.type === "drawing");
+    if (!layer) {
+      layer = this.geometry.createLayer("drawings", "drawing", { name: "Drawings" });
+      ground.children.push(layer);
+    }
+    if (layer.items.length >= 300) layer.items.shift();
+    layer.items.push({ id: "drawing-" + Easel.Random.integer(1, 2147483647), points, color: /^#[0-9a-f]{6}$/i.test(String(drawing.color)) ? drawing.color : "#ffd166", strokeWidth: Math.min(40, Math.max(1, Number(drawing.strokeWidth) || 4)), userId: connection.user.id });
+    scene.map = map;
+    scene.save();
+    this.changed();
+  }
+
+  drawingsClear({ sceneId }, connection) {
+    this.requireGM(connection);
+    const scene = new easel.vtt.Scene(sceneId);
+    const map = copy(scene.map);
+    for (const ground of this.geometry.grounds(map)) for (const layer of ground.children ?? []) if (layer.type === "drawing") layer.items = [];
+    scene.map = map;
+    scene.save();
+    this.changed();
   }
 
   sceneCreate({ name }, connection) {

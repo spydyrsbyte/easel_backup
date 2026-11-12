@@ -29,6 +29,10 @@
       {
         "name": "template@1",
         "file": "server/template.mjs"
+      },
+      {
+        "name": "sight@1",
+        "file": "server/sight.mjs"
       }
     ]
   },
@@ -39,8 +43,12 @@
         "file": "interfaces/map.json",
         "http-entry": "client/map.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
       },
       {
@@ -48,8 +56,12 @@
         "file": "interfaces/map2.json",
         "http-entry": "client/map2.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
       },
       {
@@ -57,8 +69,12 @@
         "file": "interfaces/shadowbox2.json",
         "http-entry": "client/shadowbox2.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
       },
       {
@@ -71,8 +87,12 @@
         "file": "interfaces/fog.json",
         "http-entry": "client/fog.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
       },
       {
@@ -85,8 +105,12 @@
         "file": "interfaces/template.json",
         "http-entry": "client/template.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
       },
       {
@@ -94,8 +118,12 @@
         "file": "interfaces/shadowbox.json",
         "http-entry": "client/shadowbox.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
       },
       {
@@ -103,13 +131,29 @@
         "file": "interfaces/worldmap.json",
         "http-entry": "client/worldmap.mjs",
         "required": {
-          "modules": ["easel.graphics.pixi"],
-          "interfaces": ["easel.graphics.pixi@1"]
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
         }
+      },
+      {
+        "name": "scenenav@1",
+        "file": "interfaces/scenenav.json",
+        "http-entry": "client/scenenav.mjs"
+      },
+      {
+        "name": "layertree@1",
+        "file": "interfaces/layertree.json",
+        "http-entry": "client/layertree.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

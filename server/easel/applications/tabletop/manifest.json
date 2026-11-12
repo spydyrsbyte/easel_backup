@@ -1,0 +1,66 @@
+{
+  "type": "application",
+  "owner": "easel",
+  "host": "tabletop",
+  "name": "game",
+  "title": "Easel Tabletop",
+  "description": "A virtual tabletop for any roleplaying game: battle maps with fog and light, staged scenes, characters, dice, chat and encounters.",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "application": {
+      "entry": "server/application.mjs",
+      "required": {
+        "modules": ["easel.vtt.table"],
+        "interfaces": [
+          "easel.vtt.table@1",
+          "easel.maps.geometry@1",
+          "easel.maps.sight@1",
+          "easel.visibility.projection@1",
+          "easel.dice.formula@1"
+        ]
+      }
+    },
+    "data": [
+      {
+        ".name": "Character",
+        ".extends": "easel.vtt.Actor",
+        "summary": { ".type": "string", ".default": "" },
+        "sheet": { ".type": "map", ".default": {} }
+      }
+    ]
+  },
+  "client": {
+    "application": {
+      "http-entry": "client/application.mjs",
+      "required": {
+        "modules": ["easel.vtt.table"],
+        "interfaces": [
+          "easel.vtt.tabletop@1",
+          "easel.layout.tabletop@1",
+          "easel.layout.window@2",
+          "easel.layout.sidebar@1",
+          "easel.input.toolrail@1",
+          "easel.input.hotbar@1",
+          "easel.input.form@1",
+          "easel.maps.map@2",
+          "easel.maps.shadowbox@2",
+          "easel.maps.scenenav@1",
+          "easel.maps.layertree@1",
+          "easel.narrative.chat@1",
+          "easel.narrative.journal@2",
+          "easel.combat.tracker@1",
+          "easel.collections.browser@2",
+          "easel.characters.statsheet@1",
+          "easel.display.players@1"
+        ]
+      }
+    },
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

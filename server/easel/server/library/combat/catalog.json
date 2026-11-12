@@ -295,6 +295,36 @@
       "events": [
         "close"
       ]
+    },
+    {
+      "name": "tracker",
+      "side": "client",
+      "version": 1,
+      "description": "Encounter tracker: initiative order, the current turn, health bars, round counter, and game master controls.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/tracker.mjs",
+      "contract": "interfaces/tracker.json",
+      "renderer": "tracker",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/tracker.client.md",
+      "events": [
+        "start",
+        "end",
+        "next",
+        "previous",
+        "rollAll",
+        "addSelected",
+        "select",
+        "roll",
+        "defeated",
+        "remove",
+        "initiative"
+      ]
     }
   ]
 }

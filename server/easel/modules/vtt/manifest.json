@@ -19,7 +19,8 @@
         "required": {
           "interfaces": [
             "easel.maps.geometry@1",
-            "easel.visibility.projection@1"
+            "easel.visibility.projection@1",
+            "easel.maps.sight@1"
           ]
         }
       }
@@ -54,6 +55,11 @@
         "name": "directorybinder@1",
         "file": "interfaces/directorybinder.json",
         "http-entry": "client/directorybinder.mjs"
+      },
+      {
+        "name": "tabletop@1",
+        "file": "interfaces/tabletop.json",
+        "http-entry": "client/tabletop.mjs"
       }
     ],
     "assets": {

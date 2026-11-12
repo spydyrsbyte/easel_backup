@@ -1,0 +1,62 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "actor": {
+      "type": "Object",
+      "default": {}
+    },
+    "layout": {
+      "type": "Object",
+      "default": {}
+    },
+    "values": {
+      "type": "Object",
+      "default": {}
+    },
+    "readOnly": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {
+    "change": {
+      "payload": {
+        "path": "String",
+        "value": "Object"
+      }
+    },
+    "roll": {
+      "payload": {
+        "id": "String",
+        "label": "String",
+        "modifier": "Number"
+      }
+    },
+    "image": {
+      "payload": {
+        "file": "Object"
+      }
+    },
+    "rename": {
+      "payload": {
+        "name": "String"
+      }
+    },
+    "listAdd": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "listRemove": {
+      "payload": {
+        "id": "String",
+        "index": "Integer"
+      }
+    }
+  },
+  "slots": {}
+}

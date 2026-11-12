@@ -1444,6 +1444,28 @@ dialog.modal::backdrop {
   height: 100%;
   min-height: 0;
 }
+.board-shell:has([data-easel-fill]) .main-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+}
+.board-shell:has([data-easel-fill]) .shell-header {
+  flex: 0 0 auto;
+}
+.board-shell .workspace:has([data-easel-fill]) {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.board-shell .workspace:has([data-easel-fill]) .session,
+.board-shell .workspace:has([data-easel-fill]) .session-game {
+  height: 100%;
+  min-height: 0;
+}
 .game-layout {
   grid-template-columns: minmax(0, 640px) minmax(220px, 1fr);
   gap: 22px;

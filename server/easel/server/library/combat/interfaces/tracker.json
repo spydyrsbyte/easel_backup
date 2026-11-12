@@ -1,0 +1,66 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "combat": {
+      "type": "Object",
+      "default": {}
+    },
+    "gm": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {
+    "start": {
+      "payload": {}
+    },
+    "end": {
+      "payload": {}
+    },
+    "next": {
+      "payload": {}
+    },
+    "previous": {
+      "payload": {}
+    },
+    "rollAll": {
+      "payload": {}
+    },
+    "addSelected": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String",
+        "tokenId": "String"
+      }
+    },
+    "roll": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "defeated": {
+      "payload": {
+        "id": "String",
+        "defeated": "Boolean"
+      }
+    },
+    "remove": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "initiative": {
+      "payload": {
+        "id": "String",
+        "initiative": "Number"
+      }
+    }
+  },
+  "slots": {}
+}

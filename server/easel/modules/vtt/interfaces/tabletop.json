@@ -1,0 +1,9 @@
+{
+  "kind": "service",
+  "methods": {
+    "mount": { "parameters": ["options"] },
+    "render": { "parameters": [] },
+    "toast": { "parameters": ["message", "kind"] },
+    "destroy": { "parameters": [] }
+  }
+}

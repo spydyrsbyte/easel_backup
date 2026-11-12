@@ -536,6 +536,31 @@
         "close",
         "change"
       ]
+    },
+    {
+      "name": "statsheet",
+      "side": "client",
+      "version": 1,
+      "description": "Character sheet drawn from a layout description: portrait and name, tabs, rollable statistics, resource bars, field rows, editable lists, and notes.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/statsheet.mjs",
+      "contract": "interfaces/statsheet.json",
+      "renderer": "statsheet",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/statsheet.client.md",
+      "events": [
+        "change",
+        "roll",
+        "image",
+        "rename",
+        "listAdd",
+        "listRemove"
+      ]
     }
   ]
 }

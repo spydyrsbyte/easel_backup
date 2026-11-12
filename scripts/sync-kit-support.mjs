@@ -26,3 +26,12 @@ for (const kit of catalog.libraries) {
     }
   }
 }
+for (const target of ["../server/easel/modules/vtt/client/", "../server/easel/modules/board/client/"]) {
+  const dir = fileURLToPath(new URL(target, import.meta.url));
+  if (!fs.existsSync(dir)) continue;
+  for (const file of ["ui.mjs", "kit.css"]) {
+    const data = fs.readFileSync(path.join(root, "client", file));
+    const destination = path.join(dir, file);
+    if (!fs.existsSync(destination) || !fs.readFileSync(destination).equals(data)) fs.writeFileSync(destination, data);
+  }
+}

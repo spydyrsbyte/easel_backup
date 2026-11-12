@@ -49,10 +49,17 @@
         "name": "damage@1",
         "file": "interfaces/damage.json",
         "http-entry": "client/damage.mjs"
+      },
+      {
+        "name": "tracker@1",
+        "file": "interfaces/tracker.json",
+        "http-entry": "client/tracker.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

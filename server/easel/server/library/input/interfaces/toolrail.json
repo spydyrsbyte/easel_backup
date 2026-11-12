@@ -1,0 +1,44 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "tools": {
+      "type": "Array",
+      "default": []
+    },
+    "active": {
+      "type": "String",
+      "default": "select"
+    },
+    "orientation": {
+      "type": "String",
+      "default": "vertical"
+    },
+    "shortcuts": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "toggle": {
+      "payload": {
+        "id": "String",
+        "on": "Boolean"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

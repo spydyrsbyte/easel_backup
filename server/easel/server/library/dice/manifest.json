@@ -25,6 +25,10 @@
       {
         "name": "results@1",
         "file": "server/results.mjs"
+      },
+      {
+        "name": "formula@1",
+        "file": "server/formula.mjs"
       }
     ]
   },
@@ -67,7 +71,9 @@
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

@@ -123,6 +123,26 @@
       "events": [
         "close"
       ]
+    },
+    {
+      "name": "players",
+      "side": "client",
+      "version": 1,
+      "description": "Compact list of the people at the table with presence, colour, and role.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/players.mjs",
+      "contract": "interfaces/players.json",
+      "renderer": "players",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/players.client.md",
+      "events": [
+        "select"
+      ]
     }
   ]
 }

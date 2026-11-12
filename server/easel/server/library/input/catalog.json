@@ -181,6 +181,74 @@
       "events": [
         "close"
       ]
+    },
+    {
+      "name": "toolrail",
+      "side": "client",
+      "version": 1,
+      "description": "Icon tool palette with exclusive tools, toggles, one-shot actions, grouped flyouts, tooltips, and single-key shortcuts.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/toolrail.mjs",
+      "contract": "interfaces/toolrail.json",
+      "renderer": "toolrail",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/toolrail.client.md",
+      "events": [
+        "select",
+        "toggle",
+        "action"
+      ]
+    },
+    {
+      "name": "hotbar",
+      "side": "client",
+      "version": 1,
+      "description": "Numbered quick-use bar. Slots are used by click or number key, filled by drop, and edited from a menu.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/hotbar.mjs",
+      "contract": "interfaces/hotbar.json",
+      "renderer": "hotbar",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/hotbar.client.md",
+      "events": [
+        "use",
+        "assign",
+        "clear",
+        "drop"
+      ]
+    },
+    {
+      "name": "form",
+      "side": "client",
+      "version": 1,
+      "description": "Property form built from a list of field descriptions: text, number, range, colour, switch, segment, select, image, textarea, and action rows.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/form.mjs",
+      "contract": "interfaces/form.json",
+      "renderer": "form",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/form.client.md",
+      "events": [
+        "change",
+        "file",
+        "action",
+        "submit"
+      ]
     }
   ]
 }

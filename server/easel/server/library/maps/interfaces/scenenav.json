@@ -1,0 +1,43 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "scenes": {
+      "type": "Array",
+      "default": []
+    },
+    "viewing": {
+      "type": "String",
+      "default": ""
+    },
+    "gm": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {
+    "view": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "activate": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String",
+        "action": "String"
+      }
+    },
+    "create": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

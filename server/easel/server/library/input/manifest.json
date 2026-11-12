@@ -47,10 +47,27 @@
         "name": "popover@1",
         "file": "interfaces/popover.json",
         "http-entry": "client/popover.mjs"
+      },
+      {
+        "name": "toolrail@1",
+        "file": "interfaces/toolrail.json",
+        "http-entry": "client/toolrail.mjs"
+      },
+      {
+        "name": "hotbar@1",
+        "file": "interfaces/hotbar.json",
+        "http-entry": "client/hotbar.mjs"
+      },
+      {
+        "name": "form@1",
+        "file": "interfaces/form.json",
+        "http-entry": "client/form.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

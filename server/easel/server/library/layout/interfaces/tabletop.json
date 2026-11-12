@@ -1,0 +1,52 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "sidebarOpen": {
+      "type": "Boolean",
+      "default": true
+    },
+    "sidebarWidth": {
+      "type": "Number",
+      "default": 340
+    },
+    "toasts": {
+      "type": "Array",
+      "default": []
+    },
+    "banner": {
+      "type": "Object",
+      "default": {}
+    }
+  },
+  "events": {
+    "sidebarToggle": {
+      "payload": {
+        "open": "Boolean"
+      }
+    },
+    "toastDismiss": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "insets": {
+      "payload": {
+        "insets": "Object"
+      }
+    }
+  },
+  "slots": {
+    "canvas": {},
+    "top": {},
+    "rail": {},
+    "bottom": {},
+    "corner": {},
+    "status": {},
+    "sidebar": {},
+    "windows": {}
+  }
+}

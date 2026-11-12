@@ -220,6 +220,72 @@
         "select",
         "action"
       ]
+    },
+    {
+      "name": "tabletop",
+      "side": "client",
+      "version": 1,
+      "description": "Full-screen table frame: a canvas that fills the view with a tool rail, scene bar, hotbar, player list, sidebar, floating windows, toasts, and a turn banner laid over it.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/tabletop.mjs",
+      "contract": "interfaces/tabletop.json",
+      "renderer": "tabletop",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/tabletop.client.md",
+      "events": [
+        "sidebarToggle",
+        "toastDismiss",
+        "insets"
+      ]
+    },
+    {
+      "name": "window",
+      "side": "client",
+      "version": 2,
+      "description": "Floating window that is dragged by its title bar, resized from its corner, minimized, raised on click, and closed with Escape.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/window2.mjs",
+      "contract": "interfaces/window2.json",
+      "renderer": "window",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/window2.client.md",
+      "events": [
+        "move",
+        "resize",
+        "close",
+        "focus",
+        "minimize"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "side": "client",
+      "version": 1,
+      "description": "Icon-tabbed side panel. Each tab shows the attached child whose component id it names.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/sidebar.mjs",
+      "contract": "interfaces/sidebar.json",
+      "renderer": "sidebar",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/sidebar.client.md",
+      "events": [
+        "select"
+      ]
     }
   ]
 }

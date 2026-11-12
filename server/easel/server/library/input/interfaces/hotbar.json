@@ -1,0 +1,46 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "slots": {
+      "type": "Array",
+      "default": []
+    },
+    "size": {
+      "type": "Integer",
+      "default": 10
+    },
+    "shortcuts": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "use": {
+      "payload": {
+        "index": "Integer",
+        "id": "String"
+      }
+    },
+    "assign": {
+      "payload": {
+        "index": "Integer"
+      }
+    },
+    "clear": {
+      "payload": {
+        "index": "Integer"
+      }
+    },
+    "drop": {
+      "payload": {
+        "index": "Integer",
+        "data": "Object"
+      }
+    }
+  },
+  "slots": {}
+}

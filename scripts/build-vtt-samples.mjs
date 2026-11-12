@@ -256,3 +256,35 @@ write("stage-hero.svg", figure("#101a33", "#7fb2ff", `<path d="M300 250l18-200 1
 write("stage-stranger.svg", figure("#1c0f22", "#ff9a6b", `<path d="M124 118c10-44 102-44 112 0-20-12-92-12-112 0z" fill="#05030a"/><circle cx="160" cy="128" r="5" fill="#ffd27a"/><circle cx="200" cy="128" r="5" fill="#ffd27a"/>`));
 
 console.log("wrote samples to " + out);
+
+const stage = {
+  width: 1600,
+  ratio: { width: 16, height: 9 },
+  elements: [
+    { id: "line", name: "Narration", kind: "dialogue", visible: true, x: 250, y: 640, width: 1100, height: 210, rotation: 0, fontSize: 34, speaker: "The Stranger", text: "You are late. The Collector does not like to be kept waiting, and neither do I.", color: "#f4f0e6", background: { color: "#0a0c14", opacity: 0.78 } },
+    { id: "trees", name: "Foreground trees", kind: "image", visible: true, key: "stage-trees.svg", x: 0, y: 0, width: 1600, height: 900 },
+    {
+      id: "cast",
+      name: "Cast",
+      kind: "group",
+      visible: true,
+      children: [
+        { id: "stranger", name: "Stranger", kind: "image", visible: true, key: "stage-stranger.svg", x: 980, y: 330, width: 300, height: 533, tint: "#ffd9c2", luminance: 0.5 },
+        { id: "hero", name: "Hero", kind: "image", visible: true, key: "stage-hero.svg", x: 330, y: 360, width: 290, height: 516 },
+      ],
+    },
+    { id: "mist", name: "Mist", kind: "image", visible: true, key: "stage-mist.svg", x: 0, y: 560, width: 1600, height: 300, alpha: 0.8 },
+    { id: "castle", name: "Castle", kind: "image", visible: true, key: "stage-castle.svg", x: 0, y: 0, width: 1600, height: 900 },
+    { id: "hills", name: "Hills", kind: "image", visible: true, key: "stage-hills.svg", x: 0, y: 0, width: 1600, height: 900 },
+    { id: "sky", name: "Night sky", kind: "image", visible: true, key: "stage-sky.svg", x: 0, y: 0, width: 1600, height: 900 },
+  ],
+  toggles: [
+    { id: "t-stranger", name: "Stranger", on: true, targets: ["stranger"] },
+    { id: "t-mist", name: "Mist", on: true, targets: ["mist"] },
+    { id: "t-line", name: "Dialogue", on: true, targets: ["line"] },
+  ],
+};
+fs.writeFileSync(path.join(out, "stage.json"), JSON.stringify(stage, null, 2) + "\n");
+const demo = fileURLToPath(new URL("../server/easel/applications/tabletop/server/demo.mjs", import.meta.url));
+fs.writeFileSync(demo, "export const tavern = " + JSON.stringify(scene) + ";\nexport const stage = " + JSON.stringify(stage) + ";\n");
+console.log("wrote " + demo);

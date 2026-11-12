@@ -1,0 +1,58 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "fields": {
+      "type": "Array",
+      "default": []
+    },
+    "values": {
+      "type": "Object",
+      "default": {}
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "readOnly": {
+      "type": "Boolean",
+      "default": false
+    },
+    "emptyText": {
+      "type": "String",
+      "default": ""
+    },
+    "emptyIcon": {
+      "type": "String",
+      "default": "pointer"
+    }
+  },
+  "events": {
+    "change": {
+      "payload": {
+        "id": "String",
+        "value": "Object"
+      }
+    },
+    "file": {
+      "payload": {
+        "id": "String",
+        "file": "Object"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "submit": {
+      "payload": {
+        "values": "Object"
+      }
+    }
+  },
+  "slots": {}
+}

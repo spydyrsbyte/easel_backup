@@ -55,10 +55,22 @@
         "name": "richtext@1",
         "file": "interfaces/richtext.json",
         "http-entry": "client/richtext.mjs"
+      },
+      {
+        "name": "chat@1",
+        "file": "interfaces/chat.json",
+        "http-entry": "client/chat.mjs"
+      },
+      {
+        "name": "journal@2",
+        "file": "interfaces/journal2.json",
+        "http-entry": "client/journal2.mjs"
       }
     ],
     "assets": {
-      "http": ["client/"]
+      "http": [
+        "client/"
+      ]
     }
   }
 }

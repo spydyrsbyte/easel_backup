@@ -1,0 +1,106 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    },
+    "folders": {
+      "type": "Array",
+      "default": []
+    },
+    "selected": {
+      "type": "String",
+      "default": ""
+    },
+    "kind": {
+      "type": "String",
+      "default": ""
+    },
+    "icon": {
+      "type": "String",
+      "default": "file"
+    },
+    "canCreate": {
+      "type": "Boolean",
+      "default": false
+    },
+    "canManage": {
+      "type": "Boolean",
+      "default": false
+    },
+    "allowFolders": {
+      "type": "Boolean",
+      "default": true
+    },
+    "draggable": {
+      "type": "Boolean",
+      "default": true
+    },
+    "createLabel": {
+      "type": "String",
+      "default": "New"
+    },
+    "placeholder": {
+      "type": "String",
+      "default": "Search"
+    },
+    "emptyTitle": {
+      "type": "String",
+      "default": "Nothing here yet"
+    },
+    "emptyText": {
+      "type": "String",
+      "default": ""
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "open": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "create": {
+      "payload": {
+        "folderId": "String"
+      }
+    },
+    "createFolder": {
+      "payload": {
+        "parentId": "String"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String",
+        "action": "String"
+      }
+    },
+    "folderAction": {
+      "payload": {
+        "id": "String",
+        "action": "String"
+      }
+    },
+    "move": {
+      "payload": {
+        "id": "String",
+        "folderId": "String"
+      }
+    }
+  },
+  "slots": {}
+}

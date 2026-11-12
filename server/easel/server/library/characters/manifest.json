@@ -60,6 +60,11 @@
         "name": "playbook@1",
         "file": "interfaces/playbook.json",
         "http-entry": "client/playbook.mjs"
+      },
+      {
+        "name": "statsheet@1",
+        "file": "interfaces/statsheet.json",
+        "http-entry": "client/statsheet.mjs"
       }
     ],
     "assets": {

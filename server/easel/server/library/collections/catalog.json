@@ -351,6 +351,32 @@
         "dragStart",
         "filterChange"
       ]
+    },
+    {
+      "name": "browser",
+      "side": "client",
+      "version": 2,
+      "description": "Searchable directory with folders, thumbnails, badges, per-entry menus, and entries that drag onto a map or into a folder.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/browser2.mjs",
+      "contract": "interfaces/browser2.json",
+      "renderer": "browser",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/browser2.client.md",
+      "events": [
+        "select",
+        "open",
+        "create",
+        "createFolder",
+        "action",
+        "folderAction",
+        "move"
+      ]
     }
   ]
 }

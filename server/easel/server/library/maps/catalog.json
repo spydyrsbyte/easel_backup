@@ -295,10 +295,16 @@
           "args": [
             {
               "kind": "circle",
-              "origin": { "x": 100, "y": 100 },
+              "origin": {
+                "x": 100,
+                "y": 100
+              },
               "radius": 50
             },
-            { "x": 130, "y": 140 }
+            {
+              "x": 130,
+              "y": 140
+            }
           ],
           "expected": true
         },
@@ -307,10 +313,16 @@
           "args": [
             {
               "kind": "circle",
-              "origin": { "x": 0, "y": 0 },
+              "origin": {
+                "x": 0,
+                "y": 0
+              },
               "radius": -5
             },
-            { "x": 0, "y": 0 }
+            {
+              "x": 0,
+              "y": 0
+            }
           ],
           "throws": true
         }
@@ -487,6 +499,52 @@
         "pinSelect",
         "pinMove",
         "pinCreate"
+      ]
+    },
+    {
+      "name": "scenenav",
+      "side": "client",
+      "version": 1,
+      "description": "Scene bar showing which scene players are in and which one the viewer is looking at, with game master actions.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/scenenav.mjs",
+      "contract": "interfaces/scenenav.json",
+      "renderer": "scenenav",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/scenenav.client.md",
+      "events": [
+        "view",
+        "activate",
+        "action",
+        "create"
+      ]
+    },
+    {
+      "name": "layertree",
+      "side": "client",
+      "version": 1,
+      "description": "Tree of layers or scene elements with selection, visibility switches, hover preview, and a context menu.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/layertree.mjs",
+      "contract": "interfaces/layertree.json",
+      "renderer": "layertree",
+      "checks": [
+        "scripts/test-kit-ui.mjs"
+      ],
+      "documentation": "contracts/layertree.client.md",
+      "events": [
+        "select",
+        "visibility",
+        "preview",
+        "action"
       ]
     }
   ]

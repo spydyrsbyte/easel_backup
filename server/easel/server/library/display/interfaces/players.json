@@ -1,0 +1,21 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "players": {
+      "type": "Array",
+      "default": []
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

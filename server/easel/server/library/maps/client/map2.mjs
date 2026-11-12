@@ -77,7 +77,10 @@ export default class BattleMap extends Component {
       iconButton("zoomOut", "Zoom out", () => this.zoomBy(1 / 1.25)),
       this.zoomValue,
       iconButton("zoomIn", "Zoom in", () => this.zoomBy(1.25)),
-      iconButton("fit", "Fit the map to the view", () => this.fit(true)),
+      iconButton("fit", "Fit the map to the view", () => {
+        this.autoFit = true;
+        this.fit(true);
+      }),
     );
     this.hud = h("div", { class: "ez-map-hud" }, this.empty, this.dropHint, this.readout, this.zoom);
     this.element.append(this.hud);
@@ -224,7 +227,8 @@ export default class BattleMap extends Component {
       this.fogDirty = true;
     }
     if (!sameJSON(props.insets, previous.insets)) this.placeHud();
-    if (!this.fitted || props.fitKey !== previous.fitKey) {
+    if (!this.fitted || props.fitKey !== previous.fitKey || (this.autoFit !== false && !sameJSON(props.insets, previous.insets))) {
+      this.autoFit = true;
       this.fit(false);
       this.fitted = true;
     }
@@ -251,7 +255,8 @@ export default class BattleMap extends Component {
     const height = Math.max(1, this.element.clientHeight);
     this.app.renderer.resize(width, height);
     this.placeHud();
-    this.place();
+    if (this.autoFit !== false) this.fit(false);
+    else this.place();
   }
 
   place() {
@@ -283,6 +288,7 @@ export default class BattleMap extends Component {
   }
 
   zoomBy(factor, anchor) {
+    this.autoFit = false;
     const before = anchor ? this.toWorld(anchor.x, anchor.y) : null;
     this.camera.zoom = clamp(this.camera.zoom * factor, 0.03, 8);
     if (before) {
@@ -1106,6 +1112,7 @@ export default class BattleMap extends Component {
       const dy = event.clientY - gesture.start.y;
       if (!gesture.moved && Math.hypot(dx, dy) < 4) return;
       gesture.moved = true;
+      this.autoFit = false;
       this.camera.x = gesture.camera.x - dx / this.camera.zoom;
       this.camera.y = gesture.camera.y - dy / this.camera.zoom;
       this.place();
@@ -1392,7 +1399,10 @@ export default class BattleMap extends Component {
     }
     if (event.key === "+" || event.key === "=") return void this.zoomBy(1.2);
     if (event.key === "-") return void this.zoomBy(1 / 1.2);
-    if (event.key === "0") return void this.fit(true);
+    if (event.key === "0") {
+      this.autoFit = true;
+      return void this.fit(true);
+    }
     const step = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] }[event.key.length === 1 ? event.key.toLowerCase() : event.key];
     if (!step || control) return;
     const ids = this.props.selectedTokenIds || [];

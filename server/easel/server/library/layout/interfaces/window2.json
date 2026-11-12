@@ -1,0 +1,77 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "subtitle": {
+      "type": "String",
+      "default": ""
+    },
+    "icon": {
+      "type": "String",
+      "default": ""
+    },
+    "x": {
+      "type": "Number",
+      "default": 80
+    },
+    "y": {
+      "type": "Number",
+      "default": 80
+    },
+    "width": {
+      "type": "Number",
+      "default": 420
+    },
+    "height": {
+      "type": "Number",
+      "default": 480
+    },
+    "minimized": {
+      "type": "Boolean",
+      "default": false
+    },
+    "closable": {
+      "type": "Boolean",
+      "default": true
+    },
+    "resizable": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "move": {
+      "payload": {
+        "x": "Number",
+        "y": "Number"
+      }
+    },
+    "resize": {
+      "payload": {
+        "width": "Number",
+        "height": "Number"
+      }
+    },
+    "close": {
+      "payload": {}
+    },
+    "focus": {
+      "payload": {}
+    },
+    "minimize": {
+      "payload": {
+        "minimized": "Boolean"
+      }
+    }
+  },
+  "slots": {
+    "content": {}
+  }
+}
