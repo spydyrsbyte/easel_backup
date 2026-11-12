@@ -32,10 +32,12 @@ A string is a path to a file in the package. An object is the same content writt
 | `owner` | Required stable owner identifier, such as `easel`. |
 | `host` | Required stable namespace within the owner, such as `cards`. |
 | `name` | One package member identifier. The package ID is `owner.host.name`. |
+| `title` | The name people see, such as `Chess`. Optional; the package ID is shown without it. |
+| `description` | One or two sentences shown where people choose an application. Optional. |
 | `authors` | Author names and contact details |
 | `version` | `{major, minor, revision}` |
-| `encrypt` | Optional DRM. `false` or absent means plain. An object such as `{"public": "./keys/key.txt"}` means encrypted. Encrypted packages are rejected until DRM is designed. |
-| `channels` | Update sources: any channel name maps to `{manifest, file}`. The person running the game picks the channel and whether updates happen automatically on startup or manually. |
+| `encrypt` | Optional protection. `false` or absent means plain. An object such as `{"public": "keys/publisher.pub"}` asks for protection and names where the publisher's public key is kept. Such a package runs only when it was sealed by its publisher and the installation holds a license for it; installed unsealed, it is refused. See [Running Easel](operations.md#10-protected-packages). |
+| `channels` | Update sources: any channel name maps to `{manifest, file}`, where `manifest` is the address of the channel's current `manifest.json` and `file` the address of its package archive. Each may be an `http(s)` address, a `file:` address, or a path, relative paths being inside the installed package. The person running Easel picks the channel and whether updates happen at startup or manually. See [Running Easel](operations.md#9-packages). |
 | `server` | The server side: a path or an inline object |
 | `client` | The client side: a path or an inline object |
 
@@ -47,7 +49,7 @@ For example, owner `easel`, host `cards`, and package name `table` give package 
 
 The resolved browser delivery plan's `host` field carries the full `owner.host` identity used by interface registration and implementation selection.
 
-This replaces the alpha build's two-part identities. Old manifests require an owner and qualified references must be updated. Existing saved games using the old package/type names are not automatically converted or deleted; they require a separate data conversion before they can run with these packages. No database schema migration is introduced.
+This replaces the alpha build's two-part identities. Old manifests require an owner and qualified references must be updated. Databases that hold games saved under the old two-part names predate the versioned database schema, and this build refuses to open them. They are recreated rather than converted; no conversion tool is provided.
 
 ## 3. Server side
 

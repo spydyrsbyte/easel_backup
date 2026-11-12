@@ -1,6 +1,6 @@
 # Easel Server Architecture
 
-> Status: built. Game files (section 2) have folders but nothing stores files in them yet, and the browser client does not handle challenges yet.
+> Status: built. Operating an installation, including several servers, backups, packages, and editions, is covered in [Running Easel](operations.md).
 
 ## 1. Purpose
 
@@ -44,6 +44,35 @@ Binary files, such as images, sounds, and maps, are never stored in the database
 - **Package files** ship with a package and stay in its folder under `easel/`. Clients receive them through the client asset routes.
 - **Game files** are created or received while a game runs, such as an uploaded portrait or a drawn map. They are stored in that game's folder under `games/`. The database holds only a reference to each file: its location or content hash, type, size, and owner, so permissions and validation still go through the database.
 
+#### Game files in code
+
+Each game, and the server application, has `Application.files`:
+
+| Call | Meaning |
+|---|---|
+| `create({name, mediaType, text \| base64 \| bytes})` | Store a file and return it. Exactly one of `text`, `base64`, or `bytes` (an `ArrayBuffer` or `Uint8Array`) holds the contents. |
+| `replace(id, {text \| base64 \| bytes, name?, mediaType?})` | Replace a file's contents and keep its id. |
+| `remove(id)` | Remove a file. |
+| `get(id)` / `list()` | A file, or every file of this game: `{id, name, mediaType, size, hash, owner, version, url}`. |
+| `read(id)` / `readText(id)` | The contents as an `ArrayBuffer` or a string, up to 8 MB. |
+| `url(id)` | The address a client of this game fetches the file from. |
+| `on("upload", hook)` | Decide whether a client may upload. The hook receives `{name, mediaType, size, user, replaces}` and calls `allow()` or `refuse(reason)`. The first decision wins; an upload no hook decides is refused. |
+| `on("uploaded", hook)` | Called with the stored file and the user after a client's upload is stored. |
+
+File changes belong to the request that makes them: when the request throws, a created file is removed, a replaced file gets its previous contents back, and a removed file stays.
+
+A file's contents are stored once per game under their SHA-256 hash, so two records of the same contents share them, and the contents are deleted when the last record that uses them is gone. The declared media type must be on the allowed list and must match the contents; the default limit is 32 MB.
+
+Clients use `Application.files.upload(fileOrBlob, {name, mediaType, replace, hash})` in the browser runtime, which returns the stored file, and `Application.files.url(id)`. Underneath:
+
+| Route | Purpose |
+|---|---|
+| `POST /files/{game}?name=` | Upload the request body as a new file. `Content-Type` and `Content-Length` are required. |
+| `PUT /files/{game}/{file}?name=` | Replace a file. `If-Match` with the current hash makes the replacement conditional. |
+| `GET /files/{game}/{file}` | Fetch a file, with its media type, an `ETag`, and range support. |
+
+`{game}` is a game id, or `server` for the server application's files. Only members of a running game reach its files; another game's id, or another server, answers 404. Which members may see which file is the application's decision: it chooses whose clients it tells about a file.
+
 ## 3. `server.json`
 
 ```json
@@ -66,7 +95,7 @@ A global library is available to every server and game application without being
 
 ## 4. The server application
 
-The server application is a package with the normal manifest and runtime: library and application stages, `Load.*` events, data, and security. Its definition also loads every package in the definition's `modules/` folder. It differs from a game in two ways:
+The server application is a package with the normal manifest and runtime: library and application stages, `Load.*` events, data, security, automations, and files. Its definition also loads every package in the definition's `modules/` folder. Its records, security entries, and automations are saved for that server definition on that server, apart from the games it hosts, and are there again after a restart. Every signed-in user is an `easel.easel.User` principal of the server application, with the attribute `role` set to `administrator` or `user`. It differs from a game in two ways:
 
 - it starts when Easel starts, and stops when Easel stops;
 - its `Server` global has the server-level APIs (section 6) in addition to `Server.events`. A game's `Server` global has only `Server.events`.
@@ -119,7 +148,9 @@ Authentication frames travel on the same WebSocket as everything else, before th
 
 When `hello` carries a valid token, the server replies with `welcome` directly. Otherwise it replies with `auth.required`, and after `auth.session` it sends `welcome` as the reply to the original `hello`. Any other frame before sign-in is answered with the `auth.required` error and closes the connection. The browser client may rely on its session cookie instead of a `hello` token.
 
-The browser's HTTP routes answer the same way: `POST /api/accounts` and `POST /api/sessions` return the user and set the cookie, `403 {error}` for a refusal, or `202 {challenge, challengeToken}` for a challenge. The client responds with `POST /api/sessions/response {challengeToken, response}`. A provider sign-in that is challenged redirects to `/#challenge=…&challengeToken=…`.
+The browser's HTTP routes answer the same way: `POST /api/accounts` and `POST /api/sessions` return the user and set the cookie, `403 {error}` for a refusal, or `202 {challenge, challengeToken}` for a challenge. The client responds with `POST /api/sessions/response {challengeToken, response}`. A provider sign-in that is challenged redirects to `/#challenge=…&challengeToken=…`, and one that is refused redirects to `/#error=…`.
+
+The browser shell handles all of these. On a challenge, the sign-in component (`easel.easel.signin@1`) shows one response field labelled with the challenge name, or with its `challengeLabel` property, and emits `responded` or `challengeCancelled`. A challenge can be answered once, so a wrong, expired, or reused response returns the person to the sign-in form with the reason.
 
 ### 5.4 Outside providers
 
@@ -157,8 +188,13 @@ The default server application allows every sign-in and sign-up.
 |---|---|
 | `create({name, application, modules, access})` | Create a game that plays an installed application with the given modules. `access` is `"open"` or `"invite"` (section 6.3). It gets its own folder, `games/<game id>/`. Returns the game. |
 | `setAccess(id, access)` | Switch a game between `"open"` and `"invite"` |
-| `start(id)` / `stop(id)` | Start or stop the game's session. Stopping a game closes its connections. |
-| `list()` / `get(id)` | Games on this server, each `{id, name, application, modules, access, running}` |
+| `start(id)` / `stop(id)` | Start or stop the game's session. Stopping a game closes its connections and discards its pending timers. |
+| `suspend(id)` / `resume(id)` | Suspend a running game, keeping each pending timer with the time it had left, or start it again. A suspended game does not count toward an edition's game limit. |
+| `startAutomatic()` | Start every game that was running when Easel last stopped. Returns the games that did not start, each `{game, error}`. |
+| `limit()` | `{max, running}`: the edition's limit on running games (0 for none) and the games holding a place, each `{id, name}`. |
+| `setModules(id, modules)` | Change a stopped game's modules. Data saved by a removed module is kept and comes back into use when the module is added again. |
+| `delete(id)` | Delete a game, its saved data, and its files. |
+| `list()` / `get(id)` | Games on this server, each `{id, name, application, modules, access, running, lifecycle}`. `lifecycle` is `auto`, `stopped`, `suspended`, or `relocated`. |
 
 The calls are synchronous and throw on failure, such as an application or module that isn't installed, or starting a game that is already running.
 
@@ -220,13 +256,28 @@ If the server application has no client entry for the connection's client type, 
 
 Go stores administrators with the accounts. What an administrator may do is decided by the server application.
 
-`Server.games.installed()` returns `{applications, modules}`: each installed application as `{id, requires}`, where `requires` lists the modules it needs, and the ids of the installed modules.
+`Server.games.installed()` returns `{applications, modules}`: each installed application as `{id, title, description, version, requires}`, where `title` and `description` come from its manifest and `requires` lists the modules it needs, and the ids of the installed modules.
 
-### 6.6 The default server application
+### 6.6 `Server.packages`
+
+| Call | Meaning |
+|---|---|
+| `list()` | Every installed package with its version, requirements, supported clients, update channel, kept versions, and any problem. |
+| `refresh()` | Read the installed packages again, so newly installed or updated packages can be used without restarting Easel. A running game keeps the packages it started with. |
+| `updates()` | What each package's chosen channel offers. |
+| `update(id)` | Download and install a newer release, with the same checks as `easel packages install`, then refresh. |
+
+An update that saved games do not fit is refused and changes nothing. See [Running Easel](operations.md#9-packages).
+
+### 6.7 Servers
+
+One installation can host several servers. Everything in this document is per server: accounts, administrators, sessions, games, files, and the server application's data. Each server listens on its own address and has its own session cookie.
+
+### 6.8 The default server application
 
 The default server application:
 
-- creates an open game named "Demo table" the first time it starts, and starts every game when Easel starts;
+- creates an open game named "Demo table" the first time it starts, and starts the games that were running when Easel last stopped;
 - makes the first user who connects an administrator while there is none;
 - sends each connection in the server application a lobby (the `easel.easel.lobby` kit in its `modules/` folder) that lists the games and joins one;
 - lets administrators create, start, and stop games from the lobby.

@@ -126,7 +126,13 @@ Contribution identity currently uses contributor ID and declaration source (`dat
 
 The migration writes transformed fragments, checks every resulting record and reference, seals the new schema revision, and activates it in one serializable PostgreSQL transaction. A failure rolls back schema publication, updates, and deletions together. Transformations must keep their effects inside the returned record data; external effects are outside that transaction. Previous schema revisions remain immutable. They do not contain previous record values, so reversing a successful data migration requires a reverse transformation or a backup.
 
-Cleanup is optional and uses the same migration path: omit the selected rules, remove or convert their fields, and explicitly delete or convert records whose types are removed. Dangling references prevent activation. Nothing is automatically cleaned up when a module is removed. These are backend APIs; no migration or cleanup screen is provided yet.
+Cleanup is optional and uses the same migration path: omit the selected rules, remove or convert their fields, and explicitly delete or convert records whose types are removed. Dangling references prevent activation. Nothing is automatically cleaned up when a module is removed.
+
+Operators run migrations and cleanup from a plan file with `easel schema migrate`, check a game with `easel schema status`, and can validate a plan without applying it; see [Running Easel](operations.md#11-converting-saved-data). `games.Manager.ApplyMigration` is the same operation in Go. Package installation and updates use the same check, so an update that saved games do not fit is refused before anything changes.
+
+### Transactions
+
+Everything a request saves commits together. Record transactions use PostgreSQL snapshot isolation (`REPEATABLE READ`) with a shared lock on the game and a row lock on every record loaded. A game handles one request at a time and runs in one process at a time, so within a game this is equivalent to running requests one after another, and requests in different games never fail each other.
 
 ## Names
 
