@@ -1,4 +1,4 @@
-param([string]$PostgresBin = (Join-Path $env:LOCALAPPDATA 'Easel/PostgreSQL18/pgsql/bin'), [string]$Run = '.', [string]$Timeout = '4m')
+param([string]$PostgresBin = (Join-Path $env:LOCALAPPDATA 'Easel/PostgreSQL18/pgsql/bin'), [string]$Run = '.', [string]$Timeout = '4m', [string]$Bench = '', [string]$Package = './...')
 
 $ErrorActionPreference = 'Stop'
 $workspace = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -24,7 +24,8 @@ try {
     $env:EASEL_TEST_DATABASE_CONFIG = $configPath
     Push-Location $workspace
     try {
-        & go test ./... -count=1 -timeout $Timeout -run $Run
+        if ($Bench) { & go test $Package -count=1 -timeout $Timeout -run '^$' -bench $Bench -benchtime 2s }
+        else { & go test $Package -count=1 -timeout $Timeout -run $Run }
         $testExitCode = $LASTEXITCODE
     } finally { Pop-Location }
 } finally {

@@ -1,12 +1,3 @@
-export const applicationName = (id) =>
-  ({
-    "easel.chess.game": "Chess",
-    "easel.checkers.game": "Checkers",
-    "easel.demo.table": "Demo table",
-    "easel.mtg.game": "Magic: The Gathering",
-    "easel.mtgtable.game": "MTG",
-  })[id] || id;
-
 export const element = (tag, className, text) => {
   const node = document.createElement(tag);
   if (className) node.className = className;

@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"easel/internal/automation"
-	"easel/internal/database"
 	"easel/internal/schema"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -44,9 +43,9 @@ func (store *Records) Begin(ctx context.Context) (automation.Transaction, error)
 	if store.AuthorizeRecord == nil {
 		return nil, fmt.Errorf("record authorization is not configured")
 	}
-	tx, err := database.BeginSerializable(ctx, store.Pool)
+	tx, err := store.Pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("begin record transaction: %w", err)
 	}
 	var revision *string
 	err = tx.QueryRow(ctx, `SELECT active_revision_id::text FROM game_data.games WHERE game_id=$1 FOR SHARE`, store.GameID).Scan(&revision)

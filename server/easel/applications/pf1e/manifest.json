@@ -3,6 +3,8 @@
   "owner": "easel",
   "host": "pf1e",
   "name": "game",
+  "title": "Pathfinder First Edition",
+  "description": "A virtual tabletop for Pathfinder First Edition with characters, maps and rules assistance.",
   "version": {
     "major": 0,
     "minor": 1,

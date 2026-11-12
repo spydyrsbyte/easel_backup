@@ -24,16 +24,18 @@ const (
 )
 
 type Manifest struct {
-	Owner    string             `json:"owner"`
-	Type     string             `json:"type"`
-	Name     string             `json:"name"`
-	Authors  []Author           `json:"authors,omitempty"`
-	Host     string             `json:"host"`
-	Version  Version            `json:"version"`
-	Encrypt  Encryption         `json:"encrypt"`
-	Channels map[string]Channel `json:"channels,omitempty"`
-	Server   Server             `json:"-"`
-	Client   Client             `json:"-"`
+	Owner       string             `json:"owner"`
+	Type        string             `json:"type"`
+	Name        string             `json:"name"`
+	Title       string             `json:"title,omitempty"`
+	Description string             `json:"description,omitempty"`
+	Authors     []Author           `json:"authors,omitempty"`
+	Host        string             `json:"host"`
+	Version     Version            `json:"version"`
+	Encrypt     Encryption         `json:"encrypt"`
+	Channels    map[string]Channel `json:"channels,omitempty"`
+	Server      Server             `json:"-"`
+	Client      Client             `json:"-"`
 }
 
 type Server struct {

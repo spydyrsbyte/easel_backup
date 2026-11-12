@@ -3,6 +3,8 @@
   "owner": "easel",
   "host": "mtg",
   "name": "game",
+  "title": "Magic: The Gathering",
+  "description": "A multiplayer Magic tabletop with private decks and hands, playmats, counters, casting, combat and rules assistance.",
   "version": {
     "major": 0,
     "minor": 1,

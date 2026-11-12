@@ -3,6 +3,8 @@
   "owner": "easel",
   "host": "chess",
   "name": "game",
+  "title": "Chess",
+  "description": "A classic board for two players. Move your pieces and play at your own pace.",
   "version": {
     "major": 0,
     "minor": 1,

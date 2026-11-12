@@ -3,6 +3,8 @@
   "owner": "easel",
   "host": "mtgtable",
   "name": "game",
+  "title": "MTG",
+  "description": "The scripted six-player Tabletop Simulator Magic table: playmats, draw, scry, mill and reveal buttons, life trackers, commander damage, counters, dice and importers.",
   "version": {
     "major": 0,
     "minor": 1,

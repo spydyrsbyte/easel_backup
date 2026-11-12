@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"sort"
 	"strings"
 	"sync"
@@ -147,6 +148,7 @@ func (m *Manager) halt(id, lifecycle string, keepEvents bool) error {
 	game := m.running[id]
 	delete(m.running, id)
 	m.mu.Unlock()
+	m.forgetMembers(id)
 	if game == nil {
 		return ErrNotRunning
 	}
@@ -228,6 +230,7 @@ func (s scriptedGames) Limit() any { return s.manager.Limit() }
 func (s scriptedGames) StartAutomatic(ctx context.Context) any {
 	failures := []map[string]string{}
 	for id, err := range s.manager.StartAutomatic(ctx) {
+		slog.Error("game did not start with Easel", "game", id, "error", err)
 		failures = append(failures, map[string]string{"game": id, "error": err.Error()})
 	}
 	return failures

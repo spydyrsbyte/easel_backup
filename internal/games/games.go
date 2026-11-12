@@ -67,6 +67,9 @@ type Manager struct {
 
 	mu                 sync.Mutex
 	catalogMu          sync.RWMutex
+	membersMu          sync.Mutex
+	members            map[string]map[string]bool
+	membersVersion     uint64
 	storage            string
 	storageRelease     func()
 	owned              ownership
@@ -374,15 +377,52 @@ func (m *Manager) depart(id, userID string) {
 	delete(game.departure, userID)
 }
 
+func (m *Manager) forgetMembers(id string) {
+	m.membersMu.Lock()
+	defer m.membersMu.Unlock()
+	delete(m.members, id)
+	m.membersVersion++
+}
+
 func (m *Manager) IsMember(ctx context.Context, id, userID string) (bool, error) {
 	if !validID(id) || !validID(userID) {
 		return false, nil
 	}
-	var member bool
-	if err := m.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM game_data.members m JOIN game_data.games g USING(game_id) WHERE m.game_id=$1 AND m.user_id=$2 AND g.server_id=$3 AND g.kind='game')`, id, userID, m.server()).Scan(&member); err != nil {
+	userID = strings.ToLower(userID)
+	m.membersMu.Lock()
+	known, cached := m.members[id]
+	version := m.membersVersion
+	m.membersMu.Unlock()
+	if cached {
+		return known[userID], nil
+	}
+	rows, err := m.Pool.Query(ctx, `SELECT m.user_id::text FROM game_data.members m JOIN game_data.games g USING(game_id) WHERE m.game_id=$1 AND g.server_id=$2 AND g.kind='game'`, id, m.server())
+	if err != nil {
 		return false, fmt.Errorf("check membership: %w", err)
 	}
-	return member, nil
+	defer rows.Close()
+	known = map[string]bool{}
+	for rows.Next() {
+		var member string
+		if err := rows.Scan(&member); err != nil {
+			return false, fmt.Errorf("check membership: %w", err)
+		}
+		known[member] = true
+	}
+	if err := rows.Err(); err != nil {
+		return false, fmt.Errorf("check membership: %w", err)
+	}
+	if _, running := m.runtime(id); running {
+		m.membersMu.Lock()
+		if m.membersVersion == version {
+			if m.members == nil {
+				m.members = map[string]map[string]bool{}
+			}
+			m.members[id] = known
+		}
+		m.membersMu.Unlock()
+	}
+	return known[userID], nil
 }
 
 func (m *Manager) Members(ctx context.Context, id string) ([]accounts.User, error) {
@@ -442,7 +482,9 @@ func (m *Manager) AddMember(ctx context.Context, id, userID string) error {
 	if err := addMember(ctx, tx, id, userID); err != nil {
 		return err
 	}
-	if err := tx.Commit(ctx); err != nil {
+	err = tx.Commit(ctx)
+	m.forgetMembers(id)
+	if err != nil {
 		return fmt.Errorf("commit membership: %w", err)
 	}
 	if runtime, running := m.runtime(id); running {
@@ -479,7 +521,9 @@ func (m *Manager) Join(ctx context.Context, id string, user accounts.User) error
 	if err := addMember(ctx, tx, id, user.ID); err != nil {
 		return err
 	}
-	if err := tx.Commit(ctx); err != nil {
+	err = tx.Commit(ctx)
+	m.forgetMembers(id)
+	if err != nil {
 		return fmt.Errorf("commit membership: %w", err)
 	}
 	return nil
@@ -505,7 +549,9 @@ func (m *Manager) Remove(ctx context.Context, id, userID string) error {
 			return fmt.Errorf("remove member: %w", err)
 		}
 	}
-	if err := tx.Commit(ctx); err != nil {
+	err = tx.Commit(ctx)
+	m.forgetMembers(id)
+	if err != nil {
 		return fmt.Errorf("commit removal: %w", err)
 	}
 	m.depart(id, userID)

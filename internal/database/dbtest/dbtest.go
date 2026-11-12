@@ -18,7 +18,7 @@ import (
 
 const prefix = "easel_test_"
 
-func Open(t *testing.T) *pgxpool.Pool {
+func Open(t testing.TB) *pgxpool.Pool {
 	t.Helper()
 	path := os.Getenv("EASEL_TEST_DATABASE_CONFIG")
 	if path == "" {

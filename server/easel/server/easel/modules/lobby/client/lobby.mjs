@@ -1,4 +1,4 @@
-import { applicationName, element, control } from "./dom.mjs";
+import { element, control } from "./dom.mjs";
 
 export default class Lobby {
   constructor() {
@@ -240,7 +240,7 @@ export default class Lobby {
     );
     this.application.replaceChildren(
       ...props.applications.map((app) => {
-        const option = element("option", "", applicationName(app.id));
+        const option = element("option", "", app.title || app.id);
         option.value = app.id;
         return option;
       }),
@@ -266,7 +266,7 @@ export default class Lobby {
         const text = element("div", "card-content");
         const topline = element("div", "card-topline");
         topline.append(
-          element("span", "eyebrow", applicationName(game.application)),
+          element("span", "eyebrow", game.applicationTitle || game.application),
           element(
             "span",
             game.running ? "status live" : "status",
@@ -365,23 +365,14 @@ export default class Lobby {
       ...props.applications.map((app) => {
         const card = element("article", "table-card application-card");
         const content = element("div", "card-content");
-        const description =
-          app.id === "easel.chess.game"
-            ? "A classic board for two players. Move your pieces and play at your own pace."
-            : app.id === "easel.checkers.game"
-              ? "Capture, jump and crown your checkers in a game for two players."
-              : app.id === "easel.mtg.game"
-                ? "A multiplayer Magic tabletop with private decks and hands, playmats, counters, casting, combat and rules assistance."
-                : app.id === "easel.mtgtable.game"
-                  ? "The scripted six-player Tabletop Simulator Magic table: playmats, draw, scry, mill and reveal buttons, life trackers, commander damage, counters, dice and importers."
-                  : "A demonstration table with a twenty-sided die.";
+        const description = app.description || "";
         const start = control("Start a table", "button primary", () =>
           this.openCreate(app.id),
         );
         start.disabled = props.busy;
         content.append(
           element("span", "eyebrow", "GAME APPLICATION"),
-          element("h3", "", applicationName(app.id)),
+          element("h3", "", app.title || app.id),
           element("p", "muted", description),
           start,
         );

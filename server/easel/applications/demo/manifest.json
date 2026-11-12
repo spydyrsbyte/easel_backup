@@ -3,6 +3,8 @@
   "owner": "easel",
   "host": "demo",
   "name": "table",
+  "title": "Demo table",
+  "description": "A demonstration table with a twenty-sided die.",
   "server": {
     "application": {
       "entry": "server/application.mjs"

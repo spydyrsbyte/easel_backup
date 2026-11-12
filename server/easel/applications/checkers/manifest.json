@@ -3,6 +3,8 @@
   "owner": "easel",
   "host": "checkers",
   "name": "game",
+  "title": "Checkers",
+  "description": "Capture, jump and crown your checkers in a game for two players.",
   "version": {
     "major": 0,
     "minor": 1,

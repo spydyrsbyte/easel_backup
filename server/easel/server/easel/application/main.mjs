@@ -50,7 +50,13 @@ const manages = (connection, game) =>
 const sendState = (connection) => {
   const admin = isAdmin(connection);
   const installed = Server.games.installed();
-  const games = Server.games.list();
+  const titles = Object.fromEntries(
+    installed.applications.map((application) => [application.id, application.title]),
+  );
+  const games = Server.games.list().map((game) => ({
+    ...game,
+    applicationTitle: titles[game.application] || game.application,
+  }));
   const memberships = {};
   const manageable = [];
   for (const game of games) {

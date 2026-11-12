@@ -230,8 +230,11 @@ func sortedIDs(packages map[string]manifest.Package) []string {
 }
 
 type InstalledApplication struct {
-	ID       string   `json:"id"`
-	Requires []string `json:"requires"`
+	ID          string   `json:"id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Version     string   `json:"version"`
+	Requires    []string `json:"requires"`
 }
 
 type Installed struct {
@@ -277,7 +280,12 @@ func (c *Catalog) requiredModules(pkg manifest.Package) []string {
 func (c *Catalog) Installed() Installed {
 	installed := Installed{Applications: []InstalledApplication{}, Modules: sortedIDs(c.Modules)}
 	for _, id := range sortedIDs(c.Applications) {
-		installed.Applications = append(installed.Applications, InstalledApplication{ID: id, Requires: c.requiredModules(c.Applications[id])})
+		pkg := c.Applications[id]
+		title := pkg.Manifest.Title
+		if title == "" {
+			title = id
+		}
+		installed.Applications = append(installed.Applications, InstalledApplication{ID: id, Title: title, Description: pkg.Manifest.Description, Version: pkg.Manifest.Version.String(), Requires: c.requiredModules(pkg)})
 	}
 	return installed
 }
