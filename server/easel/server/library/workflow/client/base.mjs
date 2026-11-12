@@ -1,4 +1,4 @@
-﻿import { safeImage, element as el } from "./safe.mjs";
+import { safeImage, element as el } from "./safe.mjs";
 export class Base {
   constructor(name, slots = []) {
     this.name = name;
@@ -34,8 +34,57 @@ export class Base {
     if (this.props.disabled) return;
     this.onEvent?.(name, payload);
   }
+  remember() {
+    const active = document.activeElement;
+    const marks = [];
+    for (const node of [this.content, ...this.content.querySelectorAll("*")]) {
+      if (node.scrollTop || node.scrollLeft) marks.push({ path: this.pathOf(node), top: node.scrollTop, left: node.scrollLeft });
+    }
+    const focus =
+      active && active !== document.body && this.content.contains(active)
+        ? { path: this.pathOf(active), tag: active.tagName, start: active.selectionStart ?? null, end: active.selectionEnd ?? null }
+        : null;
+    if (!marks.length && !focus) return;
+    queueMicrotask(() => {
+      for (const mark of marks) {
+        const node = this.nodeAt(mark.path);
+        if (node) {
+          node.scrollTop = mark.top;
+          node.scrollLeft = mark.left;
+        }
+      }
+      if (!focus) return;
+      const node = this.nodeAt(focus.path);
+      if (!node || node.tagName !== focus.tag || node.disabled) return;
+      node.focus({ preventScroll: true });
+      if (focus.start !== null && typeof node.setSelectionRange === "function") {
+        try {
+          node.setSelectionRange(focus.start, focus.end);
+        } catch {}
+      }
+    });
+  }
+  pathOf(node) {
+    const path = [];
+    while (node && node !== this.content) {
+      const parent = node.parentNode;
+      if (!parent) return null;
+      path.unshift(Array.prototype.indexOf.call(parent.children, node));
+      node = parent;
+    }
+    return path;
+  }
+  nodeAt(path) {
+    let node = this.content;
+    for (const index of path || []) {
+      node = node?.children[index];
+      if (!node) return null;
+    }
+    return path ? node : null;
+  }
   begin(props) {
     this.props = props;
+    this.remember();
     this.content.replaceChildren();
     this.element.hidden = props.open === false;
     this.element.setAttribute("aria-disabled", String(!!props.disabled));

@@ -1,0 +1,41 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": { "type": "Boolean", "default": false },
+    "map": { "type": "Object", "default": {} },
+    "sceneKey": { "type": "String", "default": "" },
+    "groundId": { "type": "String", "default": "" },
+    "layerId": { "type": "String", "default": "" },
+    "tokens": { "type": "Array", "default": [] },
+    "selectedTokenIds": { "type": "Array", "default": [] },
+    "gm": { "type": "Boolean", "default": false },
+    "editing": { "type": "Boolean", "default": false },
+    "fog": { "type": "Boolean", "default": true },
+    "tool": { "type": "String", "default": "select" },
+    "drawColor": { "type": "String", "default": "#ffd166" },
+    "drawWidth": { "type": "Number", "default": 4 },
+    "distanceRule": { "type": "String", "default": "chebyshev" },
+    "pings": { "type": "Array", "default": [] },
+    "rulers": { "type": "Array", "default": [] },
+    "insets": { "type": "Object", "default": {} },
+    "fitKey": { "type": "String", "default": "" }
+  },
+  "events": {
+    "tokenSelect": { "payload": { "ids": "Array" } },
+    "tokenMove": { "payload": { "id": "String", "x": "Number", "y": "Number", "groundId": "String" } },
+    "tokenOpen": { "payload": { "id": "String" } },
+    "tokenContext": { "payload": { "id": "String", "clientX": "Number", "clientY": "Number" } },
+    "tokenDelete": { "payload": { "ids": "Array" } },
+    "doorToggle": { "payload": { "id": "String", "open": "Boolean" } },
+    "mapChange": { "payload": { "map": "Object", "action": "String" } },
+    "select": { "payload": { "kind": "String", "id": "String" } },
+    "draw": { "payload": { "drawing": "Object", "groundId": "String" } },
+    "ping": { "payload": { "x": "Number", "y": "Number" } },
+    "ruler": { "payload": { "points": "Array" } },
+    "drop": { "payload": { "data": "Object", "x": "Number", "y": "Number", "groundId": "String" } },
+    "context": { "payload": { "x": "Number", "y": "Number", "clientX": "Number", "clientY": "Number", "kind": "String", "id": "String" } },
+    "cameraChange": { "payload": { "camera": "Object" } },
+    "notice": { "payload": { "message": "String" } }
+  },
+  "slots": {}
+}

@@ -1,0 +1,525 @@
+{
+  "name": "The Gilded Tankard",
+  "size": {
+    "width": 2000,
+    "height": 1400
+  },
+  "grid": {
+    "type": "square",
+    "size": 100,
+    "offset": {
+      "left": 0,
+      "top": 0
+    },
+    "relativesize": {
+      "size": 5,
+      "label": "ft"
+    },
+    "color": "#ffffff26",
+    "visible": true
+  },
+  "ambient": 0.22,
+  "image": "tavern.svg",
+  "walls": [
+    {
+      "id": "wall-1",
+      "kind": "wall",
+      "a": {
+        "x": 200,
+        "y": 200
+      },
+      "b": {
+        "x": 1400,
+        "y": 200
+      }
+    },
+    {
+      "id": "wall-2",
+      "kind": "wall",
+      "a": {
+        "x": 200,
+        "y": 800
+      },
+      "b": {
+        "x": 300,
+        "y": 800
+      }
+    },
+    {
+      "id": "wall-3",
+      "kind": "wall",
+      "a": {
+        "x": 400,
+        "y": 800
+      },
+      "b": {
+        "x": 700,
+        "y": 800
+      }
+    },
+    {
+      "id": "wall-4",
+      "kind": "wall",
+      "a": {
+        "x": 800,
+        "y": 800
+      },
+      "b": {
+        "x": 1400,
+        "y": 800
+      }
+    },
+    {
+      "id": "wall-5",
+      "kind": "wall",
+      "a": {
+        "x": 1000,
+        "y": 500
+      },
+      "b": {
+        "x": 1200,
+        "y": 500
+      }
+    },
+    {
+      "id": "wall-6",
+      "kind": "wall",
+      "a": {
+        "x": 1300,
+        "y": 500
+      },
+      "b": {
+        "x": 1600,
+        "y": 500
+      }
+    },
+    {
+      "id": "wall-7",
+      "kind": "wall",
+      "a": {
+        "x": 1000,
+        "y": 700
+      },
+      "b": {
+        "x": 1500,
+        "y": 700
+      }
+    },
+    {
+      "id": "wall-8",
+      "kind": "wall",
+      "a": {
+        "x": 1600,
+        "y": 700
+      },
+      "b": {
+        "x": 1800,
+        "y": 700
+      }
+    },
+    {
+      "id": "wall-9",
+      "kind": "wall",
+      "a": {
+        "x": 200,
+        "y": 1200
+      },
+      "b": {
+        "x": 1800,
+        "y": 1200
+      }
+    },
+    {
+      "id": "wall-10",
+      "kind": "wall",
+      "a": {
+        "x": 200,
+        "y": 200
+      },
+      "b": {
+        "x": 200,
+        "y": 400
+      }
+    },
+    {
+      "id": "wall-11",
+      "kind": "wall",
+      "a": {
+        "x": 200,
+        "y": 500
+      },
+      "b": {
+        "x": 200,
+        "y": 1200
+      }
+    },
+    {
+      "id": "wall-12",
+      "kind": "wall",
+      "a": {
+        "x": 1000,
+        "y": 200
+      },
+      "b": {
+        "x": 1000,
+        "y": 300
+      }
+    },
+    {
+      "id": "wall-13",
+      "kind": "wall",
+      "a": {
+        "x": 1000,
+        "y": 400
+      },
+      "b": {
+        "x": 1000,
+        "y": 600
+      }
+    },
+    {
+      "id": "wall-14",
+      "kind": "wall",
+      "a": {
+        "x": 1000,
+        "y": 700
+      },
+      "b": {
+        "x": 1000,
+        "y": 800
+      }
+    },
+    {
+      "id": "wall-15",
+      "kind": "wall",
+      "a": {
+        "x": 1400,
+        "y": 200
+      },
+      "b": {
+        "x": 1400,
+        "y": 500
+      }
+    },
+    {
+      "id": "wall-16",
+      "kind": "wall",
+      "a": {
+        "x": 1400,
+        "y": 700
+      },
+      "b": {
+        "x": 1400,
+        "y": 900
+      }
+    },
+    {
+      "id": "wall-17",
+      "kind": "wall",
+      "a": {
+        "x": 1400,
+        "y": 1000
+      },
+      "b": {
+        "x": 1400,
+        "y": 1200
+      }
+    },
+    {
+      "id": "wall-18",
+      "kind": "wall",
+      "a": {
+        "x": 1600,
+        "y": 500
+      },
+      "b": {
+        "x": 1600,
+        "y": 700
+      }
+    },
+    {
+      "id": "wall-19",
+      "kind": "wall",
+      "a": {
+        "x": 1800,
+        "y": 700
+      },
+      "b": {
+        "x": 1800,
+        "y": 1200
+      }
+    },
+    {
+      "id": "wall-20",
+      "kind": "wall",
+      "a": {
+        "x": 600,
+        "y": 800
+      },
+      "b": {
+        "x": 600,
+        "y": 1200
+      }
+    }
+  ],
+  "doors": [
+    {
+      "id": "door-entrance",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 200,
+        "y": 400
+      },
+      "b": {
+        "x": 200,
+        "y": 500
+      }
+    },
+    {
+      "id": "door-kitchen",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 1000,
+        "y": 300
+      },
+      "b": {
+        "x": 1000,
+        "y": 400
+      }
+    },
+    {
+      "id": "door-hall",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 1000,
+        "y": 600
+      },
+      "b": {
+        "x": 1000,
+        "y": 700
+      }
+    },
+    {
+      "id": "door-pantry",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 1200,
+        "y": 500
+      },
+      "b": {
+        "x": 1300,
+        "y": 500
+      }
+    },
+    {
+      "id": "door-vault",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": true,
+      "a": {
+        "x": 1500,
+        "y": 700
+      },
+      "b": {
+        "x": 1600,
+        "y": 700
+      }
+    },
+    {
+      "id": "door-store",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 300,
+        "y": 800
+      },
+      "b": {
+        "x": 400,
+        "y": 800
+      }
+    },
+    {
+      "id": "door-yard",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 700,
+        "y": 800
+      },
+      "b": {
+        "x": 800,
+        "y": 800
+      }
+    },
+    {
+      "id": "door-cellar",
+      "kind": "door",
+      "door": true,
+      "open": false,
+      "locked": false,
+      "a": {
+        "x": 1400,
+        "y": 900
+      },
+      "b": {
+        "x": 1400,
+        "y": 1000
+      }
+    }
+  ],
+  "columns": [
+    {
+      "id": "column-1",
+      "kind": "column",
+      "column": true,
+      "center": {
+        "x": 1500,
+        "y": 850
+      },
+      "radius": 28
+    },
+    {
+      "id": "column-2",
+      "kind": "column",
+      "column": true,
+      "center": {
+        "x": 1700,
+        "y": 850
+      },
+      "radius": 28
+    }
+  ],
+  "lights": [
+    {
+      "id": "light-hearth",
+      "x": 600,
+      "y": 250,
+      "radius": 620,
+      "color": "#ffb066",
+      "intensity": 1
+    },
+    {
+      "id": "light-bar",
+      "x": 900,
+      "y": 660,
+      "radius": 380,
+      "color": "#ffd9a0",
+      "intensity": 0.8
+    },
+    {
+      "id": "light-kitchen",
+      "x": 1200,
+      "y": 260,
+      "radius": 420,
+      "color": "#ffc27a",
+      "intensity": 0.9
+    },
+    {
+      "id": "light-hall",
+      "x": 1320,
+      "y": 600,
+      "radius": 330,
+      "color": "#ffd9a0",
+      "intensity": 0.75
+    },
+    {
+      "id": "light-vault",
+      "x": 1600,
+      "y": 950,
+      "radius": 430,
+      "color": "#7fd6ff",
+      "intensity": 0.85
+    },
+    {
+      "id": "light-yard",
+      "x": 1000,
+      "y": 1010,
+      "radius": 520,
+      "color": "#b9c8ff",
+      "intensity": 0.55
+    },
+    {
+      "id": "light-store",
+      "x": 400,
+      "y": 1000,
+      "radius": 300,
+      "color": "#ffd9a0",
+      "intensity": 0.6
+    }
+  ],
+  "tokens": [
+    {
+      "name": "Aldric",
+      "image": "token-knight.svg",
+      "x": 350,
+      "y": 450,
+      "disposition": "friendly",
+      "player": true,
+      "light": 0
+    },
+    {
+      "name": "Mira",
+      "image": "token-mage.svg",
+      "x": 450,
+      "y": 550,
+      "disposition": "friendly",
+      "player": true,
+      "light": 260
+    },
+    {
+      "name": "Pip",
+      "image": "token-rogue.svg",
+      "x": 350,
+      "y": 650,
+      "disposition": "friendly",
+      "player": true,
+      "light": 0
+    },
+    {
+      "name": "Innkeeper Bram",
+      "image": "token-keeper.svg",
+      "x": 850,
+      "y": 750,
+      "disposition": "neutral"
+    },
+    {
+      "name": "Cellar Rat",
+      "image": "token-beast.svg",
+      "x": 1550,
+      "y": 1050,
+      "disposition": "hostile"
+    },
+    {
+      "name": "Cellar Rat",
+      "image": "token-beast.svg",
+      "x": 1650,
+      "y": 1150,
+      "disposition": "hostile"
+    },
+    {
+      "name": "The Collector",
+      "image": "token-skull.svg",
+      "x": 1650,
+      "y": 950,
+      "disposition": "hostile",
+      "hidden": true
+    }
+  ]
+}

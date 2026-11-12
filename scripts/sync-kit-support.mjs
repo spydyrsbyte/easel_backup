@@ -1,4 +1,4 @@
-﻿import fs from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 const root = fileURLToPath(
@@ -9,7 +9,7 @@ const catalog = JSON.parse(
 );
 for (const kit of catalog.libraries) {
   for (const [side, source, files] of [
-    ["client", "client", ["base.mjs", "safe.mjs", "kit.css"]],
+    ["client", "client", ["base.mjs", "safe.mjs", "kit.css", "ui.mjs"]],
     [
       "server",
       "game",
