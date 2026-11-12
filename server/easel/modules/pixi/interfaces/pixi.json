@@ -1,0 +1,27 @@
+{
+  "kind": "service",
+  "engine": "PixiJS",
+  "major": 8,
+  "members": [
+    "Application",
+    "Container",
+    "Graphics",
+    "Text",
+    "Sprite",
+    "Assets",
+    "RenderTexture",
+    "ColorMatrixFilter",
+    "BlurFilter",
+    "AlphaFilter",
+    "Mesh",
+    "Geometry",
+    "MeshGeometry",
+    "Shader",
+    "TilingSprite",
+    "Rectangle",
+    "Texture",
+    "Matrix",
+    "Point",
+    "Polygon"
+  ]
+}

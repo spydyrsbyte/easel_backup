@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "core",
+  "owner": "easel",
+  "host": "easel",
+  "version": { "major": 0, "minor": 1, "revision": 0 },
+  "server": {
+    "library": { "entry": "library.mjs" }
+  }
+}

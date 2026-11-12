@@ -1,0 +1,247 @@
+{
+  "owner": "easel",
+  "host": "pieces",
+  "description": "Physical-looking movable artifacts: tokens, counters, tiles, meeples and miniatures.",
+  "members": [
+    {
+      "name": "orientation",
+      "side": "server",
+      "version": 1,
+      "description": "Turn/flip/orient pieces under declared orientations.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/orientation.mjs",
+      "contract": "contracts/orientation.server.md",
+      "methods": [
+        "rotate(value,by=90,step=1)",
+        "flip(index,count=2)"
+      ],
+      "examples": [
+        {
+          "method": "rotate",
+          "args": [
+            0,
+            -90
+          ],
+          "expected": 270
+        },
+        {
+          "method": "flip",
+          "args": [
+            1,
+            2
+          ],
+          "expected": 0
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "stacking",
+      "side": "server",
+      "version": 1,
+      "description": "Compute visual stack order and split intent while delegating actual membership to the chosen collection primitive.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/stacking.mjs",
+      "contract": "contracts/stacking.server.md",
+      "methods": [
+        "layout(count,{dx=0.05,dy=0.05}={})",
+        "split(members,count)"
+      ],
+      "examples": [
+        {
+          "method": "split",
+          "args": [
+            [
+              "a",
+              "b",
+              "c"
+            ],
+            2
+          ],
+          "expected": {
+            "taken": [
+              "a",
+              "b"
+            ],
+            "remaining": [
+              "c"
+            ]
+          }
+        },
+        {
+          "method": "split",
+          "args": [
+            [],
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "faces",
+      "side": "server",
+      "version": 1,
+      "description": "Select between predefined piece faces, when the game permits a flip.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/faces.mjs",
+      "contract": "contracts/faces.server.md",
+      "methods": [
+        "select(faces,index)",
+        "next(faces,index,allowed=true)"
+      ],
+      "examples": [
+        {
+          "method": "next",
+          "args": [
+            [
+              "front",
+              "back"
+            ],
+            0
+          ],
+          "expected": {
+            "index": 1,
+            "face": "back"
+          }
+        },
+        {
+          "method": "next",
+          "args": [
+            [
+              "a"
+            ],
+            0,
+            false
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "token",
+      "side": "client",
+      "version": 1,
+      "description": "Image/color/shape token with badges and select/move events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/token.mjs",
+      "contract": "interfaces/token.json",
+      "renderer": "piece",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/token.client.md",
+      "events": [
+        "close",
+        "select",
+        "drag"
+      ]
+    },
+    {
+      "name": "meeple",
+      "side": "client",
+      "version": 1,
+      "description": "Meeple representation with owner color, rotation and size.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/meeple.mjs",
+      "contract": "interfaces/meeple.json",
+      "renderer": "meeple",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/meeple.client.md",
+      "events": [
+        "close",
+        "select"
+      ]
+    },
+    {
+      "name": "miniature",
+      "side": "client",
+      "version": 1,
+      "description": "Miniature/sprite view with facing, base, elevation and status overlays.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/miniature.mjs",
+      "contract": "interfaces/miniature.json",
+      "renderer": "piece",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/miniature.client.md",
+      "events": [
+        "close",
+        "select",
+        "drag"
+      ]
+    },
+    {
+      "name": "tile",
+      "side": "client",
+      "version": 1,
+      "description": "One- or multi-face tile with edge/connector metadata supplied by the caller.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/tile.mjs",
+      "contract": "interfaces/tile.json",
+      "renderer": "tile",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/tile.client.md",
+      "events": [
+        "close",
+        "request",
+        "drag"
+      ]
+    },
+    {
+      "name": "stack",
+      "side": "client",
+      "version": 1,
+      "description": "Overlapping piece pile with count and split/take request events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/stack.mjs",
+      "contract": "interfaces/stack.json",
+      "renderer": "stack",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/stack.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    }
+  ]
+}

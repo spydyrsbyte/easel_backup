@@ -1,0 +1,95 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "d20",
+  "name": "d20",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "abilities@1",
+        "file": "server/abilities.mjs"
+      },
+      {
+        "name": "check@1",
+        "file": "server/check.mjs"
+      },
+      {
+        "name": "defense@1",
+        "file": "server/defense.mjs"
+      },
+      {
+        "name": "health@1",
+        "file": "server/health.mjs"
+      },
+      {
+        "name": "spellbook@1",
+        "file": "server/spellbook.mjs"
+      },
+      {
+        "name": "size@1",
+        "file": "server/size.mjs"
+      },
+      {
+        "name": "damagetypes@1",
+        "file": "server/damagetypes.mjs"
+      },
+      {
+        "name": "grid@1",
+        "file": "server/grid.mjs"
+      },
+      {
+        "name": "currency@1",
+        "file": "server/currency.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "abilityblock@1",
+        "file": "interfaces/abilityblock.json",
+        "http-entry": "client/abilityblock.mjs"
+      },
+      {
+        "name": "defensebanner@1",
+        "file": "interfaces/defensebanner.json",
+        "http-entry": "client/defensebanner.mjs"
+      },
+      {
+        "name": "vitality@1",
+        "file": "interfaces/vitality.json",
+        "http-entry": "client/vitality.mjs"
+      },
+      {
+        "name": "spellbook@1",
+        "file": "interfaces/spellbook.json",
+        "http-entry": "client/spellbook.mjs"
+      },
+      {
+        "name": "attackcard@1",
+        "file": "interfaces/attackcard.json",
+        "http-entry": "client/attackcard.mjs"
+      },
+      {
+        "name": "rolldialog@1",
+        "file": "interfaces/rolldialog.json",
+        "http-entry": "client/rolldialog.mjs"
+      },
+      {
+        "name": "equipmentslots@1",
+        "file": "interfaces/equipmentslots.json",
+        "http-entry": "client/equipmentslots.mjs"
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

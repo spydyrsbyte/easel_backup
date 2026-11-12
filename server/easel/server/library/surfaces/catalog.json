@@ -1,0 +1,276 @@
+{
+  "owner": "easel",
+  "host": "surfaces",
+  "description": "Generic tabletop surfaces, coordinate systems and camera controls; separate from the existing Chess/Checkers board package.",
+  "members": [
+    {
+      "name": "geometry",
+      "side": "server",
+      "version": 1,
+      "description": "Coordinate transforms and bounds checks for freeform, square and hexagonal spaces.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/geometry.mjs",
+      "contract": "contracts/geometry.server.md",
+      "methods": [
+        "toWorld(value,camera={})",
+        "toScreen(value,camera={})",
+        "contains(value,bounds)",
+        "snap(value,size=1,kind=\"square\")"
+      ],
+      "examples": [
+        {
+          "method": "toWorld",
+          "args": [
+            {
+              "x": 10,
+              "y": 20
+            },
+            {
+              "x": 2,
+              "y": 4,
+              "zoom": 2
+            }
+          ],
+          "expected": {
+            "x": 4,
+            "y": 8
+          }
+        },
+        {
+          "method": "snap",
+          "args": [
+            {
+              "x": 1,
+              "y": 1
+            },
+            0
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "position",
+      "side": "server",
+      "version": 1,
+      "description": "Query/update supported object positions using a consumer-chosen persistence model.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/position.mjs",
+      "contract": "contracts/position.server.md",
+      "methods": [
+        "get(values,id)",
+        "update(values,id,position,allowed)"
+      ],
+      "examples": [
+        {
+          "method": "get",
+          "args": [
+            [
+              {
+                "id": "a",
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "a"
+          ],
+          "expected": {
+            "x": 1,
+            "y": 2,
+            "rotation": 0
+          }
+        },
+        {
+          "method": "update",
+          "args": [
+            [
+              {
+                "id": "a",
+                "x": 1,
+                "y": 2
+              }
+            ],
+            "a",
+            {
+              "x": 0,
+              "y": 0
+            },
+            []
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "distance",
+      "side": "server",
+      "version": 1,
+      "description": "Measure distances and neighborhood relations under selectable geometry.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/distance.mjs",
+      "contract": "contracts/distance.server.md",
+      "methods": [
+        "measure(a,b,kind=\"euclidean\")",
+        "neighbors(pointValue,kind=\"square\")"
+      ],
+      "examples": [
+        {
+          "method": "measure",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 3,
+              "y": 4
+            }
+          ],
+          "expected": 5
+        },
+        {
+          "method": "measure",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 3,
+              "y": 4
+            },
+            "bad"
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "table",
+      "side": "client",
+      "version": 1,
+      "description": "Pan/zoom/rotate a freeform tabletop with scene/object/overlay slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/table.mjs",
+      "contract": "interfaces/table.json",
+      "renderer": "surface",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/table.client.md",
+      "events": [
+        "close",
+        "cameraChanged"
+      ]
+    },
+    {
+      "name": "squaregrid",
+      "side": "client",
+      "version": 1,
+      "description": "Draw and interact with square cells and optional coordinate labels.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/squaregrid.mjs",
+      "contract": "interfaces/squaregrid.json",
+      "renderer": "squaregrid",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/squaregrid.client.md",
+      "events": [
+        "close",
+        "position"
+      ]
+    },
+    {
+      "name": "hexgrid",
+      "side": "client",
+      "version": 1,
+      "description": "Draw and interact with pointy/flat hex cells and optional labels.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/hexgrid.mjs",
+      "contract": "interfaces/hexgrid.json",
+      "renderer": "hexgrid",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/hexgrid.client.md",
+      "events": [
+        "close",
+        "position"
+      ]
+    },
+    {
+      "name": "camera",
+      "side": "client",
+      "version": 1,
+      "description": "Reusable camera pan/zoom/rotation/focus controls with change events.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/camera.mjs",
+      "contract": "interfaces/camera.json",
+      "renderer": "camera",
+      "checks": [
+        "scripts/test-kit-browser.mjs",
+        "TestTabletopMagicBrowser"
+      ],
+      "usedBy": [
+        "easel.mtgtable.game"
+      ],
+      "documentation": "contracts/camera.client.md",
+      "events": [
+        "close",
+        "select",
+        "rotate",
+        "zoom",
+        "view"
+      ]
+    },
+    {
+      "name": "placement",
+      "side": "client",
+      "version": 1,
+      "description": "Preview a proposed placement and emit a requested position.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/placement.mjs",
+      "contract": "interfaces/placement.json",
+      "renderer": "placement",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/placement.client.md",
+      "events": [
+        "close",
+        "position"
+      ]
+    }
+  ]
+}

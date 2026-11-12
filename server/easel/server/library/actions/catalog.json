@@ -1,0 +1,236 @@
+{
+  "owner": "easel",
+  "host": "actions",
+  "description": "Candidate actions and decision presentation; no universal game action executor.",
+  "members": [
+    {
+      "name": "availability",
+      "side": "server",
+      "version": 1,
+      "description": "Evaluate caller-defined action availability from a provided context.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/availability.mjs",
+      "contract": "contracts/availability.server.md",
+      "methods": [
+        "evaluate(actions,context={})"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            [
+              {
+                "id": "buy"
+              }
+            ],
+            {}
+          ],
+          "expected": [
+            {
+              "id": "buy",
+              "available": true,
+              "reasons": []
+            }
+          ]
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            [
+              {
+                "id": ""
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "choice",
+      "side": "server",
+      "version": 1,
+      "description": "Represent enumerated options, prerequisites and selection constraints.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/choice.mjs",
+      "contract": "contracts/choice.server.md",
+      "methods": [
+        "validate(options,selected,{min=0,max=1}={})"
+      ],
+      "examples": [
+        {
+          "method": "validate",
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            [
+              "b"
+            ]
+          ],
+          "expected": [
+            "b"
+          ]
+        },
+        {
+          "method": "validate",
+          "args": [
+            [
+              "a"
+            ],
+            [
+              "b"
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "targeting",
+      "side": "server",
+      "version": 1,
+      "description": "Validate requested target shapes against caller-supplied allowed targets.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/targeting.mjs",
+      "contract": "contracts/targeting.server.md",
+      "methods": [
+        "validate(targets,allowed,{min=1,max=1}={})"
+      ],
+      "examples": [
+        {
+          "method": "validate",
+          "args": [
+            [
+              "a"
+            ],
+            [
+              "a"
+            ]
+          ],
+          "expected": [
+            "a"
+          ]
+        },
+        {
+          "method": "validate",
+          "args": [
+            [
+              "secret"
+            ],
+            [
+              "a"
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "menu",
+      "side": "client",
+      "version": 1,
+      "description": "Show possible actions and emit selected action IDs.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/menu.mjs",
+      "contract": "interfaces/menu.json",
+      "renderer": "menu",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/menu.client.md",
+      "events": [
+        "close",
+        "action"
+      ]
+    },
+    {
+      "name": "chooser",
+      "side": "client",
+      "version": 1,
+      "description": "Choose one/many supplied options with descriptive content slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/chooser.mjs",
+      "contract": "interfaces/chooser.json",
+      "renderer": "selection",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/chooser.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "targetselector",
+      "side": "client",
+      "version": 1,
+      "description": "Select eligible visible targets and report the request.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/targetselector.mjs",
+      "contract": "interfaces/targetselector.json",
+      "renderer": "selection",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/targetselector.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "actionbar",
+      "side": "client",
+      "version": 1,
+      "description": "Contextual buttons for currently available actions.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/actionbar.mjs",
+      "contract": "interfaces/actionbar.json",
+      "renderer": "actionbar",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/actionbar.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    }
+  ]
+}

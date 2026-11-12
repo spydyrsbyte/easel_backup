@@ -1,0 +1,42 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Attack"
+    },
+    "attackData": {
+      "type": "Object",
+      "default": {}
+    },
+    "isGM": {
+      "type": "Boolean",
+      "default": false
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "applyDamage": {
+      "payload": {
+        "multiplier": "Number"
+      }
+    },
+    "rollSave": {
+      "payload": {
+        "dc": "Number",
+        "type": "String"
+      }
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

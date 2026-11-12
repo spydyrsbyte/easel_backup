@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "owner": "easel",
+  "libraries": [
+    {
+      "host": "layout",
+      "package": "easel.layout.layout",
+      "manifest": "layout/manifest.json",
+      "catalog": "layout/catalog.json",
+      "members": 9
+    },
+    {
+      "host": "input",
+      "package": "easel.input.input",
+      "manifest": "input/manifest.json",
+      "catalog": "input/catalog.json",
+      "members": 7
+    },
+    {
+      "host": "display",
+      "package": "easel.display.display",
+      "manifest": "display/manifest.json",
+      "catalog": "display/catalog.json",
+      "members": 6
+    },
+    {
+      "host": "objects",
+      "package": "easel.objects.objects",
+      "manifest": "objects/manifest.json",
+      "catalog": "objects/catalog.json",
+      "members": 6
+    },
+    {
+      "host": "collections",
+      "package": "easel.collections.collections",
+      "manifest": "collections/manifest.json",
+      "catalog": "collections/catalog.json",
+      "members": 10
+    },
+    {
+      "host": "visibility",
+      "package": "easel.visibility.visibility",
+      "manifest": "visibility/manifest.json",
+      "catalog": "visibility/catalog.json",
+      "members": 5
+    },
+    {
+      "host": "surfaces",
+      "package": "easel.surfaces.surfaces",
+      "manifest": "surfaces/manifest.json",
+      "catalog": "surfaces/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "zones",
+      "package": "easel.zones.zones",
+      "manifest": "zones/manifest.json",
+      "catalog": "zones/catalog.json",
+      "members": 6
+    },
+    {
+      "host": "pieces",
+      "package": "easel.pieces.pieces",
+      "manifest": "pieces/manifest.json",
+      "catalog": "pieces/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "cards",
+      "package": "easel.cards.cards",
+      "manifest": "cards/manifest.json",
+      "catalog": "cards/catalog.json",
+      "members": 10
+    },
+    {
+      "host": "dice",
+      "package": "easel.dice.dice",
+      "manifest": "dice/manifest.json",
+      "catalog": "dice/catalog.json",
+      "members": 11
+    },
+    {
+      "host": "tracks",
+      "package": "easel.tracks.tracks",
+      "manifest": "tracks/manifest.json",
+      "catalog": "tracks/catalog.json",
+      "members": 9
+    },
+    {
+      "host": "maps",
+      "package": "easel.maps.maps",
+      "manifest": "maps/manifest.json",
+      "catalog": "maps/catalog.json",
+      "members": 12
+    },
+    {
+      "host": "territory",
+      "package": "easel.territory.territory",
+      "manifest": "territory/manifest.json",
+      "catalog": "territory/catalog.json",
+      "members": 5
+    },
+    {
+      "host": "networks",
+      "package": "easel.networks.networks",
+      "manifest": "networks/manifest.json",
+      "catalog": "networks/catalog.json",
+      "members": 6
+    },
+    {
+      "host": "resources",
+      "package": "easel.resources.resources",
+      "manifest": "resources/manifest.json",
+      "catalog": "resources/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "turns",
+      "package": "easel.turns.turns",
+      "manifest": "turns/manifest.json",
+      "catalog": "turns/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "actions",
+      "package": "easel.actions.actions",
+      "manifest": "actions/manifest.json",
+      "catalog": "actions/catalog.json",
+      "members": 7
+    },
+    {
+      "host": "rules",
+      "package": "easel.rules.rules",
+      "manifest": "rules/manifest.json",
+      "catalog": "rules/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "effects",
+      "package": "easel.effects.effects",
+      "manifest": "effects/manifest.json",
+      "catalog": "effects/catalog.json",
+      "members": 6
+    },
+    {
+      "host": "tables",
+      "package": "easel.tables.tables",
+      "manifest": "tables/manifest.json",
+      "catalog": "tables/catalog.json",
+      "members": 6
+    },
+    {
+      "host": "workflow",
+      "package": "easel.workflow.workflow",
+      "manifest": "workflow/manifest.json",
+      "catalog": "workflow/catalog.json",
+      "members": 7
+    },
+    {
+      "host": "characters",
+      "package": "easel.characters.characters",
+      "manifest": "characters/manifest.json",
+      "catalog": "characters/catalog.json",
+      "members": 9
+    },
+    {
+      "host": "inventory",
+      "package": "easel.inventory.inventory",
+      "manifest": "inventory/manifest.json",
+      "catalog": "inventory/catalog.json",
+      "members": 7
+    },
+    {
+      "host": "combat",
+      "package": "easel.combat.combat",
+      "manifest": "combat/manifest.json",
+      "catalog": "combat/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "narrative",
+      "package": "easel.narrative.narrative",
+      "manifest": "narrative/manifest.json",
+      "catalog": "narrative/catalog.json",
+      "members": 9
+    },
+    {
+      "host": "economy",
+      "package": "easel.economy.economy",
+      "manifest": "economy/manifest.json",
+      "catalog": "economy/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "progression",
+      "package": "easel.progression.progression",
+      "manifest": "progression/manifest.json",
+      "catalog": "progression/catalog.json",
+      "members": 8
+    },
+    {
+      "host": "d20",
+      "package": "easel.d20.d20",
+      "manifest": "d20/manifest.json",
+      "catalog": "d20/catalog.json",
+      "members": 16
+    }
+  ]
+}

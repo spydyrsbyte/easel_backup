@@ -1,0 +1,58 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "combat",
+  "name": "combat",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "initiative@1",
+        "file": "server/initiative.mjs"
+      },
+      {
+        "name": "attack@1",
+        "file": "server/attack.mjs"
+      },
+      {
+        "name": "damage@1",
+        "file": "server/damage.mjs"
+      },
+      {
+        "name": "range@1",
+        "file": "server/range.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "encounter@1",
+        "file": "interfaces/encounter.json",
+        "http-entry": "client/encounter.mjs"
+      },
+      {
+        "name": "initiative@1",
+        "file": "interfaces/initiative.json",
+        "http-entry": "client/initiative.mjs"
+      },
+      {
+        "name": "target@1",
+        "file": "interfaces/target.json",
+        "http-entry": "client/target.mjs"
+      },
+      {
+        "name": "damage@1",
+        "file": "interfaces/damage.json",
+        "http-entry": "client/damage.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

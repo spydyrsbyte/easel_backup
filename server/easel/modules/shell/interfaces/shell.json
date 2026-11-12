@@ -1,0 +1,19 @@
+{
+  "kind": "component",
+  "properties": {
+    "signedIn": { "type": "Boolean", "default": false },
+    "user": { "type": "String", "default": "" },
+    "admin": { "type": "Boolean", "default": false },
+    "games": { "type": "Array", "default": [] },
+    "activeGame": { "type": "String", "default": "" },
+    "view": { "type": "String", "default": "tables" }
+  },
+  "events": {
+    "navigate": { "payload": { "view": "String" } },
+    "join": { "payload": { "game": "String" } }
+  },
+  "slots": {
+    "header": {},
+    "content": {}
+  }
+}

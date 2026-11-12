@@ -1,0 +1,67 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "theme": {
+      "type": "String",
+      "default": "standard"
+    },
+    "material": {
+      "type": "String",
+      "default": "plastic"
+    },
+    "colors": {
+      "type": "Object",
+      "default": {}
+    },
+    "sound": {
+      "type": "Boolean",
+      "default": true
+    },
+    "volume": {
+      "type": "Number",
+      "default": 0.8
+    },
+    "surface": {
+      "type": "String",
+      "default": "felt"
+    },
+    "quality": {
+      "type": "String",
+      "default": "high"
+    },
+    "speed": {
+      "type": "Number",
+      "default": 1
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "change": {
+      "payload": {
+        "settings": "Object"
+      }
+    },
+    "testRoll": {
+      "payload": {
+        "notation": "String"
+      }
+    }
+  },
+  "slots": {
+    "preview": {}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "component",
+  "properties": {
+    "text": {
+      "type": "String",
+      "default": "Roll a d20"
+    },
+    "enabled": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "pressed": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

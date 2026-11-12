@@ -1,0 +1,541 @@
+{
+  "owner": "easel",
+  "host": "characters",
+  "description": "Character presentation and stat-related utilities; no prescribed GURPS/BitD schema.",
+  "members": [
+    {
+      "name": "attributes",
+      "side": "server",
+      "version": 1,
+      "description": "Read/evaluate typed primary or derived attribute descriptors.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/attributes.mjs",
+      "contract": "contracts/attributes.server.md",
+      "methods": [
+        "describe(values,definitions)",
+        "update(values,id,value,definition)"
+      ],
+      "examples": [
+        {
+          "method": "update",
+          "args": [
+            {
+              "str": 3
+            },
+            "str",
+            4,
+            {
+              "id": "str",
+              "max": 5
+            }
+          ],
+          "expected": {
+            "str": 4
+          }
+        },
+        {
+          "method": "update",
+          "args": [
+            {},
+            "str",
+            9,
+            {
+              "id": "str",
+              "max": 5
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "skills",
+      "side": "server",
+      "version": 1,
+      "description": "Evaluate skill ranks/ratings and their contributing modifiers.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/skills.mjs",
+      "contract": "contracts/skills.server.md",
+      "methods": [
+        "evaluate(skill,attributes={})"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "id": "s",
+              "rank": 2,
+              "attribute": "dex",
+              "modifiers": [
+                1
+              ]
+            },
+            {
+              "dex": 3
+            }
+          ],
+          "expected": {
+            "id": "s",
+            "rank": 2,
+            "base": 3,
+            "modifiers": [
+              1
+            ],
+            "total": 6
+          }
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "id": "s",
+              "rank": "two"
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "traits",
+      "side": "server",
+      "version": 1,
+      "description": "Enumerate and query traits, tags and qualities.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/traits.mjs",
+      "contract": "contracts/traits.server.md",
+      "methods": [
+        "query(traits,{tags=[],all=true}={})",
+        "has(traits,id)"
+      ],
+      "examples": [
+        {
+          "method": "query",
+          "args": [
+            [
+              {
+                "id": "a",
+                "tags": [
+                  "fire"
+                ]
+              }
+            ],
+            {
+              "tags": [
+                "fire"
+              ]
+            }
+          ],
+          "expected": [
+            {
+              "id": "a",
+              "tags": [
+                "fire"
+              ]
+            }
+          ]
+        },
+        {
+          "method": "has",
+          "args": [
+            [],
+            "x"
+          ],
+          "expected": false
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "derived",
+      "side": "server",
+      "version": 1,
+      "description": "Compute derived values from explicitly supplied inputs/dependency rules.",
+      "status": "tested",
+      "dependencies": [
+        "easel.rules.formula@1",
+        "easel.effects.stacking@1"
+      ],
+      "entry": "server/derived.mjs",
+      "contract": "contracts/derived.server.md",
+      "methods": [
+        "evaluate(inputs,definitions)",
+        "evaluateWithBreakdown(inputs,definitions,modifiers={})"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "a": 2,
+              "b": 3
+            },
+            [
+              {
+                "id": "c",
+                "inputs": [
+                  "a",
+                  "b"
+                ],
+                "op": "sum"
+              }
+            ]
+          ],
+          "expected": {
+            "a": 2,
+            "b": 3,
+            "c": 5
+          }
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            {},
+            [
+              {
+                "id": "c",
+                "inputs": [
+                  "c"
+                ],
+                "op": "sum"
+              }
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "method": "evaluateWithBreakdown",
+          "args": [
+            {
+              "score": 15
+            },
+            [
+              {
+                "id": "shifted",
+                "inputs": [
+                  "score"
+                ],
+                "op": "sum",
+                "offset": -10
+              },
+              {
+                "id": "mod",
+                "inputs": [
+                  "shifted"
+                ],
+                "op": "floor",
+                "factor": 0.5
+              }
+            ],
+            {
+              "mod": [
+                {
+                  "id": "buff",
+                  "op": "add",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "expected": {
+            "values": {
+              "score": 15,
+              "shifted": 5,
+              "mod": 3
+            },
+            "breakdowns": {
+              "shifted": {
+                "base": 5,
+                "value": 5,
+                "applied": []
+              },
+              "mod": {
+                "base": 2,
+                "value": 3,
+                "applied": [
+                  {
+                    "id": "buff",
+                    "before": 2,
+                    "after": 3
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "a": 4,
+              "b": 6
+            },
+            [
+              {
+                "id": "capped",
+                "inputs": [
+                  "scaled"
+                ],
+                "op": "clamp",
+                "min": 0,
+                "max": 5
+              },
+              {
+                "id": "scaled",
+                "inputs": [
+                  "a",
+                  "b"
+                ],
+                "op": "scale",
+                "factors": [
+                  1.5,
+                  0.5
+                ]
+              },
+              {
+                "id": "expr",
+                "op": "formula",
+                "formula": "ceil(@scaled / 2) + @capped"
+              }
+            ]
+          ],
+          "expected": {
+            "a": 4,
+            "b": 6,
+            "scaled": 9,
+            "capped": 5,
+            "expr": 10
+          }
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "abilities": {
+                "str": {
+                  "total": 18
+                }
+              },
+              "x": 0
+            },
+            [
+              {
+                "id": "y",
+                "inputs": [
+                  "x"
+                ],
+                "op": "sum"
+              },
+              {
+                "id": "x",
+                "op": "formula",
+                "formula": "floor((@abilities.str.total - 10) / 2)"
+              }
+            ]
+          ],
+          "expected": {
+            "abilities": {
+              "str": {
+                "total": 18
+              }
+            },
+            "x": 4,
+            "y": 4
+          }
+        },
+        {
+          "method": "evaluateWithBreakdown",
+          "args": [
+            {
+              "base": 10
+            },
+            [
+              {
+                "id": "total",
+                "inputs": [
+                  "base"
+                ],
+                "op": "sum",
+                "policies": {
+                  "enhancement": "strongest",
+                  "untyped": "stack"
+                }
+              }
+            ],
+            {
+              "total": [
+                {
+                  "id": "m1",
+                  "key": "enhancement",
+                  "value": 2
+                },
+                {
+                  "id": "m2",
+                  "key": "enhancement",
+                  "value": 4
+                },
+                {
+                  "id": "m3",
+                  "key": "untyped",
+                  "value": 1
+                }
+              ]
+            }
+          ],
+          "expected": {
+            "values": {
+              "base": 10,
+              "total": 15
+            },
+            "breakdowns": {
+              "total": {
+                "base": 10,
+                "value": 15,
+                "applied": [
+                  {
+                    "id": "m2",
+                    "before": 10,
+                    "after": 14
+                  },
+                  {
+                    "id": "m3",
+                    "before": 14,
+                    "after": 15
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "sheet",
+      "side": "client",
+      "version": 1,
+      "description": "Configurable character-sheet layout, supplied fields and actions.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/sheet.mjs",
+      "contract": "interfaces/sheet.json",
+      "renderer": "form",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/sheet.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "attribute",
+      "side": "client",
+      "version": 1,
+      "description": "Labeled attribute value/editor widget.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/attribute.mjs",
+      "contract": "interfaces/attribute.json",
+      "renderer": "counter",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/attribute.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "skilllist",
+      "side": "client",
+      "version": 1,
+      "description": "List skills/ratings and optional modifiers.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/skilllist.mjs",
+      "contract": "interfaces/skilllist.json",
+      "renderer": "table",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/skilllist.client.md",
+      "events": [
+        "close",
+        "select",
+        "change"
+      ]
+    },
+    {
+      "name": "traitlist",
+      "side": "client",
+      "version": 1,
+      "description": "Display tags, traits and descriptors.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/traitlist.mjs",
+      "contract": "interfaces/traitlist.json",
+      "renderer": "list",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/traitlist.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "playbook",
+      "side": "client",
+      "version": 1,
+      "description": "Configurable narrative-style character/playbook layout; no game-specific moves.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/playbook.mjs",
+      "contract": "interfaces/playbook.json",
+      "renderer": "form",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/playbook.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    }
+  ]
+}

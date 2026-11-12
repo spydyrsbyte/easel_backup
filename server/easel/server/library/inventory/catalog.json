@@ -1,0 +1,248 @@
+{
+  "owner": "easel",
+  "host": "inventory",
+  "description": "Item organization and equipment displays; actual membership may use Collections.",
+  "members": [
+    {
+      "name": "capacity",
+      "side": "server",
+      "version": 1,
+      "description": "Calculate weight, volume or slot usage under supplied rules.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/capacity.mjs",
+      "contract": "contracts/capacity.server.md",
+      "methods": [
+        "usage(items,{weight=Number.MAX_SAFE_INTEGER,volume=Number.MAX_SAFE_INTEGER,slots=Number.MAX_SAFE_INTEGER}={})"
+      ],
+      "examples": [
+        {
+          "method": "usage",
+          "args": [
+            [
+              {
+                "weight": 2,
+                "quantity": 3
+              }
+            ]
+          ],
+          "expected": {
+            "used": {
+              "weight": 6,
+              "volume": 0,
+              "slots": 3
+            },
+            "overloaded": false
+          }
+        },
+        {
+          "method": "usage",
+          "args": [
+            [
+              {
+                "weight": -1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "equipment",
+      "side": "server",
+      "version": 1,
+      "description": "Represent occupied equipment slots and equipment conflicts.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/equipment.mjs",
+      "contract": "contracts/equipment.server.md",
+      "methods": [
+        "equip(equipment,item,slots)",
+        "unequip(equipment,id)"
+      ],
+      "examples": [
+        {
+          "method": "equip",
+          "args": [
+            {},
+            {
+              "id": "sword"
+            },
+            [
+              "hand"
+            ]
+          ],
+          "expected": {
+            "hand": "sword"
+          }
+        },
+        {
+          "method": "equip",
+          "args": [
+            {
+              "hand": "axe"
+            },
+            {
+              "id": "sword"
+            },
+            [
+              "hand"
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "container",
+      "side": "server",
+      "version": 1,
+      "description": "Represent nested holding places through collection references.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/container.mjs",
+      "contract": "contracts/container.server.md",
+      "methods": [
+        "validate(containers)",
+        "contents(containers,id,{recursive=false}={})"
+      ],
+      "examples": [
+        {
+          "method": "contents",
+          "args": [
+            {
+              "bag": [
+                "box"
+              ],
+              "box": [
+                "a"
+              ]
+            },
+            "bag",
+            {
+              "recursive": true
+            }
+          ],
+          "expected": [
+            "box",
+            "a"
+          ]
+        },
+        {
+          "method": "validate",
+          "args": [
+            {
+              "a": [
+                "b"
+              ],
+              "b": [
+                "a"
+              ]
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "inventory",
+      "side": "client",
+      "version": 1,
+      "description": "Grid/list of item views with move/equip request events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/inventory.mjs",
+      "contract": "interfaces/inventory.json",
+      "renderer": "inventory",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/inventory.client.md",
+      "events": [
+        "close",
+        "request",
+        "drag",
+        "drop"
+      ]
+    },
+    {
+      "name": "equipment",
+      "side": "client",
+      "version": 1,
+      "description": "Equipment slot display with equip/unequip requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/equipment.mjs",
+      "contract": "interfaces/equipment.json",
+      "renderer": "equipment",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/equipment.client.md",
+      "events": [
+        "close",
+        "request",
+        "drop"
+      ]
+    },
+    {
+      "name": "container",
+      "side": "client",
+      "version": 1,
+      "description": "Expandable nested items view.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/container.mjs",
+      "contract": "interfaces/container.json",
+      "renderer": "container",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/container.client.md",
+      "events": [
+        "close",
+        "drop"
+      ]
+    },
+    {
+      "name": "item",
+      "side": "client",
+      "version": 1,
+      "description": "Item summary with quantity, tags and actions.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/item.mjs",
+      "contract": "interfaces/item.json",
+      "renderer": "entry",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/item.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    }
+  ]
+}

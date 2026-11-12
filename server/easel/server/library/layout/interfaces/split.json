@@ -1,0 +1,35 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "ratio": {
+      "type": "Number",
+      "default": 0.5
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "ratio": {
+      "payload": {
+        "ratio": "Number"
+      }
+    }
+  },
+  "slots": {
+    "first": {},
+    "second": {}
+  }
+}

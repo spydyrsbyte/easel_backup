@@ -1,0 +1,59 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Vitality"
+    },
+    "hp": {
+      "type": "Number",
+      "default": 10
+    },
+    "maxHp": {
+      "type": "Number",
+      "default": 10
+    },
+    "tempHp": {
+      "type": "Number",
+      "default": 0
+    },
+    "nonlethal": {
+      "type": "Number",
+      "default": 0
+    },
+    "status": {
+      "type": "String",
+      "default": "healthy"
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "applyDamage": {
+      "payload": {
+        "amount": "Number",
+        "isNonlethal": "Boolean"
+      }
+    },
+    "applyHealing": {
+      "payload": {
+        "amount": "Number"
+      }
+    },
+    "updateTempHp": {
+      "payload": {
+        "amount": "Number"
+      }
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

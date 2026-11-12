@@ -1,0 +1,196 @@
+{
+  "owner": "easel",
+  "host": "zones",
+  "description": "Spatial or logical regions used as drop targets, attachment points or group boundaries.",
+  "members": [
+    {
+      "name": "zone",
+      "side": "server",
+      "version": 1,
+      "description": "Describe region capacity, labels and acceptable member categories without defining game-specific legality.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/zone.mjs",
+      "contract": "contracts/zone.server.md",
+      "methods": [
+        "validate(zone)",
+        "accepts(zone,member,members=[])"
+      ],
+      "examples": [
+        {
+          "method": "accepts",
+          "args": [
+            {
+              "id": "a",
+              "capacity": 1,
+              "accepts": [
+                "card"
+              ]
+            },
+            {
+              "kind": "card"
+            },
+            []
+          ],
+          "expected": true
+        },
+        {
+          "method": "accepts",
+          "args": [
+            {
+              "id": "a",
+              "capacity": 0
+            },
+            {
+              "kind": "card"
+            },
+            []
+          ],
+          "expected": false
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "slots",
+      "side": "server",
+      "version": 1,
+      "description": "Compute slot layouts and positions for a region.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/slots.mjs",
+      "contract": "contracts/slots.server.md",
+      "methods": [
+        "layout(count,{columns=5,width=1,height=1,gap=0,x=0,y=0}={})"
+      ],
+      "examples": [
+        {
+          "method": "layout",
+          "args": [
+            2,
+            {
+              "columns": 2,
+              "width": 2,
+              "height": 3
+            }
+          ],
+          "expected": [
+            {
+              "index": 0,
+              "x": 0,
+              "y": 0,
+              "width": 2,
+              "height": 3
+            },
+            {
+              "index": 1,
+              "x": 2,
+              "y": 0,
+              "width": 2,
+              "height": 3
+            }
+          ]
+        },
+        {
+          "method": "layout",
+          "args": [
+            1,
+            {
+              "columns": 0
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "region",
+      "side": "client",
+      "version": 1,
+      "description": "Draw a labeled game region using supplied geometry.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/region.mjs",
+      "contract": "interfaces/region.json",
+      "renderer": "region",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/region.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "dropzone",
+      "side": "client",
+      "version": 1,
+      "description": "Drop target with allowed/denied/hover presentation and request events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/dropzone.mjs",
+      "contract": "interfaces/dropzone.json",
+      "renderer": "dropzone",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/dropzone.client.md",
+      "events": [
+        "close",
+        "drop"
+      ]
+    },
+    {
+      "name": "slots",
+      "side": "client",
+      "version": 1,
+      "description": "Arrange supplied member views in configured spatial slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/slots.mjs",
+      "contract": "interfaces/slots.json",
+      "renderer": "slots",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/slots.client.md",
+      "events": [
+        "close",
+        "drop"
+      ]
+    },
+    {
+      "name": "highlight",
+      "side": "client",
+      "version": 1,
+      "description": "Draw temporary active/eligible/selected region highlight.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/highlight.mjs",
+      "contract": "interfaces/highlight.json",
+      "renderer": "region",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/highlight.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

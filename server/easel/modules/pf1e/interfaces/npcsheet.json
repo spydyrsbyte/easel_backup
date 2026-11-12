@@ -1,0 +1,186 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "NPC Sheet"
+    },
+    "mode": {
+      "type": "String",
+      "default": "lite"
+    },
+    "recordType": {
+      "type": "String",
+      "default": "NPC"
+    },
+    "actor": {
+      "type": "Object",
+      "default": {}
+    },
+    "derived": {
+      "type": "Object",
+      "default": {}
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    },
+    "classes": {
+      "type": "Array",
+      "default": []
+    },
+    "features": {
+      "type": "Array",
+      "default": []
+    },
+    "spellbooks": {
+      "type": "Array",
+      "default": []
+    },
+    "spells": {
+      "type": "Array",
+      "default": []
+    },
+    "buffs": {
+      "type": "Array",
+      "default": []
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "race": {
+      "type": "Object",
+      "default": {}
+    },
+    "isGM": {
+      "type": "Boolean",
+      "default": false
+    },
+    "activeTab": {
+      "type": "String",
+      "default": "summary"
+    },
+    "targetActorId": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "canControl": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "modeChange": {
+      "payload": {
+        "mode": "String"
+      }
+    },
+    "rollAbility": {
+      "payload": {
+        "ability": "String",
+        "score": "Number",
+        "modifier": "Number"
+      }
+    },
+    "rollSave": {
+      "payload": {
+        "save": "String",
+        "modifier": "Number"
+      }
+    },
+    "rollSkill": {
+      "payload": {
+        "skillId": "String",
+        "ability": "String",
+        "modifier": "Number",
+        "take": "Number"
+      }
+    },
+    "rollInitiative": {
+      "payload": {
+        "actorId": "String"
+      }
+    },
+    "useAction": {
+      "payload": {
+        "actionId": "String",
+        "mode": "String"
+      }
+    },
+    "castSpell": {
+      "payload": {
+        "spellId": "String",
+        "level": "Number"
+      }
+    },
+    "applyDamage": {
+      "payload": {
+        "amount": "Number",
+        "isNonlethal": "Boolean"
+      }
+    },
+    "applyHealing": {
+      "payload": {
+        "amount": "Number"
+      }
+    },
+    "transferItem": {
+      "payload": {
+        "itemId": "String",
+        "targetActorId": "String",
+        "targetContainerId": "String"
+      }
+    },
+    "transferCoin": {
+      "payload": {
+        "currency": "Object",
+        "targetActorId": "String"
+      }
+    },
+    "importStatblock": {
+      "payload": {
+        "statblockText": "String"
+      }
+    },
+    "editRecord": {
+      "payload": {
+        "recordType": "String",
+        "recordId": "String"
+      }
+    },
+    "triggerTrap": {
+      "payload": {
+        "trapId": "String"
+      }
+    },
+    "resetTrap": {
+      "payload": {
+        "trapId": "String"
+      }
+    },
+    "triggerHaunt": {
+      "payload": {
+        "hauntId": "String"
+      }
+    }
+  },
+  "slots": {
+    "fullSheet": {},
+    "liteVitality": {},
+    "liteDefenses": {},
+    "lootInventory": {},
+    "statblockModal": {}
+  }
+}

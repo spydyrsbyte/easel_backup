@@ -1,0 +1,50 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "zones",
+  "name": "zones",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "zone@1",
+        "file": "server/zone.mjs"
+      },
+      {
+        "name": "slots@1",
+        "file": "server/slots.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "region@1",
+        "file": "interfaces/region.json",
+        "http-entry": "client/region.mjs"
+      },
+      {
+        "name": "dropzone@1",
+        "file": "interfaces/dropzone.json",
+        "http-entry": "client/dropzone.mjs"
+      },
+      {
+        "name": "slots@1",
+        "file": "interfaces/slots.json",
+        "http-entry": "client/slots.mjs"
+      },
+      {
+        "name": "highlight@1",
+        "file": "interfaces/highlight.json",
+        "http-entry": "client/highlight.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

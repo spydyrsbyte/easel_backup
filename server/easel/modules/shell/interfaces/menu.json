@@ -1,0 +1,29 @@
+{
+  "kind": "component",
+  "properties": {
+    "label": {
+      "type": "String",
+      "default": "Game"
+    },
+    "visible": {
+      "type": "Boolean",
+      "default": true
+    },
+    "enabled": {
+      "type": "Boolean",
+      "default": true
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    }
+  },
+  "events": {
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "data": {
+      "type": "Object",
+      "default": {}
+    },
+    "now": {
+      "type": "Number",
+      "default": -1
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "request": {
+      "payload": {
+        "action": "String",
+        "value": "Object"
+      }
+    }
+  },
+  "slots": {}
+}

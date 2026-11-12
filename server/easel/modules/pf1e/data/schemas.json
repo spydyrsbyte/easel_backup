@@ -1,0 +1,2430 @@
+[
+  {
+    ".name": "Actor",
+    "size": {
+      ".type": "string",
+      ".default": "medium",
+      ".validate": {
+        ".in": [
+          "fine",
+          "diminutive",
+          "tiny",
+          "small",
+          "medium",
+          "large",
+          "huge",
+          "gargantuan",
+          "colossal"
+        ]
+      }
+    },
+    "alignment": {
+      ".type": "string",
+      ".default": "n",
+      ".validate": {
+        ".in": [
+          "lg",
+          "ng",
+          "cg",
+          "ln",
+          "n",
+          "cn",
+          "le",
+          "ne",
+          "ce"
+        ]
+      }
+    },
+    "abilities": {
+      ".type": "field",
+      "str": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 10
+        },
+        "damage": {
+          ".type": "number",
+          ".default": 0
+        },
+        "drain": {
+          ".type": "number",
+          ".default": 0
+        },
+        "penalty": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "dex": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 10
+        },
+        "damage": {
+          ".type": "number",
+          ".default": 0
+        },
+        "drain": {
+          ".type": "number",
+          ".default": 0
+        },
+        "penalty": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "con": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 10
+        },
+        "damage": {
+          ".type": "number",
+          ".default": 0
+        },
+        "drain": {
+          ".type": "number",
+          ".default": 0
+        },
+        "penalty": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "int": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 10
+        },
+        "damage": {
+          ".type": "number",
+          ".default": 0
+        },
+        "drain": {
+          ".type": "number",
+          ".default": 0
+        },
+        "penalty": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "wis": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 10
+        },
+        "damage": {
+          ".type": "number",
+          ".default": 0
+        },
+        "drain": {
+          ".type": "number",
+          ".default": 0
+        },
+        "penalty": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "cha": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 10
+        },
+        "damage": {
+          ".type": "number",
+          ".default": 0
+        },
+        "drain": {
+          ".type": "number",
+          ".default": 0
+        },
+        "penalty": {
+          ".type": "number",
+          ".default": 0
+        }
+      }
+    },
+    "health": {
+      ".type": "field",
+      "hp": {
+        ".type": "number",
+        ".default": 10
+      },
+      "maxHp": {
+        ".type": "number",
+        ".default": 10
+      },
+      "tempHp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "nonlethal": {
+        ".type": "number",
+        ".default": 0
+      },
+      "vigor": {
+        ".type": "number",
+        ".default": 0
+      },
+      "maxVigor": {
+        ".type": "number",
+        ".default": 0
+      },
+      "wounds": {
+        ".type": "number",
+        ".default": 0
+      },
+      "maxWounds": {
+        ".type": "number",
+        ".default": 0
+      },
+      "fastHealing": {
+        ".type": "number",
+        ".default": 0
+      },
+      "regeneration": {
+        ".type": "number",
+        ".default": 0
+      }
+    },
+    "speeds": {
+      ".type": "field",
+      "land": {
+        ".type": "number",
+        ".default": 30
+      },
+      "burrow": {
+        ".type": "number",
+        ".default": 0
+      },
+      "climb": {
+        ".type": "number",
+        ".default": 0
+      },
+      "fly": {
+        ".type": "number",
+        ".default": 0
+      },
+      "flyManeuverability": {
+        ".type": "string",
+        ".default": "average",
+        ".required": false
+      },
+      "swim": {
+        ".type": "number",
+        ".default": 0
+      }
+    },
+    "senses": {
+      ".type": "field",
+      "visionPreset": {
+        ".type": "string",
+        ".default": "normal"
+      },
+      "darkvisionFeet": {
+        ".type": "number",
+        ".default": 0
+      },
+      "lowLight": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "blindsenseFeet": {
+        ".type": "number",
+        ".default": 0
+      },
+      "blindsightFeet": {
+        ".type": "number",
+        ".default": 0
+      },
+      "tremorsenseFeet": {
+        ".type": "number",
+        ".default": 0
+      },
+      "scent": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "seeInvisibility": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "trueSeeingFeet": {
+        ".type": "number",
+        ".default": 0
+      },
+      "customSenses": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    },
+    "defenses": {
+      ".type": "field",
+      "naturalAC": {
+        ".type": "number",
+        ".default": 0
+      },
+      "cmdNotes": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "srFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "drEntries": {
+        ".type": "array",
+        ".default": []
+      },
+      "energyResistances": {
+        ".type": "array",
+        ".default": []
+      },
+      "immunities": {
+        ".type": "array",
+        ".default": []
+      },
+      "vulnerabilities": {
+        ".type": "array",
+        ".default": []
+      },
+      "conditionImmunities": {
+        ".type": "array",
+        ".default": []
+      }
+    },
+    "conditions": {
+      ".type": "field",
+      "bleeding": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "blinded": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "confused": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "cowering": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "dazed": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "dazzled": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "dead": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "deafened": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "disabled": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "dying": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "energyDrained": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "entangled": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "exhausted": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "fascinated": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "fatigued": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "fear": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "frightened": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "grappled": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "helpless": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "incorporeal": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "invisible": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "nauseated": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "panicked": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "paralyzed": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "petrified": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "pinned": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "prone": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "shaken": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "sickened": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "sinking": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "stable": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "staggered": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "stunned": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "unconscious": {
+        ".type": "boolean",
+        ".default": false
+      }
+    },
+    "skills": {
+      ".type": "map",
+      ".default": {}
+    },
+    "currency": {
+      ".type": "field",
+      "pp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "gp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "sp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "cp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "bank": {
+        ".type": "field",
+        "pp": {
+          ".type": "number",
+          ".default": 0
+        },
+        "gp": {
+          ".type": "number",
+          ".default": 0
+        },
+        "sp": {
+          ".type": "number",
+          ".default": 0
+        },
+        "cp": {
+          ".type": "number",
+          ".default": 0
+        }
+      }
+    },
+    "notes": {
+      ".type": "field",
+      "biography": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "description": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "gmNotes": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "general": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    },
+    "baseAtk": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "saveFortBase": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "saveRefBase": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "saveWillBase": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "initBonus": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "settings": {
+      ".type": "map",
+      ".default": {},
+      ".required": false
+    },
+    ".extends": "easel.vtt.Actor"
+  },
+  {
+    ".name": "Character",
+    ".extends": "Actor",
+    "raceId": {
+      ".type": "*Race",
+      ".required": false
+    },
+    "xp": {
+      ".type": "number",
+      ".default": 0
+    },
+    "favoredClassIds": {
+      ".type": "array",
+      ".default": []
+    },
+    "traitsSummary": {
+      ".type": "map",
+      ".default": {},
+      ".required": false
+    },
+    "encumbranceOverride": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    }
+  },
+  {
+    ".name": "NPC",
+    ".extends": "Actor",
+    "cr": {
+      ".type": "number",
+      ".default": 1
+    },
+    "xpAward": {
+      ".type": "number",
+      ".default": 400
+    },
+    "creatureType": {
+      ".type": "string",
+      ".default": "humanoid"
+    },
+    "subtypes": {
+      ".type": "array",
+      ".default": []
+    },
+    "racialHDFormula": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "environment": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "organization": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "treasure": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "sheetMode": {
+      ".type": "string",
+      ".default": "full",
+      ".validate": {
+        ".in": [
+          "full",
+          "lite",
+          "loot"
+        ]
+      }
+    },
+    "statblockSource": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    }
+  },
+  {
+    ".name": "Vehicle",
+    ".extends": "Actor",
+    "vehicleSize": {
+      ".type": "string",
+      ".default": "large"
+    },
+    "squares": {
+      ".type": "number",
+      ".default": 4
+    },
+    "hardness": {
+      ".type": "number",
+      ".default": 5
+    },
+    "maxSpeed": {
+      ".type": "number",
+      ".default": 30
+    },
+    "acceleration": {
+      ".type": "number",
+      ".default": 10
+    },
+    "propulsion": {
+      ".type": "string",
+      ".default": "wind"
+    },
+    "drivingCheckSkill": {
+      ".type": "string",
+      ".default": "profession"
+    },
+    "drivingDevice": {
+      ".type": "string",
+      ".default": "wheel"
+    },
+    "crew": {
+      ".type": "number",
+      ".default": 1
+    },
+    "passengers": {
+      ".type": "number",
+      ".default": 0
+    },
+    "cargoCapacityLbs": {
+      ".type": "number",
+      ".default": 1000
+    },
+    "rammingDamage": {
+      ".type": "string",
+      ".default": "1d8"
+    }
+  },
+  {
+    ".name": "Trap",
+    ".extends": "Actor",
+    "cr": {
+      ".type": "number",
+      ".default": 1
+    },
+    "trapType": {
+      ".type": "string",
+      ".default": "mechanical",
+      ".validate": {
+        ".in": [
+          "mechanical",
+          "magic"
+        ]
+      }
+    },
+    "perceptionDC": {
+      ".type": "number",
+      ".default": 20
+    },
+    "disableDeviceDC": {
+      ".type": "number",
+      ".default": 20
+    },
+    "trigger": {
+      ".type": "string",
+      ".default": "location"
+    },
+    "reset": {
+      ".type": "string",
+      ".default": "manual"
+    },
+    "duration": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "effectSummary": {
+      ".type": "string",
+      ".default": ""
+    },
+    "bypass": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    }
+  },
+  {
+    ".name": "Haunt",
+    ".extends": "Actor",
+    "cr": {
+      ".type": "number",
+      ".default": 1
+    },
+    "noticeSkill": {
+      ".type": "string",
+      ".default": "perception"
+    },
+    "noticeDC": {
+      ".type": "number",
+      ".default": 20
+    },
+    "hp": {
+      ".type": "number",
+      ".default": 10
+    },
+    "trigger": {
+      ".type": "string",
+      ".default": "proximity"
+    },
+    "reset": {
+      ".type": "string",
+      ".default": "1 day"
+    },
+    "weakness": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "destruction": {
+      ".type": "string",
+      ".default": ""
+    },
+    "casterLevel": {
+      ".type": "number",
+      ".default": 1
+    },
+    "effectSummary": {
+      ".type": "string",
+      ".default": ""
+    }
+  },
+  {
+    ".name": "Race",
+    "actorId": {
+      ".type": "*Actor",
+      ".required": false
+    },
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "description": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "creatureType": {
+      ".type": "string",
+      ".default": "humanoid",
+      ".validate": {
+        ".in": [
+          "aberration",
+          "animal",
+          "construct",
+          "dragon",
+          "fey",
+          "humanoid",
+          "magicalBeast",
+          "monstrousHumanoid",
+          "ooze",
+          "outsider",
+          "plant",
+          "undead",
+          "vermin"
+        ]
+      }
+    },
+    "subtypes": {
+      ".type": "array",
+      ".default": []
+    },
+    "size": {
+      ".type": "string",
+      ".default": "medium"
+    },
+    "baseSpeeds": {
+      ".type": "field",
+      "land": {
+        ".type": "number",
+        ".default": 30
+      },
+      "burrow": {
+        ".type": "number",
+        ".default": 0
+      },
+      "climb": {
+        ".type": "number",
+        ".default": 0
+      },
+      "fly": {
+        ".type": "number",
+        ".default": 0
+      },
+      "swim": {
+        ".type": "number",
+        ".default": 0
+      }
+    },
+    "senses": {
+      ".type": "field",
+      "darkvisionFeet": {
+        ".type": "number",
+        ".default": 0
+      },
+      "lowLight": {
+        ".type": "boolean",
+        ".default": false
+      }
+    },
+    "languages": {
+      ".type": "array",
+      ".default": []
+    },
+    "modifiers": {
+      ".type": "array",
+      ".default": []
+    },
+    "contextNotes": {
+      ".type": "array",
+      ".default": []
+    },
+    "grantedRacialTraits": {
+      ".type": "array",
+      ".default": []
+    }
+  },
+  {
+    ".name": "Class",
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "tag": {
+      ".type": "string",
+      ".default": ""
+    },
+    "classType": {
+      ".type": "string",
+      ".default": "base",
+      ".validate": {
+        ".in": [
+          "base",
+          "prestige",
+          "npc",
+          "racial",
+          "mythic"
+        ]
+      }
+    },
+    "hitDie": {
+      ".type": "number",
+      ".default": 8,
+      ".validate": {
+        ".in": [
+          6,
+          8,
+          10,
+          12
+        ]
+      }
+    },
+    "babProgression": {
+      ".type": "string",
+      ".default": "medium",
+      ".validate": {
+        ".in": [
+          "full",
+          "medium",
+          "low"
+        ]
+      }
+    },
+    "saveProgressions": {
+      ".type": "field",
+      "fort": {
+        ".type": "string",
+        ".default": "poor",
+        ".validate": {
+          ".in": [
+            "good",
+            "poor"
+          ]
+        }
+      },
+      "ref": {
+        ".type": "string",
+        ".default": "poor",
+        ".validate": {
+          ".in": [
+            "good",
+            "poor"
+          ]
+        }
+      },
+      "will": {
+        ".type": "string",
+        ".default": "poor",
+        ".validate": {
+          ".in": [
+            "good",
+            "poor"
+          ]
+        }
+      }
+    },
+    "skillsPerLevel": {
+      ".type": "number",
+      ".default": 2
+    },
+    "classSkills": {
+      ".type": "array",
+      ".default": []
+    },
+    "castingConfig": {
+      ".type": "field",
+      ".required": false,
+      "castingType": {
+        ".type": "string",
+        ".default": "none",
+        ".required": false
+      },
+      "castingAbility": {
+        ".type": "string",
+        ".default": "int",
+        ".required": false
+      },
+      "maxSpellLevel": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "progressionTable": {
+        ".type": "array",
+        ".default": [],
+        ".required": false
+      }
+    },
+    "featureGrantsByLevel": {
+      ".type": "map",
+      ".default": {},
+      ".required": false
+    }
+  },
+  {
+    ".name": "ClassLevel",
+    "actorId": {
+      ".type": "*Actor"
+    },
+    "classId": {
+      ".type": "*Class"
+    },
+    "characterLevel": {
+      ".type": "number",
+      ".default": 1
+    },
+    "classLevel": {
+      ".type": "number",
+      ".default": 1
+    },
+    "hpRolled": {
+      ".type": "number",
+      ".default": 0
+    },
+    "favoredClassBonus": {
+      ".type": "string",
+      ".default": "none",
+      ".validate": {
+        ".in": [
+          "none",
+          "hp",
+          "skill",
+          "alt"
+        ]
+      }
+    },
+    "grantedFeatures": {
+      ".type": "array",
+      ".default": []
+    },
+    "skillRanksAllocated": {
+      ".type": "map",
+      ".default": {},
+      ".required": false
+    }
+  },
+  {
+    ".name": "Feature",
+    "actorId": {
+      ".type": "*Actor",
+      ".required": false
+    },
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "description": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "abilityType": {
+      ".type": "string",
+      ".default": "na",
+      ".validate": {
+        ".in": [
+          "na",
+          "ex",
+          "su",
+          "sp"
+        ]
+      }
+    },
+    "enabled": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "modifiers": {
+      ".type": "array",
+      ".default": []
+    },
+    "contextNotes": {
+      ".type": "array",
+      ".default": []
+    },
+    "charges": {
+      ".type": "field",
+      ".required": false,
+      "value": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "max": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "maxFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "rechargePeriod": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "rechargeFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    },
+    "tags": {
+      ".type": "array",
+      ".default": []
+    }
+  },
+  {
+    ".name": "Feat",
+    ".extends": "Feature",
+    "featType": {
+      ".type": "string",
+      ".default": "general",
+      ".validate": {
+        ".in": [
+          "general",
+          "combat",
+          "metamagic",
+          "itemCreation",
+          "critical",
+          "grit",
+          "panache",
+          "performance",
+          "racial",
+          "style",
+          "teamwork",
+          "mythic"
+        ]
+      }
+    },
+    "prerequisites": {
+      ".type": "map",
+      ".default": {},
+      ".required": false
+    }
+  },
+  {
+    ".name": "ClassFeature",
+    ".extends": "Feature",
+    "classTag": {
+      ".type": "string",
+      ".default": ""
+    },
+    "levelAcquired": {
+      ".type": "number",
+      ".default": 1
+    },
+    "associations": {
+      ".type": "array",
+      ".default": []
+    }
+  },
+  {
+    ".name": "Trait",
+    ".extends": "Feature",
+    "traitType": {
+      ".type": "string",
+      ".default": "combat",
+      ".validate": {
+        ".in": [
+          "combat",
+          "faith",
+          "magic",
+          "social",
+          "race",
+          "regional",
+          "religion",
+          "campaign",
+          "drawback"
+        ]
+      }
+    }
+  },
+  {
+    ".name": "RacialTrait",
+    ".extends": "Feature",
+    "raceName": {
+      ".type": "string",
+      ".default": ""
+    },
+    "replaces": {
+      ".type": "array",
+      ".default": []
+    }
+  },
+  {
+    ".name": "Spellbook",
+    "actorId": {
+      ".type": "*Actor"
+    },
+    "name": {
+      ".type": "string",
+      ".default": "Primary"
+    },
+    "classTag": {
+      ".type": "string",
+      ".default": ""
+    },
+    "castingType": {
+      ".type": "string",
+      ".default": "prepared",
+      ".validate": {
+        ".in": [
+          "prepared",
+          "spontaneous",
+          "hybrid",
+          "points"
+        ]
+      }
+    },
+    "castingAbility": {
+      ".type": "string",
+      ".default": "int",
+      ".validate": {
+        ".in": [
+          "int",
+          "wis",
+          "cha"
+        ]
+      }
+    },
+    "casterLevelFormula": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "concentrationBonusFormula": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "spellPenetrationBonusFormula": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "hasDomainsOrSchool": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "domainSlotCount": {
+      ".type": "number",
+      ".default": 0
+    },
+    "arcaneSpellFailureApplies": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "slotsByLevel": {
+      "0": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "1": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "2": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "3": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "4": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "5": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "6": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "7": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "8": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      "9": {
+        ".type": "field",
+        "base": {
+          ".type": "number",
+          ".default": 0
+        },
+        "bonusOverride": {
+          ".type": "number",
+          ".default": 0
+        },
+        "castRemaining": {
+          ".type": "number",
+          ".default": 0
+        },
+        "domainPrepared": {
+          ".type": "number",
+          ".default": 0
+        }
+      },
+      ".type": "field"
+    },
+    "spellPoints": {
+      ".type": "field",
+      ".required": false,
+      "value": {
+        ".type": "number",
+        ".default": 0
+      },
+      "max": {
+        ".type": "number",
+        ".default": 0
+      },
+      "maxFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    }
+  },
+  {
+    ".name": "Spell",
+    "actorId": {
+      ".type": "*Actor",
+      ".required": false
+    },
+    "spellbookId": {
+      ".type": "*Spellbook",
+      ".required": false
+    },
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "description": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "level": {
+      ".type": "number",
+      ".default": 1
+    },
+    "school": {
+      ".type": "string",
+      ".default": "evo",
+      ".validate": {
+        ".in": [
+          "abj",
+          "conj",
+          "div",
+          "enc",
+          "evo",
+          "ill",
+          "nec",
+          "trs",
+          "uni"
+        ]
+      }
+    },
+    "subschool": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "descriptors": {
+      ".type": "array",
+      ".default": []
+    },
+    "components": {
+      ".type": "field",
+      "verbal": {
+        ".type": "boolean",
+        ".default": true
+      },
+      "somatic": {
+        ".type": "boolean",
+        ".default": true
+      },
+      "material": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "materialDescription": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "materialCostGp": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "focus": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "focusDescription": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "divineFocus": {
+        ".type": "boolean",
+        ".default": false
+      }
+    },
+    "castingTime": {
+      ".type": "string",
+      ".default": "1 standard action"
+    },
+    "range": {
+      ".type": "string",
+      ".default": "close"
+    },
+    "area": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "targets": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "effect": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "duration": {
+      ".type": "string",
+      ".default": "instantaneous"
+    },
+    "savingThrow": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "sr": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "isDomainOrSchoolSpell": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "isAtWill": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "preparation": {
+      ".type": "field",
+      "preparedCount": {
+        ".type": "number",
+        ".default": 0
+      },
+      "maxPrepared": {
+        ".type": "number",
+        ".default": 0
+      },
+      "castCount": {
+        ".type": "number",
+        ".default": 0
+      }
+    }
+  },
+  {
+    ".name": "Buff",
+    "actorId": {
+      ".type": "*Actor"
+    },
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "description": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "icon": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "subType": {
+      ".type": "string",
+      ".default": "temp",
+      ".validate": {
+        ".in": [
+          "temp",
+          "perm",
+          "item",
+          "misc"
+        ]
+      }
+    },
+    "active": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "casterLevel": {
+      ".type": "number",
+      ".default": 1
+    },
+    "duration": {
+      ".type": "field",
+      "formula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "unit": {
+        ".type": "string",
+        ".default": "round",
+        ".validate": {
+          ".in": [
+            "round",
+            "minute",
+            "tenMinute",
+            "hour",
+            "day",
+            "permanent"
+          ]
+        }
+      },
+      "remainingRounds": {
+        ".type": "number",
+        ".default": 0
+      },
+      "expireOnTurnStart": {
+        ".type": "boolean",
+        ".default": true
+      },
+      "sourceActorId": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    },
+    "modifiers": {
+      ".type": "array",
+      ".default": []
+    },
+    "contextNotes": {
+      ".type": "array",
+      ".default": []
+    },
+    "conditionsGranted": {
+      ".type": "array",
+      ".default": []
+    }
+  },
+  {
+    ".name": "Action",
+    "actorId": {
+      ".type": "*Actor",
+      ".required": false
+    },
+    "parentRecordType": {
+      ".type": "string",
+      ".default": "Actor",
+      ".validate": {
+        ".in": [
+          "Item",
+          "Spell",
+          "Feature",
+          "Actor"
+        ]
+      }
+    },
+    "parentRecordId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "actionType": {
+      ".type": "string",
+      ".default": "mwak",
+      ".validate": {
+        ".in": [
+          "mwak",
+          "rwak",
+          "msak",
+          "rsak",
+          "mcman",
+          "rcman",
+          "save",
+          "heal",
+          "other"
+        ]
+      }
+    },
+    "activation": {
+      ".type": "field",
+      "type": {
+        ".type": "string",
+        ".default": "standard",
+        ".validate": {
+          ".in": [
+            "standard",
+            "move",
+            "swift",
+            "immediate",
+            "full",
+            "free",
+            "passive"
+          ]
+        }
+      },
+      "cost": {
+        ".type": "number",
+        ".default": 1
+      }
+    },
+    "actionCost": {
+      ".type": "number",
+      ".default": 1,
+      ".required": false
+    },
+    "range": {
+      ".type": "field",
+      "value": {
+        ".type": "number",
+        ".default": 5
+      },
+      "units": {
+        ".type": "string",
+        ".default": "melee",
+        ".validate": {
+          ".in": [
+            "touch",
+            "melee",
+            "reach",
+            "ft",
+            "close",
+            "medium",
+            "long"
+          ]
+        }
+      },
+      "maxIncrements": {
+        ".type": "number",
+        ".default": 1
+      }
+    },
+    "measureTemplate": {
+      ".type": "field",
+      ".required": false,
+      "shape": {
+        ".type": "string",
+        ".default": "circle",
+        ".required": false,
+        ".validate": {
+          ".in": [
+            "cone",
+            "circle",
+            "ray",
+            "cube"
+          ]
+        }
+      },
+      "sizeFeet": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "color": {
+        ".type": "string",
+        ".default": "#ff0000",
+        ".required": false
+      }
+    },
+    "attackBonusFormula": {
+      ".type": "string",
+      ".default": ""
+    },
+    "critRange": {
+      ".type": "number",
+      ".default": 20
+    },
+    "critMultiplier": {
+      ".type": "number",
+      ".default": 2
+    },
+    "primaryAttack": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "extraAttacks": {
+      ".type": "field",
+      "mode": {
+        ".type": "string",
+        ".default": "none",
+        ".validate": {
+          ".in": [
+            "none",
+            "standardIteratives",
+            "flurry",
+            "custom"
+          ]
+        }
+      },
+      "customFormulae": {
+        ".type": "array",
+        ".default": []
+      }
+    },
+    "damageParts": {
+      ".type": "array",
+      ".default": []
+    },
+    "abilityDamageMultiplier": {
+      ".type": "number",
+      ".default": 1
+    },
+    "conditionalModifiers": {
+      ".type": "array",
+      ".default": []
+    },
+    "modifiers": {
+      ".type": "array",
+      ".default": []
+    },
+    "contextNotes": {
+      ".type": "array",
+      ".default": []
+    },
+    "savingThrow": {
+      ".type": "field",
+      ".required": false,
+      "type": {
+        ".type": "string",
+        ".default": "fort",
+        ".required": false,
+        ".validate": {
+          ".in": [
+            "fort",
+            "ref",
+            "will"
+          ]
+        }
+      },
+      "dcFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "description": {
+        ".type": "string",
+        ".default": "negates",
+        ".required": false,
+        ".validate": {
+          ".in": [
+            "negates",
+            "half",
+            "partial",
+            "disbelief"
+          ]
+        }
+      }
+    },
+    "usesCost": {
+      ".type": "number",
+      ".default": 0
+    },
+    "ammoType": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "soundEffect": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    }
+  },
+  {
+    ".name": "Item",
+    "actorId": {
+      ".type": "*Actor",
+      ".required": false
+    },
+    "containerId": {
+      ".type": "*Container",
+      ".required": false
+    },
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "description": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "icon": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "quantity": {
+      ".type": "number",
+      ".default": 1
+    },
+    "weightLbs": {
+      ".type": "number",
+      ".default": 0
+    },
+    "priceGp": {
+      ".type": "number",
+      ".default": 0
+    },
+    "size": {
+      ".type": "string",
+      ".default": "medium"
+    },
+    "hp": {
+      ".type": "number",
+      ".default": 10
+    },
+    "maxHp": {
+      ".type": "number",
+      ".default": 10
+    },
+    "hardness": {
+      ".type": "number",
+      ".default": 0
+    },
+    "carried": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "equipped": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "slot": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "masterwork": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "broken": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "identified": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "unidentifiedName": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "unidentifiedDescription": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "unidentifiedPriceGp": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "auraSchool": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "cl": {
+      ".type": "number",
+      ".default": 0,
+      ".required": false
+    },
+    "identifyDC": {
+      ".type": "number",
+      ".default": 15,
+      ".required": false
+    },
+    "cursed": {
+      ".type": "boolean",
+      ".default": false,
+      ".required": false
+    },
+    "curseDescription": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "modifiers": {
+      ".type": "array",
+      ".default": []
+    },
+    "contextNotes": {
+      ".type": "array",
+      ".default": []
+    },
+    "notes": {
+      ".type": "field",
+      ".required": false,
+      "biography": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "description": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "gmNotes": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    },
+    "charges": {
+      ".type": "field",
+      ".required": false,
+      "value": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "max": {
+        ".type": "number",
+        ".default": 0,
+        ".required": false
+      },
+      "maxFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "rechargePeriod": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      },
+      "rechargeFormula": {
+        ".type": "string",
+        ".default": "",
+        ".required": false
+      }
+    }
+  },
+  {
+    ".name": "Weapon",
+    ".extends": "Item",
+    "weaponCategory": {
+      ".type": "string",
+      ".default": "simple",
+      ".validate": {
+        ".in": [
+          "simple",
+          "martial",
+          "exotic"
+        ]
+      }
+    },
+    "weaponSubtype": {
+      ".type": "string",
+      ".default": "oneHanded",
+      ".validate": {
+        ".in": [
+          "light",
+          "oneHanded",
+          "twoHanded",
+          "ranged",
+          "ammunition"
+        ]
+      }
+    },
+    "weaponGroups": {
+      ".type": "array",
+      ".default": []
+    },
+    "baseDamageDice": {
+      ".type": "string",
+      ".default": "1d6"
+    },
+    "critRange": {
+      ".type": "number",
+      ".default": 20
+    },
+    "critMultiplier": {
+      ".type": "number",
+      ".default": 2
+    },
+    "rangeIncrementFeet": {
+      ".type": "number",
+      ".default": 0
+    },
+    "enhancementBonus": {
+      ".type": "number",
+      ".default": 0
+    },
+    "material": {
+      ".type": "string",
+      ".default": "steel"
+    },
+    "properties": {
+      ".type": "field",
+      "finessable": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "reach": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "brace": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "disarm": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "double": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "nonlethal": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "monk": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "sunder": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "trip": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "deadly": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "distracting": {
+        ".type": "boolean",
+        ".default": false
+      },
+      "fragile": {
+        ".type": "boolean",
+        ".default": false
+      }
+    },
+    "heldMode": {
+      ".type": "string",
+      ".default": "oneHanded",
+      ".validate": {
+        ".in": [
+          "oneHanded",
+          "twoHanded",
+          "offHand"
+        ]
+      }
+    }
+  },
+  {
+    ".name": "Armor",
+    ".extends": "Item",
+    "armorCategory": {
+      ".type": "string",
+      ".default": "light",
+      ".validate": {
+        ".in": [
+          "light",
+          "medium",
+          "heavy"
+        ]
+      }
+    },
+    "armorBonus": {
+      ".type": "number",
+      ".default": 0
+    },
+    "enhancementBonus": {
+      ".type": "number",
+      ".default": 0
+    },
+    "maxDexBonus": {
+      ".type": "number",
+      ".default": 10
+    },
+    "armorCheckPenalty": {
+      ".type": "number",
+      ".default": 0
+    },
+    "arcaneSpellFailure": {
+      ".type": "number",
+      ".default": 0
+    },
+    "material": {
+      ".type": "string",
+      ".default": "leather"
+    }
+  },
+  {
+    ".name": "Shield",
+    ".extends": "Item",
+    "shieldCategory": {
+      ".type": "string",
+      ".default": "light",
+      ".validate": {
+        ".in": [
+          "buckler",
+          "light",
+          "heavy",
+          "tower"
+        ]
+      }
+    },
+    "shieldBonus": {
+      ".type": "number",
+      ".default": 1
+    },
+    "enhancementBonus": {
+      ".type": "number",
+      ".default": 0
+    },
+    "maxDexBonus": {
+      ".type": "number",
+      ".default": 10
+    },
+    "armorCheckPenalty": {
+      ".type": "number",
+      ".default": 0
+    },
+    "arcaneSpellFailure": {
+      ".type": "number",
+      ".default": 5
+    },
+    "material": {
+      ".type": "string",
+      ".default": "wood"
+    }
+  },
+  {
+    ".name": "WondrousItem",
+    ".extends": "Item",
+    "bodySlot": {
+      ".type": "string",
+      ".default": "slotless",
+      ".validate": {
+        ".in": [
+          "head",
+          "headband",
+          "eyes",
+          "shoulders",
+          "neck",
+          "chest",
+          "body",
+          "belt",
+          "wrists",
+          "hands",
+          "ring",
+          "feet",
+          "slotless"
+        ]
+      }
+    }
+  },
+  {
+    ".name": "Consumable",
+    ".extends": "Item",
+    "consumableType": {
+      ".type": "string",
+      ".default": "potion",
+      ".validate": {
+        ".in": [
+          "potion",
+          "scroll",
+          "wand",
+          "rod",
+          "staff",
+          "poison",
+          "drug",
+          "ammo",
+          "food",
+          "other"
+        ]
+      }
+    },
+    "destroyOnEmpty": {
+      ".type": "boolean",
+      ".default": true
+    },
+    "spellId": {
+      ".type": "*Spell",
+      ".required": false
+    }
+  },
+  {
+    ".name": "Container",
+    ".extends": "Item",
+    "weightReductionPercent": {
+      ".type": "number",
+      ".default": 0
+    },
+    "constantWeightLbs": {
+      ".type": "number",
+      ".default": 0
+    },
+    "maxCapacityWeightLbs": {
+      ".type": "number",
+      ".default": 100
+    },
+    "currency": {
+      ".type": "field",
+      "pp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "gp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "sp": {
+        ".type": "number",
+        ".default": 0
+      },
+      "cp": {
+        ".type": "number",
+        ".default": 0
+      }
+    }
+  },
+  {
+    ".name": "Loot",
+    ".extends": "Item",
+    "lootType": {
+      ".type": "string",
+      ".default": "treasure",
+      ".validate": {
+        ".in": [
+          "gear",
+          "tool",
+          "tradeGoods",
+          "treasure",
+          "clothing",
+          "herb",
+          "animalGear"
+        ]
+      }
+    }
+  },
+  {
+    ".name": "Implant",
+    ".extends": "Item",
+    "implantType": {
+      ".type": "string",
+      ".default": "cybertech",
+      ".validate": {
+        ".in": [
+          "cybertech",
+          "biotech",
+          "necrograft",
+          "demonic",
+          "ioun"
+        ]
+      }
+    },
+    "implantationValue": {
+      ".type": "number",
+      ".default": 1
+    }
+  },
+  {
+    ".name": "ChatMessage",
+    "userId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "rollMode": {
+      ".type": "string",
+      ".default": "public"
+    },
+    "timestamp": {
+      ".type": "number",
+      ".default": 0
+    },
+    "content": {
+      ".type": "map",
+      ".default": {}
+    }
+  }
+]

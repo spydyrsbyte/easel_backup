@@ -1,0 +1,54 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "actions",
+  "name": "actions",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "availability@1",
+        "file": "server/availability.mjs"
+      },
+      {
+        "name": "choice@1",
+        "file": "server/choice.mjs"
+      },
+      {
+        "name": "targeting@1",
+        "file": "server/targeting.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "menu@1",
+        "file": "interfaces/menu.json",
+        "http-entry": "client/menu.mjs"
+      },
+      {
+        "name": "chooser@1",
+        "file": "interfaces/chooser.json",
+        "http-entry": "client/chooser.mjs"
+      },
+      {
+        "name": "targetselector@1",
+        "file": "interfaces/targetselector.json",
+        "http-entry": "client/targetselector.mjs"
+      },
+      {
+        "name": "actionbar@1",
+        "file": "interfaces/actionbar.json",
+        "http-entry": "client/actionbar.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

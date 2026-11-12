@@ -1,0 +1,96 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "image": {
+      "type": "String",
+      "default": ""
+    },
+    "tiles": {
+      "type": "Array",
+      "default": []
+    },
+    "pins": {
+      "type": "Array",
+      "default": []
+    },
+    "locations": {
+      "type": "Array",
+      "default": []
+    },
+    "selectedPinId": {
+      "type": "String",
+      "default": ""
+    },
+    "camera": {
+      "type": "Object",
+      "default": {
+        "x": 0,
+        "y": 0,
+        "zoom": 1,
+        "rotation": 0
+      }
+    },
+    "gm": {
+      "type": "Boolean",
+      "default": false
+    },
+    "width": {
+      "type": "Number",
+      "default": 960
+    },
+    "height": {
+      "type": "Number",
+      "default": 600
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "cameraChanged": {
+      "payload": {
+        "camera": "Object"
+      }
+    },
+    "pinSelect": {
+      "payload": {
+        "id": "String",
+        "linkedMapId": "String"
+      }
+    },
+    "pinMove": {
+      "payload": {
+        "id": "String",
+        "x": "Number",
+        "y": "Number"
+      }
+    },
+    "pinCreate": {
+      "payload": {
+        "x": "Number",
+        "y": "Number",
+        "label": "String"
+      }
+    },
+    "tileMove": {
+      "payload": {
+        "id": "String",
+        "x": "Number",
+        "y": "Number"
+      }
+    }
+  },
+  "slots": {}
+}

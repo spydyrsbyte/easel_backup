@@ -1,0 +1,30 @@
+{
+    "type":"application|module|kit"
+    ,"name":"<name>"
+    ,"owner":"<owner>"
+    ,"authors":[{"name":"","details":[{"email":"spydyrs.byte@gmail.com"}]}]
+    ,"host":"<namespace>"
+    
+    ,"version":{
+        "major":4
+        ,"minor":22
+        ,"revision":321
+    }
+    ,"encrypt":false
+    ,"encrypt-true":{
+        "public":"./keys/key.txt"
+    }
+    ,"channels":{
+        "update":{
+            "manifest":"http://wwww.sample.com/latest-stable.json"
+            ,"file":"http://wwww.sample.com/latest-stable.zip"}
+        ,"latest":{
+            "manifest":"http://wwww.sample.com/latest-stable.json"
+            ,"file":"http://wwww.sample.com/latest-stable.zip"}
+        ,"nightly":{
+            "manifest":"http://wwww.sample.com/latest-stable.json"
+            ,"file":"http://wwww.sample.com/latest-stable.zip"}
+    }
+    ,"client":"./client.json"
+    ,"server":"./server.json"
+}

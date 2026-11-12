@@ -1,0 +1,12 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "table",
+  "name": "style",
+  "client": {
+    "implements": [
+      { "name": "easel.easel.button@1", "file": "interfaces/button.json", "http-entry": "client/button.mjs" }
+    ],
+    "assets": { "http": ["client/"] }
+  }
+}

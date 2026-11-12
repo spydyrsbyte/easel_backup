@@ -1,0 +1,65 @@
+{
+  "type": "module",
+  "owner": "easel",
+  "host": "vtt",
+  "name": "table",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "security": {
+      "entry": "server/security.mjs"
+    },
+    "interfaces": [
+      {
+        "name": "table@1",
+        "file": "server/table.mjs",
+        "required": {
+          "interfaces": [
+            "easel.maps.geometry@1",
+            "easel.visibility.projection@1"
+          ]
+        }
+      }
+    ],
+    "data": [
+      {
+        ".file": "data/records.json"
+      }
+    ],
+    "library": {
+      "entry": "server/library.mjs"
+    }
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "scenebinder@1",
+        "file": "interfaces/scenebinder.json",
+        "http-entry": "client/scenebinder.mjs"
+      },
+      {
+        "name": "combatbinder@1",
+        "file": "interfaces/combatbinder.json",
+        "http-entry": "client/combatbinder.mjs"
+      },
+      {
+        "name": "chatbinder@1",
+        "file": "interfaces/chatbinder.json",
+        "http-entry": "client/chatbinder.mjs"
+      },
+      {
+        "name": "directorybinder@1",
+        "file": "interfaces/directorybinder.json",
+        "http-entry": "client/directorybinder.mjs"
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

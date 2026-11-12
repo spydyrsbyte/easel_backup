@@ -1,0 +1,77 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "templates": {
+      "type": "Array",
+      "default": []
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    },
+    "activeTemplate": {
+      "type": "Object",
+      "default": {}
+    },
+    "grid": {
+      "type": "Object",
+      "default": {
+        "offsetX": 0,
+        "offsetY": 0,
+        "cellSize": 64,
+        "scale": 5,
+        "unit": "ft",
+        "snap": true
+      }
+    },
+    "width": {
+      "type": "Number",
+      "default": 800
+    },
+    "height": {
+      "type": "Number",
+      "default": 600
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "place": {
+      "payload": {
+        "template": "Object"
+      }
+    },
+    "move": {
+      "payload": {
+        "id": "String",
+        "x": "Number",
+        "y": "Number",
+        "direction": "Number"
+      }
+    },
+    "remove": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

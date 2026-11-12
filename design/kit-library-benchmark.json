@@ -1,0 +1,47 @@
+{
+  "scope": "In-process value cloning and optimistic membership transfer; not PostgreSQL or network latency.",
+  "results": [
+    {
+      "cards": 1200,
+      "pageSize": 100,
+      "iterations": 100,
+      "aggregate": {
+        "meanMs": 1.1502370000000002,
+        "p95Ms": 1.7488000000000028,
+        "serializedBytes": 212967
+      },
+      "partitionPatch": {
+        "meanMs": 0.028530000000000513,
+        "p95Ms": 0.04590000000000316,
+        "serializedBytes": 1009
+      },
+      "concurrent": {
+        "actors": 6,
+        "commits": 120,
+        "retries": 300,
+        "membershipPreserved": true
+      }
+    },
+    {
+      "cards": 5000,
+      "pageSize": 100,
+      "iterations": 100,
+      "aggregate": {
+        "meanMs": 4.7787649999999955,
+        "p95Ms": 7.3723999999999705,
+        "serializedBytes": 904567
+      },
+      "partitionPatch": {
+        "meanMs": 0.0348509999999979,
+        "p95Ms": 0.045099999999990814,
+        "serializedBytes": 1009
+      },
+      "concurrent": {
+        "actors": 6,
+        "commits": 120,
+        "retries": 300,
+        "membershipPreserved": true
+      }
+    }
+  ]
+}

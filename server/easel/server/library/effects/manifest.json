@@ -1,0 +1,49 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "effects",
+  "name": "effects",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "duration@1",
+        "file": "server/duration.mjs"
+      },
+      {
+        "name": "stacking@1",
+        "file": "server/stacking.mjs"
+      },
+      {
+        "name": "status@1",
+        "file": "server/status.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "status@1",
+        "file": "interfaces/status.json",
+        "http-entry": "client/status.mjs"
+      },
+      {
+        "name": "effectlist@1",
+        "file": "interfaces/effectlist.json",
+        "http-entry": "client/effectlist.mjs"
+      },
+      {
+        "name": "duration@1",
+        "file": "interfaces/duration.json",
+        "http-entry": "client/duration.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "owner": "easel",
+  "host": "layout",
+  "description": "Containers and application layout widgets; rendering only unless the consumer elects to save layout preferences.",
+  "members": [
+    {
+      "name": "workspace",
+      "side": "server",
+      "version": 1,
+      "description": "Describe or validate a viewer's saved layout configuration; optional support for applications that persist layouts.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/workspace.mjs",
+      "contract": "contracts/workspace.server.md",
+      "methods": [
+        "validate(value)",
+        "fit(value,bounds)"
+      ],
+      "examples": [
+        {
+          "method": "validate",
+          "args": [
+            {
+              "windows": []
+            }
+          ],
+          "expected": {
+            "windows": []
+          }
+        },
+        {
+          "method": "validate",
+          "args": [
+            {
+              "windows": [
+                {
+                  "id": "w",
+                  "x": 0,
+                  "y": 0,
+                  "width": -1,
+                  "height": 2
+                }
+              ]
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "panel",
+      "side": "client",
+      "version": 1,
+      "description": "Collapsible panel with header/body/footer slots; emits open-change requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/panel.mjs",
+      "contract": "interfaces/panel.json",
+      "renderer": "panel",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/panel.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "window",
+      "side": "client",
+      "version": 1,
+      "description": "Movable/resizable window with content and toolbar slots; emits move, resize and close requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/window.mjs",
+      "contract": "interfaces/window.json",
+      "renderer": "window",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/window.client.md",
+      "events": [
+        "close",
+        "move",
+        "resize"
+      ]
+    },
+    {
+      "name": "tabs",
+      "side": "client",
+      "version": 1,
+      "description": "Tabbed content selector with per-tab slots and active-tab change events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/tabs.mjs",
+      "contract": "interfaces/tabs.json",
+      "renderer": "tabs",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/tabs.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "dialog",
+      "side": "client",
+      "version": 1,
+      "description": "Modal/nonmodal decision surface with content slot and action/cancel events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/dialog.mjs",
+      "contract": "interfaces/dialog.json",
+      "renderer": "dialog",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/dialog.client.md",
+      "events": [
+        "close",
+        "action"
+      ]
+    },
+    {
+      "name": "split",
+      "side": "client",
+      "version": 1,
+      "description": "Resizable two-pane layout with first/second slots and ratio-change events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/split.mjs",
+      "contract": "interfaces/split.json",
+      "renderer": "split",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/split.client.md",
+      "events": [
+        "close",
+        "ratio"
+      ]
+    },
+    {
+      "name": "sheet",
+      "side": "client",
+      "version": 1,
+      "description": "Responsive form/sheet container with configurable sections and field slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/sheet.mjs",
+      "contract": "interfaces/sheet.json",
+      "renderer": "form",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/sheet.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "vttworkspace",
+      "side": "client",
+      "version": 1,
+      "description": "Full-bleed tabletop workspace layout dock for canvas, dice overlay, floating HUD, toolstrip, hotbar, collapsible sidebar, and floating windows.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/vttworkspace.mjs",
+      "contract": "interfaces/vttworkspace.json",
+      "renderer": "vttworkspace",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/vttworkspace.client.md",
+      "events": [
+        "close",
+        "toggleSidebar"
+      ]
+    },
+    {
+      "name": "toolstrip",
+      "side": "client",
+      "version": 1,
+      "description": "Left-hand layer and tool selector strip for tabletop tools.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/toolstrip.mjs",
+      "contract": "interfaces/toolstrip.json",
+      "renderer": "toolstrip",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/toolstrip.client.md",
+      "events": [
+        "close",
+        "select",
+        "action"
+      ]
+    }
+  ]
+}

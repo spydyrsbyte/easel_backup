@@ -1,0 +1,6 @@
+/bin/
+/.env.local
+/server/config/database.json
+/server/config/auth.json
+/server/games/*
+node_modules/

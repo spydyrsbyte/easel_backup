@@ -1,0 +1,49 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "tables",
+  "name": "tables",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "lookup@1",
+        "file": "server/lookup.mjs"
+      },
+      {
+        "name": "weighted@1",
+        "file": "server/weighted.mjs"
+      },
+      {
+        "name": "rolltable@1",
+        "file": "server/rolltable.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "table@1",
+        "file": "interfaces/table.json",
+        "http-entry": "client/table.mjs"
+      },
+      {
+        "name": "rolltable@1",
+        "file": "interfaces/rolltable.json",
+        "http-entry": "client/rolltable.mjs"
+      },
+      {
+        "name": "entry@1",
+        "file": "interfaces/entry.json",
+        "http-entry": "client/entry.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

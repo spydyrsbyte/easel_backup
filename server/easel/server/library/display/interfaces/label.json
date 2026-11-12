@@ -1,0 +1,35 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "src": {
+      "type": "String",
+      "default": ""
+    },
+    "alt": {
+      "type": "String",
+      "default": ""
+    },
+    "text": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

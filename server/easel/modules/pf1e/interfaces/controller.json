@@ -1,0 +1,10 @@
+{
+  "kind": "service",
+  "methods": {
+    "mount": { "parameters": ["options"] },
+    "start": { "parameters": ["options"] },
+    "openCharacterSheet": { "parameters": ["actorId"] },
+    "openNPCSheet": { "parameters": ["actorId", "mode"] },
+    "openRecordEditor": { "parameters": ["recordType", "recordId"] }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "workflow",
+  "name": "workflow",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "steps@1",
+        "file": "server/steps.mjs"
+      },
+      {
+        "name": "responses@1",
+        "file": "server/responses.mjs"
+      },
+      {
+        "name": "timeout@1",
+        "file": "server/timeout.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "wizard@1",
+        "file": "interfaces/wizard.json",
+        "http-entry": "client/wizard.mjs"
+      },
+      {
+        "name": "prompt@1",
+        "file": "interfaces/prompt.json",
+        "http-entry": "client/prompt.mjs"
+      },
+      {
+        "name": "waiting@1",
+        "file": "interfaces/waiting.json",
+        "http-entry": "client/waiting.mjs"
+      },
+      {
+        "name": "review@1",
+        "file": "interfaces/review.json",
+        "http-entry": "client/review.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

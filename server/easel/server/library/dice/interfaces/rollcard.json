@@ -1,0 +1,73 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "formula": {
+      "type": "String",
+      "default": ""
+    },
+    "total": {
+      "type": "Number",
+      "default": 0
+    },
+    "rolls": {
+      "type": "Array",
+      "default": []
+    },
+    "breakdown": {
+      "type": "Array",
+      "default": []
+    },
+    "isCrit": {
+      "type": "Boolean",
+      "default": false
+    },
+    "isFumble": {
+      "type": "Boolean",
+      "default": false
+    },
+    "collapsed": {
+      "type": "Boolean",
+      "default": false
+    },
+    "speaker": {
+      "type": "Object",
+      "default": {}
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "toggle": {
+      "payload": {
+        "collapsed": "Boolean"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String",
+        "payload": "Object"
+      }
+    }
+  },
+  "slots": {
+    "breakdown": {},
+    "actions": {}
+  }
+}

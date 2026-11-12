@@ -1,0 +1,284 @@
+{
+  "owner": "easel",
+  "host": "turns",
+  "description": "Turn ordering, phases, round and priority primitives; individual games decide when advancement is legal.",
+  "members": [
+    {
+      "name": "sequence",
+      "side": "server",
+      "version": 1,
+      "description": "Determine active actor and next actor under a supplied ordering policy.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/sequence.mjs",
+      "contract": "contracts/sequence.server.md",
+      "methods": [
+        "next(order,current,{direction=1,skip=[]}={})",
+        "active(order,index=0)"
+      ],
+      "examples": [
+        {
+          "method": "next",
+          "args": [
+            [
+              "a",
+              "b",
+              "c"
+            ],
+            "a",
+            {
+              "skip": [
+                "b"
+              ]
+            }
+          ],
+          "expected": "c"
+        },
+        {
+          "method": "next",
+          "args": [
+            [],
+            "a"
+          ],
+          "expected": null
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "phase",
+      "side": "server",
+      "version": 1,
+      "description": "Represent and advance a configured sequence of named phases.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/phase.mjs",
+      "contract": "contracts/phase.server.md",
+      "methods": [
+        "current(phases,index=0)",
+        "advance(phases,index,{loop=true}={})"
+      ],
+      "examples": [
+        {
+          "method": "advance",
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            1
+          ],
+          "expected": {
+            "index": 0,
+            "phase": "a",
+            "wrapped": true,
+            "complete": false
+          }
+        },
+        {
+          "method": "current",
+          "args": [
+            [],
+            0
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "priority",
+      "side": "server",
+      "version": 1,
+      "description": "Track passing/claiming priority in interactive windows.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/priority.mjs",
+      "contract": "contracts/priority.server.md",
+      "methods": [
+        "create(order,holder=order[0])",
+        "pass(state,actor)",
+        "claim(state,actor)"
+      ],
+      "examples": [
+        {
+          "method": "pass",
+          "args": [
+            {
+              "order": [
+                "a"
+              ],
+              "holder": "a",
+              "passed": []
+            },
+            "a"
+          ],
+          "expected": {
+            "order": [
+              "a"
+            ],
+            "holder": null,
+            "passed": [
+              "a"
+            ],
+            "complete": true
+          }
+        },
+        {
+          "method": "pass",
+          "args": [
+            {
+              "holder": "a"
+            },
+            "b"
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "simultaneous",
+      "side": "server",
+      "version": 1,
+      "description": "Track per-participant submission/ready state for simultaneous phases.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/simultaneous.mjs",
+      "contract": "contracts/simultaneous.server.md",
+      "methods": [
+        "create(participants)",
+        "ready(state,actor,value=true)"
+      ],
+      "examples": [
+        {
+          "method": "ready",
+          "args": [
+            {
+              "a": false
+            },
+            "a"
+          ],
+          "expected": {
+            "state": {
+              "a": true
+            },
+            "complete": true,
+            "waiting": []
+          }
+        },
+        {
+          "method": "ready",
+          "args": [
+            {},
+            "a"
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "turnorder",
+      "side": "client",
+      "version": 1,
+      "description": "Ordered players/participants with active/highlight states.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/turnorder.mjs",
+      "contract": "interfaces/turnorder.json",
+      "renderer": "turnorder",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/turnorder.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "phase",
+      "side": "client",
+      "version": 1,
+      "description": "Phase progress indicator and advance request.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/phase.mjs",
+      "contract": "interfaces/phase.json",
+      "renderer": "phase",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/phase.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "priority",
+      "side": "client",
+      "version": 1,
+      "description": "Show holders/pass states and emit pass/claim requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/priority.mjs",
+      "contract": "interfaces/priority.json",
+      "renderer": "priority",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/priority.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "ready",
+      "side": "client",
+      "version": 1,
+      "description": "Per-participant waiting/ready indicators.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/ready.mjs",
+      "contract": "interfaces/ready.json",
+      "renderer": "ready",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/ready.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    }
+  ]
+}

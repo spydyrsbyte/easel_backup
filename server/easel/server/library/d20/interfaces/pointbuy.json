@@ -1,0 +1,52 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Ability Point Buy"
+    },
+    "budget": {
+      "type": "Number",
+      "default": 20
+    },
+    "scores": {
+      "type": "Object",
+      "default": {}
+    },
+    "costTable": {
+      "type": "Object",
+      "default": {}
+    },
+    "minScore": {
+      "type": "Number",
+      "default": 7
+    },
+    "maxScore": {
+      "type": "Number",
+      "default": 18
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "change": {
+      "payload": {
+        "scores": "Object",
+        "spent": "Number",
+        "remaining": "Number",
+        "valid": "Boolean"
+      }
+    },
+    "commit": {
+      "payload": {
+        "scores": "Object"
+      }
+    }
+  }
+}

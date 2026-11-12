@@ -1,0 +1,186 @@
+{
+  "owner": "easel",
+  "host": "input",
+  "description": "Reusable local interaction controls; these report intent and never grant server permissions.",
+  "members": [
+    {
+      "name": "intent",
+      "side": "server",
+      "version": 1,
+      "description": "Optional interface for describing/validating the shape of a client-requested interaction; not a game action executor.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/intent.mjs",
+      "contract": "contracts/intent.server.md",
+      "methods": [
+        "validate(intent,definition)"
+      ],
+      "examples": [
+        {
+          "method": "validate",
+          "args": [
+            {
+              "id": "x"
+            },
+            {
+              "id": "string"
+            }
+          ],
+          "expected": {
+            "id": "x"
+          }
+        },
+        {
+          "method": "validate",
+          "args": [
+            {
+              "secret": 1
+            },
+            {}
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "selection",
+      "side": "client",
+      "version": 1,
+      "description": "Single/multi-selection controller that emits selected identifiers.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/selection.mjs",
+      "contract": "interfaces/selection.json",
+      "renderer": "selection",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/selection.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "dragdrop",
+      "side": "client",
+      "version": 1,
+      "description": "Pointer/touch/keyboard drag source and target; emits requested drops and cancellation.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/dragdrop.mjs",
+      "contract": "interfaces/dragdrop.json",
+      "renderer": "dragdrop",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/dragdrop.client.md",
+      "events": [
+        "close",
+        "drag",
+        "drop"
+      ]
+    },
+    {
+      "name": "contextmenu",
+      "side": "client",
+      "version": 1,
+      "description": "Contextual action list that emits the chosen action ID.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/contextmenu.mjs",
+      "contract": "interfaces/contextmenu.json",
+      "renderer": "menu",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/contextmenu.client.md",
+      "events": [
+        "close",
+        "action"
+      ]
+    },
+    {
+      "name": "targetpicker",
+      "side": "client",
+      "version": 1,
+      "description": "Choose one or several visible targets; reports the selection, not a completed action.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/targetpicker.mjs",
+      "contract": "interfaces/targetpicker.json",
+      "renderer": "selection",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/targetpicker.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "shortcut",
+      "side": "client",
+      "version": 1,
+      "description": "Keyboard shortcut binding with conflict and focus handling.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/shortcut.mjs",
+      "contract": "interfaces/shortcut.json",
+      "renderer": "shortcut",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/shortcut.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "action",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "popover",
+      "side": "client",
+      "version": 1,
+      "description": "Anchored popup with outside-click and dismiss events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/popover.mjs",
+      "contract": "interfaces/popover.json",
+      "renderer": "popover",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/popover.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

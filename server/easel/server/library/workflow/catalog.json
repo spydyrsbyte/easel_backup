@@ -1,0 +1,244 @@
+{
+  "owner": "easel",
+  "host": "workflow",
+  "description": "Presentation and state helpers for multi-step decisions; the game/module supplies the actual process.",
+  "members": [
+    {
+      "name": "steps",
+      "side": "server",
+      "version": 1,
+      "description": "Validate/configure a named ordered set of prompts and transitions.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/steps.mjs",
+      "contract": "contracts/steps.server.md",
+      "methods": [
+        "validate(steps)",
+        "transition(steps,current,next)"
+      ],
+      "examples": [
+        {
+          "method": "transition",
+          "args": [
+            [
+              {
+                "id": "a",
+                "next": [
+                  "b"
+                ]
+              },
+              {
+                "id": "b"
+              }
+            ],
+            "a",
+            "b"
+          ],
+          "expected": {
+            "id": "b"
+          }
+        },
+        {
+          "method": "validate",
+          "args": [
+            [
+              {
+                "id": "a",
+                "next": [
+                  "b"
+                ]
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "responses",
+      "side": "server",
+      "version": 1,
+      "description": "Aggregate per-participant answer states and detect completion.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/responses.mjs",
+      "contract": "contracts/responses.server.md",
+      "methods": [
+        "submit(state,participants,actor,response)"
+      ],
+      "examples": [
+        {
+          "method": "submit",
+          "args": [
+            {},
+            [
+              "a"
+            ],
+            "a",
+            {
+              "choice": "x"
+            }
+          ],
+          "expected": {
+            "responses": {
+              "a": {
+                "choice": "x"
+              }
+            },
+            "waiting": [],
+            "complete": true
+          }
+        },
+        {
+          "method": "submit",
+          "args": [
+            {},
+            [
+              "a"
+            ],
+            "b",
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "timeout",
+      "side": "server",
+      "version": 1,
+      "description": "Compute deadline/expiry outcomes, using existing scheduling for callbacks.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/timeout.mjs",
+      "contract": "contracts/timeout.server.md",
+      "methods": [
+        "deadline(start,duration)",
+        "evaluate(deadline,now)"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            10,
+            12
+          ],
+          "expected": {
+            "expired": true,
+            "remaining": 0
+          }
+        },
+        {
+          "method": "deadline",
+          "args": [
+            1,
+            -1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "wizard",
+      "side": "client",
+      "version": 1,
+      "description": "Multi-step form flow with next/back/cancel requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/wizard.mjs",
+      "contract": "interfaces/wizard.json",
+      "renderer": "wizard",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/wizard.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "prompt",
+      "side": "client",
+      "version": 1,
+      "description": "Choice/input prompt with validation errors and response request.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/prompt.mjs",
+      "contract": "interfaces/prompt.json",
+      "renderer": "form",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/prompt.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "waiting",
+      "side": "client",
+      "version": 1,
+      "description": "Display outstanding responders and ready states.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/waiting.mjs",
+      "contract": "interfaces/waiting.json",
+      "renderer": "waiting",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/waiting.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "review",
+      "side": "client",
+      "version": 1,
+      "description": "Review collected answers before submit/commit request.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/review.mjs",
+      "contract": "interfaces/review.json",
+      "renderer": "review",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/review.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "application",
+  "owner": "easel",
+  "host": "demo",
+  "name": "table",
+  "server": {
+    "application": {
+      "entry": "server/application.mjs"
+    }
+  },
+  "client": {
+    "application": {
+      "http-entry": "client/application.mjs",
+      "required": {
+        "modules": ["easel.easel.ui", "easel.table.style"],
+        "interfaces": ["easel.easel.panel@1", "easel.easel.button@1"]
+      }
+    },
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

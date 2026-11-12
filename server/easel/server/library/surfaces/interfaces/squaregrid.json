@@ -1,0 +1,45 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "width": {
+      "type": "Number",
+      "default": 600
+    },
+    "height": {
+      "type": "Number",
+      "default": 400
+    },
+    "gridSize": {
+      "type": "Number",
+      "default": 40
+    },
+    "labels": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "position": {
+      "payload": {
+        "x": "Number",
+        "y": "Number"
+      }
+    }
+  },
+  "slots": {}
+}

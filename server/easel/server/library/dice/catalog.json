@@ -1,0 +1,342 @@
+{
+  "owner": "easel",
+  "host": "dice",
+  "description": "Dice generation, representation and outcome interpretation utilities.",
+  "members": [
+    {
+      "name": "roller",
+      "side": "server",
+      "version": 1,
+      "description": "Generate server-authoritative standard/custom dice outcomes from the approved random source.",
+      "status": "tested",
+      "dependencies": [
+        "Easel.Random"
+      ],
+      "entry": "server/roller.mjs",
+      "contract": "contracts/roller.server.md",
+      "methods": [
+        "roll(sides=6,count=1,source)"
+      ],
+      "examples": [
+        {
+          "method": "roll",
+          "args": [
+            6,
+            0
+          ],
+          "expected": []
+        },
+        {
+          "method": "roll",
+          "args": [
+            1,
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "pool",
+      "side": "server",
+      "version": 1,
+      "description": "Describe and evaluate collections of heterogeneous dice, including reroll/keep/drop.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/pool.mjs",
+      "contract": "contracts/pool.server.md",
+      "methods": [
+        "evaluate(rolls,{drop=0,keep=rolls.length-drop,highest=true}={})",
+        "describe(groups)"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            [
+              1,
+              6,
+              3
+            ],
+            {
+              "keep": 2
+            }
+          ],
+          "expected": {
+            "total": 9,
+            "kept": [
+              1,
+              2
+            ],
+            "dropped": [
+              0
+            ]
+          }
+        },
+        {
+          "method": "describe",
+          "args": [
+            [
+              {
+                "sides": 1,
+                "count": 1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "notation",
+      "side": "server",
+      "version": 1,
+      "description": "Parse and evaluate permitted dice expressions; explicitly define supported notation.",
+      "status": "tested",
+      "dependencies": [
+        "Easel.Random"
+      ],
+      "entry": "server/notation.mjs",
+      "contract": "contracts/notation.server.md",
+      "methods": [
+        "parse(expression)",
+        "roll(expression,source)"
+      ],
+      "examples": [
+        {
+          "method": "parse",
+          "args": [
+            "2d6-3"
+          ],
+          "expected": {
+            "count": 2,
+            "sides": 6,
+            "modifier": -3
+          }
+        },
+        {
+          "method": "parse",
+          "args": [
+            "eval()"
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "results",
+      "side": "server",
+      "version": 1,
+      "description": "Normalize, summarize and compare roll outcomes without choosing a game's success rule.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/results.mjs",
+      "contract": "contracts/results.server.md",
+      "methods": [
+        "summarize(values)",
+        "compare(values,target)"
+      ],
+      "examples": [
+        {
+          "method": "summarize",
+          "args": [
+            []
+          ],
+          "expected": {
+            "count": 0,
+            "total": 0,
+            "min": null,
+            "max": null
+          }
+        },
+        {
+          "method": "compare",
+          "args": [
+            [
+              2,
+              4,
+              6
+            ],
+            4
+          ],
+          "expected": {
+            "count": 3,
+            "total": 12,
+            "min": 2,
+            "max": 6,
+            "successes": 2,
+            "failures": 1
+          }
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "die",
+      "side": "client",
+      "version": 1,
+      "description": "2D die face/shape renderer with roll request event.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/die.mjs",
+      "contract": "interfaces/die.json",
+      "renderer": "die",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/die.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "tray",
+      "side": "client",
+      "version": 1,
+      "description": "Multi-die display with roll/reroll/clear requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/tray.mjs",
+      "contract": "interfaces/tray.json",
+      "renderer": "dicetray",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/tray.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "results",
+      "side": "client",
+      "version": 1,
+      "description": "Outcome list showing individual dice and optional totals/details.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/results.mjs",
+      "contract": "interfaces/results.json",
+      "renderer": "table",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/results.client.md",
+      "events": [
+        "close",
+        "select",
+        "change"
+      ]
+    },
+    {
+      "name": "poolbuilder",
+      "side": "client",
+      "version": 1,
+      "description": "Controls to select counts and die types.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/poolbuilder.mjs",
+      "contract": "interfaces/poolbuilder.json",
+      "renderer": "poolbuilder",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/poolbuilder.client.md",
+      "events": [
+        "close",
+        "change",
+        "request"
+      ]
+    },
+    {
+      "name": "dicebox",
+      "side": "client",
+      "version": 1,
+      "description": "Deterministic 3D polyhedral dice overlay rendering polyhedral dice with physics animation settling on server-provided values.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/dicebox.mjs",
+      "contract": "interfaces/dicebox.json",
+      "renderer": "dicebox",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/dicebox.client.md",
+      "events": [
+        "close",
+        "settled",
+        "clear"
+      ]
+    },
+    {
+      "name": "dicesettings",
+      "side": "client",
+      "version": 1,
+      "description": "Configuration widget for 3D dice appearance, themes, materials, SFX volume, and preview.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/dicesettings.mjs",
+      "contract": "interfaces/dicesettings.json",
+      "renderer": "dicesettings",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/dicesettings.client.md",
+      "events": [
+        "close",
+        "change",
+        "testRoll"
+      ]
+    },
+    {
+      "name": "rollcard",
+      "side": "client",
+      "version": 1,
+      "description": "Expandable roll result widget displaying roll title, formula, critical/fumble total badge, individual die values, and collapsible modifier breakdown.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/rollcard.mjs",
+      "contract": "interfaces/rollcard.json",
+      "renderer": "rollcard",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/rollcard.client.md",
+      "events": [
+        "close",
+        "toggle",
+        "action"
+      ]
+    }
+  ]
+}

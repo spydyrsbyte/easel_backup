@@ -1,0 +1,76 @@
+{
+  "type": "application",
+  "owner": "easel",
+  "host": "pf1e",
+  "name": "game",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "application": {
+      "entry": "server/application.mjs",
+      "required": {
+        "modules": [
+          "easel.pf1e.rules",
+          "easel.vtt.table"
+        ],
+        "interfaces": [
+          "easel.pf1e.game@1",
+          "easel.vtt.table@1",
+          "easel.maps.geometry@1",
+          "easel.visibility.projection@1",
+          "easel.d20.check@1",
+          "easel.dice.notation@1"
+        ]
+      }
+    }
+  },
+  "client": {
+    "application": {
+      "http-entry": "client/application.mjs",
+      "required": {
+        "modules": [
+          "easel.pf1e.rules",
+          "easel.vtt.table"
+        ],
+        "interfaces": [
+          "easel.pf1e.controller@1",
+          "easel.layout.tabs@1",
+          "easel.layout.window@1",
+          "easel.layout.toolstrip@1",
+          "easel.collections.directory@1",
+          "easel.collections.compendium@1",
+          "easel.pf1e.charactersheet@1",
+          "easel.pf1e.npcsheet@1",
+          "easel.pf1e.recordeditor@1",
+          "easel.d20.rolldialog@1",
+          "easel.d20.vitality@1",
+          "easel.d20.abilityblock@1",
+          "easel.d20.defensebanner@1",
+          "easel.d20.equipmentslots@1",
+          "easel.d20.spellbook@1",
+          "easel.rules.modifierlist@1",
+          "easel.narrative.richtext@1",
+          "easel.narrative.chatlog@1",
+          "easel.combat.encounter@1",
+          "easel.maps.map@1",
+          "easel.dice.dicebox@1",
+          "easel.dice.dicesettings@1",
+          "easel.vtt.scenebinder@1",
+          "easel.vtt.combatbinder@1",
+          "easel.vtt.chatbinder@1",
+          "easel.vtt.directorybinder@1",
+          "easel.layout.sheet@1",
+          "easel.layout.dialog@1"
+        ]
+      }
+    },
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

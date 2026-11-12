@@ -1,0 +1,114 @@
+{
+  "type": "module",
+  "owner": "easel",
+  "host": "board",
+  "name": "games",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "security": {
+      "entry": "server/security.mjs"
+    },
+    "interfaces": [
+      {
+        "name": "game@1",
+        "file": "server/game.mjs"
+      }
+    ],
+    "data": [
+      {
+        ".name": "Match",
+        "game": {
+          ".type": "string"
+        },
+        "squares": {
+          ".type": "array",
+          ".size": {
+            "min": 64,
+            "max": 64
+          },
+          ".validate": {
+            ".type": "field"
+          }
+        },
+        "turn": {
+          ".type": "string",
+          ".default": "white"
+        },
+        "seats": {
+          ".type": "field",
+          "white": {
+            ".type": "string",
+            ".default": ""
+          },
+          "black": {
+            ".type": "string",
+            ".default": ""
+          }
+        },
+        "names": {
+          ".type": "field",
+          "white": {
+            ".type": "string",
+            ".default": ""
+          },
+          "black": {
+            ".type": "string",
+            ".default": ""
+          }
+        },
+        "history": {
+          ".type": "array",
+          ".default": []
+        },
+        "revision": {
+          ".type": "integer",
+          ".default": 0
+        },
+        "chain": {
+          ".type": "integer",
+          ".default": -1
+        },
+        "winner": {
+          ".type": "string",
+          ".default": ""
+        }
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "table@1",
+        "file": "interfaces/table.json",
+        "http-entry": "client/table.mjs",
+        "required": {
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
+        }
+      },
+      {
+        "name": "controller@1",
+        "file": "interfaces/controller.json",
+        "http-entry": "client/controller.mjs",
+        "required": {
+          "interfaces": [
+            "easel.board.table@1"
+          ]
+        }
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

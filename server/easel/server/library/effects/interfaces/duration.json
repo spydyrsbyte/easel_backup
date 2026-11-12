@@ -1,0 +1,31 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "value": {
+      "type": "Number",
+      "default": 0
+    },
+    "unit": {
+      "type": "String",
+      "default": "turns"
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

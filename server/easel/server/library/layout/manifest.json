@@ -1,0 +1,66 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "layout",
+  "name": "layout",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "workspace@1",
+        "file": "server/workspace.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "panel@1",
+        "file": "interfaces/panel.json",
+        "http-entry": "client/panel.mjs"
+      },
+      {
+        "name": "window@1",
+        "file": "interfaces/window.json",
+        "http-entry": "client/window.mjs"
+      },
+      {
+        "name": "tabs@1",
+        "file": "interfaces/tabs.json",
+        "http-entry": "client/tabs.mjs"
+      },
+      {
+        "name": "dialog@1",
+        "file": "interfaces/dialog.json",
+        "http-entry": "client/dialog.mjs"
+      },
+      {
+        "name": "split@1",
+        "file": "interfaces/split.json",
+        "http-entry": "client/split.mjs"
+      },
+      {
+        "name": "sheet@1",
+        "file": "interfaces/sheet.json",
+        "http-entry": "client/sheet.mjs"
+      },
+      {
+        "name": "vttworkspace@1",
+        "file": "interfaces/vttworkspace.json",
+        "http-entry": "client/vttworkspace.mjs"
+      },
+      {
+        "name": "toolstrip@1",
+        "file": "interfaces/toolstrip.json",
+        "http-entry": "client/toolstrip.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "kind": "component",
+  "properties": {
+    "state": {
+      "type": "Object",
+      "default": {}
+    },
+    "user": {
+      "type": "String",
+      "default": ""
+    },
+    "revision": {
+      "type": "Integer",
+      "default": 0
+    },
+    "manage": {
+      "type": "Boolean",
+      "default": false
+    },
+    "busy": {
+      "type": "Boolean",
+      "default": false
+    },
+    "error": {
+      "type": "String",
+      "default": ""
+    },
+    "response": {
+      "type": "Object",
+      "default": {}
+    },
+    "cameraCommand": {
+      "type": "Object",
+      "default": {}
+    }
+  },
+  "events": {
+    "action": {
+      "payload": {
+        "request": "String",
+        "payload": "Object"
+      }
+    },
+    "refresh": {
+      "payload": {}
+    },
+    "inspection": {
+      "payload": {
+        "data": "Object",
+        "open": "Boolean",
+        "pinned": "Boolean"
+      }
+    }
+  },
+  "slots": {
+    "camera": {},
+    "inspection": {}
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "kind": "component",
+  "properties": {
+    "view": { "type": "String", "default": "tables" },
+    "user": { "type": "String", "default": "" },
+    "admin": { "type": "Boolean", "default": false },
+    "games": { "type": "Array", "default": [] },
+    "applications": { "type": "Array", "default": [] },
+    "modules": { "type": "Array", "default": [] },
+    "users": { "type": "Array", "default": [] },
+    "memberships": { "type": "Object", "default": {} },
+    "manageable": { "type": "Array", "default": [] },
+    "error": { "type": "String", "default": "" },
+    "notice": { "type": "String", "default": "" },
+    "busy": { "type": "Boolean", "default": false }
+  },
+  "events": {
+    "navigate": { "payload": { "view": "String" } },
+    "refresh": { "payload": {} },
+    "add": { "payload": { "game": "String", "user": "String" } },
+    "remove": { "payload": { "game": "String", "user": "String" } },
+    "role": {
+      "payload": { "game": "String", "user": "String", "role": "String" }
+    },
+    "access": { "payload": { "game": "String", "access": "String" } },
+    "admin": { "payload": { "user": "String", "admin": "Boolean" } },
+    "join": { "payload": { "game": "String" } },
+    "start": { "payload": { "game": "String" } },
+    "stop": { "payload": { "game": "String" } },
+    "delete": { "payload": { "game": "String" } },
+    "create": {
+      "payload": {
+        "name": "String",
+        "application": "String",
+        "modules": "Array",
+        "access": "String"
+      }
+    }
+  },
+  "slots": {}
+}

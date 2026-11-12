@@ -1,0 +1,297 @@
+{
+  "owner": "easel",
+  "host": "narrative",
+  "description": "Text/scene/story presentations and general collaborative note utilities.",
+  "members": [
+    {
+      "name": "scene",
+      "side": "server",
+      "version": 1,
+      "description": "Read/organize named scenes and references without imposing a storytelling process.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/scene.mjs",
+      "contract": "contracts/scene.server.md",
+      "methods": [
+        "describe(scene)",
+        "reorder(scenes,ids)"
+      ],
+      "examples": [
+        {
+          "method": "describe",
+          "args": [
+            {
+              "id": "s"
+            }
+          ],
+          "expected": {
+            "id": "s",
+            "title": "",
+            "description": "",
+            "participants": [],
+            "references": []
+          }
+        },
+        {
+          "method": "reorder",
+          "args": [
+            [
+              {
+                "id": "s"
+              }
+            ],
+            [
+              "x"
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "journal",
+      "side": "server",
+      "version": 1,
+      "description": "Format/search entry metadata supplied by the game.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/journal.mjs",
+      "contract": "contracts/journal.server.md",
+      "methods": [
+        "search(entries,{query=\"\",tags=[],author=null}={})"
+      ],
+      "examples": [
+        {
+          "method": "search",
+          "args": [
+            [
+              {
+                "id": "a",
+                "title": "Forest"
+              }
+            ],
+            {
+              "query": "forest"
+            }
+          ],
+          "expected": [
+            {
+              "id": "a",
+              "title": "Forest",
+              "author": null,
+              "time": null,
+              "tags": []
+            }
+          ]
+        },
+        {
+          "method": "search",
+          "args": [
+            [],
+            {
+              "query": 3
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "tags",
+      "side": "server",
+      "version": 1,
+      "description": "Index/filter descriptive tags and relationships.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/tags.mjs",
+      "contract": "contracts/tags.server.md",
+      "methods": [
+        "index(entries)",
+        "filter(entries,tags,{all=true}={})"
+      ],
+      "examples": [
+        {
+          "method": "index",
+          "args": [
+            [
+              {
+                "id": "a",
+                "tags": [
+                  "x"
+                ]
+              }
+            ]
+          ],
+          "expected": {
+            "x": [
+              "a"
+            ]
+          }
+        },
+        {
+          "method": "filter",
+          "args": [
+            [
+              {
+                "id": "a",
+                "tags": [
+                  "x"
+                ]
+              }
+            ],
+            [
+              "y"
+            ]
+          ],
+          "expected": []
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "journal",
+      "side": "client",
+      "version": 1,
+      "description": "Rich journal/notes reader with edit requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/journal.mjs",
+      "contract": "interfaces/journal.json",
+      "renderer": "journal",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/journal.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "scene",
+      "side": "client",
+      "version": 1,
+      "description": "Scene header/participants/description layout.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/scene.mjs",
+      "contract": "interfaces/scene.json",
+      "renderer": "scene",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/scene.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "handout",
+      "side": "client",
+      "version": 1,
+      "description": "Viewer-projected handout/document presentation.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/handout.mjs",
+      "contract": "interfaces/handout.json",
+      "renderer": "handout",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/handout.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "relationship",
+      "side": "client",
+      "version": 1,
+      "description": "Relationship/connection view for factions or characters.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/relationship.mjs",
+      "contract": "interfaces/relationship.json",
+      "renderer": "network",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/relationship.client.md",
+      "events": [
+        "close",
+        "select",
+        "request"
+      ]
+    },
+    {
+      "name": "chatlog",
+      "side": "client",
+      "version": 1,
+      "description": "Scrollable RPG chat and roll history stream supporting speaker headers, whisper badges, roll mode selection, and interactive card slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/chatlog.mjs",
+      "contract": "interfaces/chatlog.json",
+      "renderer": "chatlog",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/chatlog.client.md",
+      "events": [
+        "close",
+        "sendMessage",
+        "rollModeChanged",
+        "cardAction",
+        "clear"
+      ]
+    },
+    {
+      "name": "richtext",
+      "side": "client",
+      "version": 1,
+      "description": "Sanitized rich text and Markdown renderer with inline interactive enricher tokens and optional GM secret toggles.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/richtext.mjs",
+      "contract": "interfaces/richtext.json",
+      "renderer": "richtext",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/richtext.client.md",
+      "events": [
+        "close",
+        "enricherActivate",
+        "enricherClick",
+        "change"
+      ]
+    }
+  ]
+}

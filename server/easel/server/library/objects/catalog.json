@@ -1,0 +1,216 @@
+{
+  "owner": "easel",
+  "host": "objects",
+  "description": "Generic identity, metadata and presentation helpers; not a mandatory base class for every game record.",
+  "members": [
+    {
+      "name": "reference",
+      "side": "server",
+      "version": 1,
+      "description": "Validate, format and resolve typed game references without treating IDs as authorization.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/reference.mjs",
+      "contract": "contracts/reference.server.md",
+      "methods": [
+        "validate(ref)",
+        "format(ref)",
+        "resolve(ref,records)"
+      ],
+      "examples": [
+        {
+          "method": "format",
+          "args": [
+            {
+              "id": "one two",
+              "type": "easel.cards.Card"
+            }
+          ],
+          "expected": "easel.cards.Card#one%20two"
+        },
+        {
+          "method": "validate",
+          "args": [
+            {
+              "id": "x",
+              "type": "cards.Card"
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "properties",
+      "side": "server",
+      "version": 1,
+      "description": "Read/write allowed generic object properties through the caller's chosen record model.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/properties.mjs",
+      "contract": "contracts/properties.server.md",
+      "methods": [
+        "read(value,names)",
+        "update(value,patch,allowed)"
+      ],
+      "examples": [
+        {
+          "method": "update",
+          "args": [
+            {
+              "life": 4
+            },
+            {
+              "life": 3
+            },
+            [
+              "life"
+            ]
+          ],
+          "expected": {
+            "life": 3
+          }
+        },
+        {
+          "method": "update",
+          "args": [
+            {
+              "life": 4
+            },
+            {
+              "owner": "x"
+            },
+            [
+              "life"
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "transform",
+      "side": "server",
+      "version": 1,
+      "description": "Compute orientation, scale and transforms without prescribing board rules.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/transform.mjs",
+      "contract": "contracts/transform.server.md",
+      "methods": [
+        "rotate(value,degrees)",
+        "apply(value,transform={})",
+        "inverse(value,transform={})"
+      ],
+      "examples": [
+        {
+          "method": "inverse",
+          "args": [
+            {
+              "x": 7,
+              "y": 9
+            },
+            {
+              "x": 1,
+              "y": 1,
+              "scale": 2
+            }
+          ],
+          "expected": {
+            "x": 3,
+            "y": 4
+          }
+        },
+        {
+          "method": "inverse",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "scale": 0
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "inspector",
+      "side": "client",
+      "version": 1,
+      "description": "Display caller-provided projected properties and contextual actions.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/inspector.mjs",
+      "contract": "interfaces/inspector.json",
+      "renderer": "inspector",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/inspector.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "propertylist",
+      "side": "client",
+      "version": 1,
+      "description": "Render a configurable read-only/editable property list and emit edit requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/propertylist.mjs",
+      "contract": "interfaces/propertylist.json",
+      "renderer": "form",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/propertylist.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "objecticon",
+      "side": "client",
+      "version": 1,
+      "description": "Small object representation with image, counters and state badges.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/objecticon.mjs",
+      "contract": "interfaces/objecticon.json",
+      "renderer": "piece",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/objecticon.client.md",
+      "events": [
+        "close",
+        "select",
+        "drag"
+      ]
+    }
+  ]
+}

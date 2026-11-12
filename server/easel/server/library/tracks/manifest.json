@@ -1,0 +1,63 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "tracks",
+  "name": "tracks",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "counter@1",
+        "file": "server/counter.mjs"
+      },
+      {
+        "name": "progress@1",
+        "file": "server/progress.mjs"
+      },
+      {
+        "name": "clock@1",
+        "file": "server/clock.mjs"
+      },
+      {
+        "name": "threshold@1",
+        "file": "server/threshold.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "counter@1",
+        "file": "interfaces/counter.json",
+        "http-entry": "client/counter.mjs"
+      },
+      {
+        "name": "meter@1",
+        "file": "interfaces/meter.json",
+        "http-entry": "client/meter.mjs"
+      },
+      {
+        "name": "clock@1",
+        "file": "interfaces/clock.json",
+        "http-entry": "client/clock.mjs"
+      },
+      {
+        "name": "track@1",
+        "file": "interfaces/track.json",
+        "http-entry": "client/track.mjs"
+      },
+      {
+        "name": "timer@1",
+        "file": "interfaces/timer.json",
+        "http-entry": "client/timer.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "opacity": {
+      "type": "Number",
+      "default": 1
+    },
+    "text": {
+      "type": "String",
+      "default": "Concealed"
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {
+    "body": {}
+  }
+}

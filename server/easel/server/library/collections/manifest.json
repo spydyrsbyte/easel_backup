@@ -1,0 +1,68 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "collections",
+  "name": "collections",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "ordered@1",
+        "file": "server/ordered.mjs"
+      },
+      {
+        "name": "set@1",
+        "file": "server/set.mjs"
+      },
+      {
+        "name": "transfer@1",
+        "file": "server/transfer.mjs"
+      },
+      {
+        "name": "partition@1",
+        "file": "server/partition.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "list@1",
+        "file": "interfaces/list.json",
+        "http-entry": "client/list.mjs"
+      },
+      {
+        "name": "strip@1",
+        "file": "interfaces/strip.json",
+        "http-entry": "client/strip.mjs"
+      },
+      {
+        "name": "stack@1",
+        "file": "interfaces/stack.json",
+        "http-entry": "client/stack.mjs"
+      },
+      {
+        "name": "browser@1",
+        "file": "interfaces/browser.json",
+        "http-entry": "client/browser.mjs"
+      },
+      {
+        "name": "directory@1",
+        "file": "interfaces/directory.json",
+        "http-entry": "client/directory.mjs"
+      },
+      {
+        "name": "compendium@1",
+        "file": "interfaces/compendium.json",
+        "http-entry": "client/compendium.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

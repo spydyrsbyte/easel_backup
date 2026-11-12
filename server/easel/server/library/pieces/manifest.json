@@ -1,0 +1,59 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "pieces",
+  "name": "pieces",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "orientation@1",
+        "file": "server/orientation.mjs"
+      },
+      {
+        "name": "stacking@1",
+        "file": "server/stacking.mjs"
+      },
+      {
+        "name": "faces@1",
+        "file": "server/faces.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "token@1",
+        "file": "interfaces/token.json",
+        "http-entry": "client/token.mjs"
+      },
+      {
+        "name": "meeple@1",
+        "file": "interfaces/meeple.json",
+        "http-entry": "client/meeple.mjs"
+      },
+      {
+        "name": "miniature@1",
+        "file": "interfaces/miniature.json",
+        "http-entry": "client/miniature.mjs"
+      },
+      {
+        "name": "tile@1",
+        "file": "interfaces/tile.json",
+        "http-entry": "client/tile.mjs"
+      },
+      {
+        "name": "stack@1",
+        "file": "interfaces/stack.json",
+        "http-entry": "client/stack.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

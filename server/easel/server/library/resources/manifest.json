@@ -1,0 +1,58 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "resources",
+  "name": "resources",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "pool@1",
+        "file": "server/pool.mjs"
+      },
+      {
+        "name": "cost@1",
+        "file": "server/cost.mjs"
+      },
+      {
+        "name": "exchange@1",
+        "file": "server/exchange.mjs"
+      },
+      {
+        "name": "charges@1",
+        "file": "server/charges.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "resource@1",
+        "file": "interfaces/resource.json",
+        "http-entry": "client/resource.mjs"
+      },
+      {
+        "name": "pool@1",
+        "file": "interfaces/pool.json",
+        "http-entry": "client/pool.mjs"
+      },
+      {
+        "name": "cost@1",
+        "file": "interfaces/cost.json",
+        "http-entry": "client/cost.mjs"
+      },
+      {
+        "name": "exchange@1",
+        "file": "interfaces/exchange.json",
+        "http-entry": "client/exchange.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

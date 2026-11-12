@@ -1,0 +1,376 @@
+{
+  "owner": "easel",
+  "host": "cards",
+  "description": "Independent card and collection presentations plus reusable card manipulations; no prescribed card-game rules.",
+  "members": [
+    {
+      "name": "card",
+      "side": "server",
+      "version": 1,
+      "description": "Card face/back, orientation and inspectable metadata operations on caller-selected records.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/card.mjs",
+      "contract": "contracts/card.server.md",
+      "methods": [
+        "present(card,{faceUp=true,fields=[\"id\",\"name\",\"image\",\"description\",\"orientation\"]}={})",
+        "orient(card,degrees)",
+        "flip(card,allowed=true)"
+      ],
+      "examples": [
+        {
+          "method": "present",
+          "args": [
+            {
+              "id": "a",
+              "name": "Secret",
+              "back": "back.jpg"
+            },
+            {
+              "faceUp": false
+            }
+          ],
+          "expected": {
+            "id": "a",
+            "faceUp": false,
+            "back": "back.jpg"
+          }
+        },
+        {
+          "method": "flip",
+          "args": [
+            {},
+            false
+          ],
+          "throws": true
+        },
+        {
+          "method": "present",
+          "args": [
+            {
+              "id": "x",
+              "name": "Secret",
+              "faceUp": false
+            }
+          ],
+          "expected": {
+            "id": "x",
+            "faceUp": false,
+            "back": null
+          }
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "deck",
+      "side": "server",
+      "version": 1,
+      "description": "Deck ordering, top/bottom insertion, draw/deal intents and shuffle of an ordered collection.",
+      "status": "tested",
+      "dependencies": [
+        "Easel.Random"
+      ],
+      "entry": "server/deck.mjs",
+      "contract": "contracts/deck.server.md",
+      "methods": [
+        "draw(members,count=1)",
+        "insert(members,added,where=\"top\")",
+        "deal(members,players,count=1)",
+        "shuffle(members,source)"
+      ],
+      "examples": [
+        {
+          "method": "deal",
+          "args": [
+            [
+              "a",
+              "b",
+              "c",
+              "d"
+            ],
+            [
+              "alice",
+              "bob"
+            ],
+            2
+          ],
+          "expected": {
+            "hands": {
+              "alice": [
+                "a",
+                "c"
+              ],
+              "bob": [
+                "b",
+                "d"
+              ]
+            },
+            "remaining": []
+          }
+        },
+        {
+          "method": "draw",
+          "args": [
+            [],
+            1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "hand",
+      "side": "server",
+      "version": 1,
+      "description": "Hand-oriented presentation/order support, including hand visibility conventions.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/hand.mjs",
+      "contract": "contracts/hand.server.md",
+      "methods": [
+        "reorder(members,order)",
+        "project(cards,owner,viewer)"
+      ],
+      "examples": [
+        {
+          "method": "project",
+          "args": [
+            [
+              {
+                "id": "x",
+                "name": "secret"
+              }
+            ],
+            "alice",
+            "bob"
+          ],
+          "expected": [
+            {
+              "id": "x",
+              "faceUp": false,
+              "back": null
+            }
+          ]
+        },
+        {
+          "method": "reorder",
+          "args": [
+            [
+              "a"
+            ],
+            [
+              "b"
+            ]
+          ],
+          "throws": true
+        },
+        {
+          "method": "project",
+          "args": [
+            [
+              {
+                "id": "x",
+                "name": "Secret"
+              }
+            ],
+            null,
+            null
+          ],
+          "expected": [
+            {
+              "id": "x",
+              "faceUp": false,
+              "back": null
+            }
+          ]
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "shuffle",
+      "side": "server",
+      "version": 1,
+      "description": "Randomize a sequence using an approved server-side random source; no hard-coded card model.",
+      "status": "tested",
+      "dependencies": [
+        "Easel.Random"
+      ],
+      "entry": "server/shuffle.mjs",
+      "contract": "contracts/shuffle.server.md",
+      "methods": [
+        "shuffle(sequence,source)"
+      ],
+      "examples": [
+        {
+          "method": "shuffle",
+          "args": [
+            []
+          ],
+          "expected": []
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "card",
+      "side": "client",
+      "version": 1,
+      "description": "Single front/back card renderer, selected state and inspect/flip request events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/card.mjs",
+      "contract": "interfaces/card.json",
+      "renderer": "card",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/card.client.md",
+      "events": [
+        "close",
+        "select",
+        "inspect"
+      ]
+    },
+    {
+      "name": "hand",
+      "side": "client",
+      "version": 1,
+      "description": "Fan/row/stack card arrangement with selection and reorder requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/hand.mjs",
+      "contract": "interfaces/hand.json",
+      "renderer": "hand",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/hand.client.md",
+      "events": [
+        "close",
+        "select",
+        "inspect",
+        "reorder",
+        "drag",
+        "drop"
+      ]
+    },
+    {
+      "name": "pile",
+      "side": "client",
+      "version": 1,
+      "description": "Stacked card group with count, top/back visual and draw/drop requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/pile.mjs",
+      "contract": "interfaces/pile.json",
+      "renderer": "pile",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/pile.client.md",
+      "events": [
+        "close",
+        "select",
+        "request",
+        "inspect",
+        "drag",
+        "drop"
+      ]
+    },
+    {
+      "name": "deck",
+      "side": "client",
+      "version": 1,
+      "description": "Deck-back presentation with count and draw/shuffle action requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/deck.mjs",
+      "contract": "interfaces/deck.json",
+      "renderer": "deck",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/deck.client.md",
+      "events": [
+        "close",
+        "select",
+        "request",
+        "inspect",
+        "drag",
+        "drop"
+      ]
+    },
+    {
+      "name": "inspector",
+      "side": "client",
+      "version": 1,
+      "description": "Upright card examination independent of tabletop camera rotation.",
+      "status": "used",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/inspector.mjs",
+      "contract": "interfaces/inspector.json",
+      "renderer": "cardinspect",
+      "checks": [
+        "scripts/test-kit-browser.mjs",
+        "TestTabletopMagicBrowser"
+      ],
+      "usedBy": [
+        "easel.mtgtable.game"
+      ],
+      "documentation": "contracts/inspector.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "fan",
+      "side": "client",
+      "version": 1,
+      "description": "Generic overlapping-card fan layout; can be reused outside hands.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/fan.mjs",
+      "contract": "interfaces/fan.json",
+      "renderer": "fan",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/fan.client.md",
+      "events": [
+        "close",
+        "select",
+        "inspect",
+        "reorder",
+        "drag",
+        "drop"
+      ]
+    }
+  ]
+}

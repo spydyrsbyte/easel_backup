@@ -1,0 +1,59 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "surfaces",
+  "name": "surfaces",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "geometry@1",
+        "file": "server/geometry.mjs"
+      },
+      {
+        "name": "position@1",
+        "file": "server/position.mjs"
+      },
+      {
+        "name": "distance@1",
+        "file": "server/distance.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "table@1",
+        "file": "interfaces/table.json",
+        "http-entry": "client/table.mjs"
+      },
+      {
+        "name": "squaregrid@1",
+        "file": "interfaces/squaregrid.json",
+        "http-entry": "client/squaregrid.mjs"
+      },
+      {
+        "name": "hexgrid@1",
+        "file": "interfaces/hexgrid.json",
+        "http-entry": "client/hexgrid.mjs"
+      },
+      {
+        "name": "camera@1",
+        "file": "interfaces/camera.json",
+        "http-entry": "client/camera.mjs"
+      },
+      {
+        "name": "placement@1",
+        "file": "interfaces/placement.json",
+        "http-entry": "client/placement.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

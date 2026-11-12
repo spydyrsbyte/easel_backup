@@ -1,0 +1,125 @@
+{
+  "startup": "./easel/manifest.json",
+  "library": [
+    {
+      "name": "core",
+      "manifest": "./library/core/manifest.json"
+    },
+    {
+      "name": "layout",
+      "manifest": "./library/layout/manifest.json"
+    },
+    {
+      "name": "input",
+      "manifest": "./library/input/manifest.json"
+    },
+    {
+      "name": "display",
+      "manifest": "./library/display/manifest.json"
+    },
+    {
+      "name": "objects",
+      "manifest": "./library/objects/manifest.json"
+    },
+    {
+      "name": "collections",
+      "manifest": "./library/collections/manifest.json"
+    },
+    {
+      "name": "visibility",
+      "manifest": "./library/visibility/manifest.json"
+    },
+    {
+      "name": "surfaces",
+      "manifest": "./library/surfaces/manifest.json"
+    },
+    {
+      "name": "zones",
+      "manifest": "./library/zones/manifest.json"
+    },
+    {
+      "name": "pieces",
+      "manifest": "./library/pieces/manifest.json"
+    },
+    {
+      "name": "cards",
+      "manifest": "./library/cards/manifest.json"
+    },
+    {
+      "name": "dice",
+      "manifest": "./library/dice/manifest.json"
+    },
+    {
+      "name": "tracks",
+      "manifest": "./library/tracks/manifest.json"
+    },
+    {
+      "name": "maps",
+      "manifest": "./library/maps/manifest.json"
+    },
+    {
+      "name": "territory",
+      "manifest": "./library/territory/manifest.json"
+    },
+    {
+      "name": "networks",
+      "manifest": "./library/networks/manifest.json"
+    },
+    {
+      "name": "resources",
+      "manifest": "./library/resources/manifest.json"
+    },
+    {
+      "name": "turns",
+      "manifest": "./library/turns/manifest.json"
+    },
+    {
+      "name": "actions",
+      "manifest": "./library/actions/manifest.json"
+    },
+    {
+      "name": "rules",
+      "manifest": "./library/rules/manifest.json"
+    },
+    {
+      "name": "effects",
+      "manifest": "./library/effects/manifest.json"
+    },
+    {
+      "name": "tables",
+      "manifest": "./library/tables/manifest.json"
+    },
+    {
+      "name": "workflow",
+      "manifest": "./library/workflow/manifest.json"
+    },
+    {
+      "name": "characters",
+      "manifest": "./library/characters/manifest.json"
+    },
+    {
+      "name": "inventory",
+      "manifest": "./library/inventory/manifest.json"
+    },
+    {
+      "name": "combat",
+      "manifest": "./library/combat/manifest.json"
+    },
+    {
+      "name": "narrative",
+      "manifest": "./library/narrative/manifest.json"
+    },
+    {
+      "name": "economy",
+      "manifest": "./library/economy/manifest.json"
+    },
+    {
+      "name": "progression",
+      "manifest": "./library/progression/manifest.json"
+    },
+    {
+      "name": "d20",
+      "manifest": "./library/d20/manifest.json"
+    }
+  ]
+}

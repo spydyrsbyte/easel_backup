@@ -1,0 +1,46 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Roll Check"
+    },
+    "bonus": {
+      "type": "Number",
+      "default": 0
+    },
+    "conditionalModifiers": {
+      "type": "Array",
+      "default": []
+    },
+    "rollModes": {
+      "type": "Array",
+      "default": []
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "roll": {
+      "payload": {
+        "bonus": "Number",
+        "mode": "String",
+        "take": "Number",
+        "activeModifiers": "Array"
+      }
+    },
+    "cancel": {
+      "payload": {}
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

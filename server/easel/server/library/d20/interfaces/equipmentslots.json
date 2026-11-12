@@ -1,0 +1,46 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Equipment Slots"
+    },
+    "slots": {
+      "type": "Object",
+      "default": {}
+    },
+    "editable": {
+      "type": "Boolean",
+      "default": false
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "equipItem": {
+      "payload": {
+        "slot": "String"
+      }
+    },
+    "unequipItem": {
+      "payload": {
+        "slot": "String"
+      }
+    },
+    "inspectSlot": {
+      "payload": {
+        "slot": "String"
+      }
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

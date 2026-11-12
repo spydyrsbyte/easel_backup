@@ -1,0 +1,493 @@
+{
+  "owner": "easel",
+  "host": "maps",
+  "description": "Exploration/tactical spatial representations, separate from any mandatory combat subsystem.",
+  "members": [
+    {
+      "name": "terrain",
+      "side": "server",
+      "version": 1,
+      "description": "Read terrain and movement-cost data from caller-supplied map regions.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/terrain.mjs",
+      "contract": "contracts/terrain.server.md",
+      "methods": [
+        "at(regions,position)",
+        "cost(regions,position,fallback=1)"
+      ],
+      "examples": [
+        {
+          "method": "cost",
+          "args": [
+            [],
+            {
+              "x": 0,
+              "y": 0
+            },
+            2
+          ],
+          "expected": 2
+        },
+        {
+          "method": "cost",
+          "args": [
+            [],
+            {
+              "x": 0,
+              "y": 0
+            },
+            -1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "geometry",
+      "side": "server",
+      "version": 1,
+      "description": "Line-of-sight, range, area, path, collision, grid, and multi-ground hierarchy geometry calculations.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/geometry.mjs",
+      "contract": "contracts/geometry.server.md",
+      "methods": [
+        "distance(a,b)",
+        "lineOfSight(a,b,walls=[])",
+        "contains(value,polygon)",
+        "insidePolygon(value,polygon)",
+        "area(polygon)",
+        "bodyRadius(size)",
+        "movementBlocked(walls,from,to,size)",
+        "createGrid(raw={})",
+        "createGround(raw={},index=0)",
+        "createLayer(raw={},index=0)",
+        "layerFeatures(type)",
+        "emptyBattleMap(overrides={})",
+        "grounds(map)",
+        "activeGround(map,groundId)",
+        "mapSize(map)",
+        "unitsPerPixel(map)",
+        "findLayer(layers,id)",
+        "findItem(ground,itemId,filterFn)",
+        "itemKind(item)",
+        "targetLayer(ground,itemOrType)",
+        "moveLayer(siblings,id,delta)",
+        "groundStack(map,groundId)",
+        "visibleStack(map,groundId,tokens=null)",
+        "battleView(map,groundId,options={})",
+        "plainStack(options={})"
+      ],
+      "examples": [
+        {
+          "method": "lineOfSight",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 2,
+              "y": 0
+            },
+            [
+              {
+                "a": {
+                  "x": 1,
+                  "y": -1
+                },
+                "b": {
+                  "x": 1,
+                  "y": 1
+                }
+              }
+            ]
+          ],
+          "expected": false
+        },
+        {
+          "method": "area",
+          "args": [
+            [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 2,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": 2
+              }
+            ]
+          ],
+          "expected": 2
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "path",
+      "side": "server",
+      "version": 1,
+      "description": "Find bounded routes across graph/grid terrain under supplied constraints.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/path.mjs",
+      "contract": "contracts/path.server.md",
+      "methods": [
+        "find(nodes,edges,start,end,{blocked=[],maxNodes=10000}={})"
+      ],
+      "examples": [
+        {
+          "method": "find",
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            [
+              {
+                "from": "a",
+                "to": "b",
+                "cost": 2
+              }
+            ],
+            "a",
+            "b"
+          ],
+          "expected": {
+            "nodes": [
+              "a",
+              "b"
+            ],
+            "cost": 2
+          }
+        },
+        {
+          "method": "find",
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            [],
+            "a",
+            "b"
+          ],
+          "expected": null
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "vision",
+      "side": "server",
+      "version": 1,
+      "description": "Compute visible areas, hindrance attenuation, luminance-gated detail, and sampled vision masks from supplied obstructions and observers.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/vision.mjs",
+      "contract": "contracts/vision.server.md",
+      "methods": [
+        "visible(observer,targets,{range=10,walls=[],facing=0,fov=360}={})",
+        "polygon(observer,{range=10,walls=[],facing=0,fov=360,rays=128}={})",
+        "register({hindrances=[],presets={},builtin,reset=false}={})",
+        "catalog()",
+        "has(name)",
+        "types(value=[])",
+        "vision(value)",
+        "visibility(value=true)",
+        "presentation(value={})",
+        "angleMatches(angle,range)",
+        "inFieldOfView(token,at)",
+        "hindrance(vision,visibility,angle=0,typesOverride)",
+        "combineHindrances(values=[])",
+        "effectiveDistance(distance,crossings=[])",
+        "detailAt(vision,distance,observerLuminance=1)",
+        "createVisionField(scene,options={})",
+        "evaluateScene(scene,options={})"
+      ],
+      "examples": [
+        {
+          "method": "visible",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            [
+              {
+                "id": "a",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "b",
+                "x": 12,
+                "y": 0
+              }
+            ],
+            {
+              "range": 3
+            }
+          ],
+          "expected": [
+            {
+              "id": "a",
+              "x": 2,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "method": "visible",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            [],
+            {
+              "range": -1
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "template",
+      "side": "server",
+      "version": 1,
+      "description": "Area-of-effect template geometry (circle/burst, cone, ray/line, rectangle) and cell/token intersection queries.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/template.mjs",
+      "contract": "contracts/template.server.md",
+      "methods": [
+        "polygon(template)",
+        "contains(template,target)",
+        "cells(template,grid={})",
+        "tokens(template,tokens=[])",
+        "evaluate(template,scene={})"
+      ],
+      "examples": [
+        {
+          "method": "contains",
+          "args": [
+            {
+              "kind": "circle",
+              "origin": { "x": 100, "y": 100 },
+              "radius": 50
+            },
+            { "x": 130, "y": 140 }
+          ],
+          "expected": true
+        },
+        {
+          "method": "contains",
+          "args": [
+            {
+              "kind": "circle",
+              "origin": { "x": 0, "y": 0 },
+              "radius": -5
+            },
+            { "x": 0, "y": 0 }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "map",
+      "side": "client",
+      "version": 1,
+      "description": "PixiJS v8 multi-level battlemap viewport with camera, grid calibration, tokens, walls/doors/columns, lighting/fog, overhead roofs, AoE templates, and .map archive import/export.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM",
+        "easel.graphics.pixi@1"
+      ],
+      "entry": "client/map.mjs",
+      "contract": "interfaces/map.json",
+      "renderer": "map",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/map.client.md",
+      "events": [
+        "close",
+        "cameraChanged",
+        "tokenSelect",
+        "tokenMoveRequest",
+        "doorToggleRequest",
+        "gridCalibrated",
+        "mapEditChange",
+        "exportMap",
+        "importMap"
+      ]
+    },
+    {
+      "name": "ruler",
+      "side": "client",
+      "version": 1,
+      "description": "Measure distance or path length with interactive endpoints.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/ruler.mjs",
+      "contract": "interfaces/ruler.json",
+      "renderer": "ruler",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/ruler.client.md",
+      "events": [
+        "close",
+        "measure"
+      ]
+    },
+    {
+      "name": "fog",
+      "side": "client",
+      "version": 1,
+      "description": "Render server-projected known/unknown map areas and vision masks using PixiJS v8; not a security boundary itself.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM",
+        "easel.graphics.pixi@1"
+      ],
+      "entry": "client/fog.mjs",
+      "contract": "interfaces/fog.json",
+      "renderer": "fog",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/fog.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "waypoint",
+      "side": "client",
+      "version": 1,
+      "description": "Selectable path-node and waypoint overlays.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/waypoint.mjs",
+      "contract": "interfaces/waypoint.json",
+      "renderer": "waypoint",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/waypoint.client.md",
+      "events": [
+        "close",
+        "select"
+      ]
+    },
+    {
+      "name": "template",
+      "side": "client",
+      "version": 1,
+      "description": "Interactive PixiJS v8 area-of-effect template overlay (burst/circle, 90°/60° cones, ray/line, rectangle) with grid-cell highlighting.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM",
+        "easel.graphics.pixi@1"
+      ],
+      "entry": "client/template.mjs",
+      "contract": "interfaces/template.json",
+      "renderer": "template",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/template.client.md",
+      "events": [
+        "close",
+        "place",
+        "move",
+        "remove",
+        "select"
+      ]
+    },
+    {
+      "name": "shadowbox",
+      "side": "client",
+      "version": 1,
+      "description": "PixiJS v8 16:9 theatrical stage with hierarchical group visibility, visual filters, dialogue boxes, GM reveal toggles, and .box zip archives.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM",
+        "easel.graphics.pixi@1"
+      ],
+      "entry": "client/shadowbox.mjs",
+      "contract": "interfaces/shadowbox.json",
+      "renderer": "shadowbox",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/shadowbox.client.md",
+      "events": [
+        "close",
+        "speak",
+        "toggleElements",
+        "select",
+        "change",
+        "exportBox",
+        "importBox"
+      ]
+    },
+    {
+      "name": "worldmap",
+      "side": "client",
+      "version": 1,
+      "description": "Draggable and zoomable PixiJS v8 overland worldmap with tiles and interactive location pins linked to sub-maps or notes.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM",
+        "easel.graphics.pixi@1"
+      ],
+      "entry": "client/worldmap.mjs",
+      "contract": "interfaces/worldmap.json",
+      "renderer": "worldmap",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/worldmap.client.md",
+      "events": [
+        "close",
+        "cameraChanged",
+        "pinSelect",
+        "pinMove",
+        "pinCreate"
+      ]
+    }
+  ]
+}

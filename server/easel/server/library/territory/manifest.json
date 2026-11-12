@@ -1,0 +1,45 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "territory",
+  "name": "territory",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "influence@1",
+        "file": "server/influence.mjs"
+      },
+      {
+        "name": "control@1",
+        "file": "server/control.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "controlmap@1",
+        "file": "interfaces/controlmap.json",
+        "http-entry": "client/controlmap.mjs"
+      },
+      {
+        "name": "influence@1",
+        "file": "interfaces/influence.json",
+        "http-entry": "client/influence.mjs"
+      },
+      {
+        "name": "regionmarker@1",
+        "file": "interfaces/regionmarker.json",
+        "http-entry": "client/regionmarker.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

@@ -1,0 +1,647 @@
+{
+  "owner": "easel",
+  "host": "d20",
+  "description": "Reusable server calculation bricks and client UI widgets for d20-family tabletop RPGs.",
+  "members": [
+    {
+      "name": "abilities",
+      "side": "server",
+      "version": 1,
+      "description": "Six classic ability scores, modifiers, damage, drain, and point buy.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/abilities.mjs",
+      "contract": "contracts/abilities.server.md",
+      "methods": [
+        "abilityModifier(score)",
+        "resolveAbility(raw, stackingService)",
+        "pointBuyCost(scores, costTable)",
+        "carryingCapacity(strength, multiplier)"
+      ],
+      "examples": [
+        {
+          "method": "abilityModifier",
+          "args": [14],
+          "expected": 2
+        },
+        {
+          "method": "abilityModifier",
+          "args": [9],
+          "expected": -1
+        },
+        {
+          "method": "pointBuyCost",
+          "args": [
+            {
+              "str": 10,
+              "dex": 14,
+              "con": 12,
+              "int": 10,
+              "wis": 10,
+              "cha": 10
+            }
+          ],
+          "expected": 7
+        },
+        {
+          "method": "pointBuyCost",
+          "args": [
+            {
+              "str": 25
+            }
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "check",
+      "side": "server",
+      "version": 1,
+      "description": "d20 checks, advantage/disadvantage, natural 1/20, attacks and criticals.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/check.mjs",
+      "contract": "contracts/check.server.md",
+      "methods": [
+        "rollCheck(options)",
+        "rollAttack(options)"
+      ],
+      "examples": [
+        {
+          "method": "rollCheck",
+          "args": [
+            {
+              "take": 10,
+              "modifiers": [5],
+              "dc": 15
+            }
+          ],
+          "expected": {
+            "naturalRoll": 10,
+            "dice": [10],
+            "modifierTotal": 5,
+            "breakdown": [5],
+            "total": 15,
+            "dc": 15,
+            "isNatural1": false,
+            "isNatural20": false,
+            "success": true
+          }
+        },
+        {
+          "method": "rollCheck",
+          "args": [
+            {
+              "take": 20,
+              "modifiers": [2],
+              "dc": 25
+            }
+          ],
+          "expected": {
+            "naturalRoll": 20,
+            "dice": [20],
+            "modifierTotal": 2,
+            "breakdown": [2],
+            "total": 22,
+            "dc": 25,
+            "isNatural1": false,
+            "isNatural20": true,
+            "success": true
+          }
+        },
+        {
+          "method": "rollCheck",
+          "args": [
+            {
+              "mode": "invalid"
+            }
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "defense",
+      "side": "server",
+      "version": 1,
+      "description": "Normal, Touch, and Flat-Footed Armor Class, saving throws.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/defense.mjs",
+      "contract": "contracts/defense.server.md",
+      "methods": [
+        "resolveArmorClass(options)",
+        "resolveSavingThrows(options)"
+      ],
+      "examples": [
+        {
+          "method": "resolveArmorClass",
+          "args": [
+            {
+              "base": 10,
+              "modifiers": [
+                { "type": "armor", "value": 4 },
+                { "type": "dex", "value": 2 },
+                { "type": "dodge", "value": 1 }
+              ]
+            }
+          ],
+          "expected": {
+            "normal": 17,
+            "touch": 13,
+            "flatFooted": 14,
+            "breakdowns": {
+              "normal": {
+                "total": 7,
+                "active": [
+                  { "type": "dodge", "value": 1 },
+                  { "type": "armor", "value": 4 },
+                  { "type": "dex", "value": 2 }
+                ],
+                "suppressed": []
+              },
+              "touch": {
+                "total": 3,
+                "active": [
+                  { "type": "dodge", "value": 1 },
+                  { "type": "dex", "value": 2 }
+                ],
+                "suppressed": []
+              },
+              "flatFooted": {
+                "total": 4,
+                "active": [
+                  { "type": "armor", "value": 4 }
+                ],
+                "suppressed": []
+              }
+            }
+          }
+        },
+        {
+          "method": "resolveArmorClass",
+          "args": [
+            {
+              "base": "invalid"
+            }
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "health",
+      "side": "server",
+      "version": 1,
+      "description": "HP state transitions, nonlethal damage, death thresholds.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/health.mjs",
+      "contract": "contracts/health.server.md",
+      "methods": [
+        "resolveHealthState(options)",
+        "applyDamageToPools(options)",
+        "calculateHitDice(options)"
+      ],
+      "examples": [
+        {
+          "method": "resolveHealthState",
+          "args": [
+            {
+              "hp": 25,
+              "maxHp": 30,
+              "tempHp": 5,
+              "nonlethal": 0,
+              "deathThreshold": -14
+            }
+          ],
+          "expected": {
+            "hp": 25,
+            "maxHp": 30,
+            "tempHp": 5,
+            "nonlethal": 0,
+            "effectiveHp": 30,
+            "status": "healthy"
+          }
+        },
+        {
+          "method": "resolveHealthState",
+          "args": [
+            {
+              "hp": -15,
+              "maxHp": 30,
+              "deathThreshold": -14
+            }
+          ],
+          "expected": {
+            "hp": -15,
+            "maxHp": 30,
+            "tempHp": 0,
+            "nonlethal": 0,
+            "effectiveHp": -15,
+            "status": "dead"
+          }
+        },
+        {
+          "method": "applyDamageToPools",
+          "args": [
+            {
+              "hp": 20,
+              "maxHp": 20,
+              "tempHp": 5,
+              "nonlethal": 0,
+              "lethalDamage": 8
+            }
+          ],
+          "expected": {
+            "hp": 17,
+            "maxHp": 20,
+            "tempHp": 0,
+            "nonlethal": 0
+          }
+        },
+        {
+          "method": "resolveHealthState",
+          "args": [
+            {
+              "hp": "bad"
+            }
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "spellbook",
+      "side": "server",
+      "version": 1,
+      "description": "Bonus spell slots, spell DC, concentration and caster level checks.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/spellbook.mjs",
+      "contract": "contracts/spellbook.server.md",
+      "methods": [
+        "bonusSlotsForAbility(abilityModifier, maxSpellLevel)",
+        "resolveSpellDC(options)",
+        "rollConcentration(options, checkService)",
+        "rollCasterLevelCheck(options, checkService)"
+      ],
+      "examples": [
+        {
+          "method": "bonusSlotsForAbility",
+          "args": [4, 9],
+          "expected": [0, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+        },
+        {
+          "method": "resolveSpellDC",
+          "args": [
+            {
+              "base": 10,
+              "spellLevel": 3,
+              "abilityModifier": 4,
+              "modifiers": [
+                { "name": "Spell Focus", "value": 1 }
+              ]
+            }
+          ],
+          "expected": {
+            "total": 18,
+            "dc": 18,
+            "breakdown": {
+              "base": 10,
+              "spellLevel": 3,
+              "abilityModifier": 4,
+              "stackedBonus": 1,
+              "modifiers": [
+                { "name": "Spell Focus", "value": 1 }
+              ]
+            }
+          }
+        },
+        {
+          "method": "bonusSlotsForAbility",
+          "args": ["invalid"],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "size",
+      "side": "server",
+      "version": 1,
+      "description": "Size categories, modifiers, weapon damage dice stepping.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/size.mjs",
+      "contract": "contracts/size.server.md",
+      "methods": [
+        "getSizeData(sizeKey)",
+        "stepWeaponDamageDice(diceFormula, steps)"
+      ],
+      "examples": [
+        {
+          "method": "getSizeData",
+          "args": ["medium"],
+          "expected": {
+            "key": "medium",
+            "index": 4,
+            "acAttackMod": 0,
+            "specialMod": 0,
+            "flyMod": 0,
+            "stealthMod": 0,
+            "spaceFeet": 5,
+            "naturalReachTallFeet": 5,
+            "naturalReachLongFeet": 5
+          }
+        },
+        {
+          "method": "stepWeaponDamageDice",
+          "args": ["1d8", 1],
+          "expected": "2d6"
+        },
+        {
+          "method": "stepWeaponDamageDice",
+          "args": ["1d8", 2],
+          "expected": "3d6"
+        },
+        {
+          "method": "stepWeaponDamageDice",
+          "args": ["1d8", -1],
+          "expected": "1d6"
+        },
+        {
+          "method": "getSizeData",
+          "args": ["unknownSize"],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "damagetypes",
+      "side": "server",
+      "version": 1,
+      "description": "Physical and energy damage, DR bypass, resistances, vulnerabilities.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/damagetypes.mjs",
+      "contract": "contracts/damagetypes.server.md",
+      "methods": [
+        "resolveDamageInstances(options)"
+      ],
+      "examples": [
+        {
+          "method": "resolveDamageInstances",
+          "args": [
+            {
+              "instances": [
+                { "amount": 12, "types": ["slashing"] },
+                { "amount": 6, "types": ["fire"] }
+              ],
+              "dr": [
+                { "amount": 5, "bypass": ["coldIron", "good"] }
+              ],
+              "resistances": { "fire": 5 },
+              "immunities": ["cold"],
+              "vulnerabilities": []
+            }
+          ],
+          "expected": {
+            "totalLethal": 8,
+            "totalNonlethal": 0,
+            "totalDamage": 8,
+            "breakdownPerInstance": [
+              {
+                "originalAmount": 12,
+                "types": ["slashing"],
+                "finalAmount": 7,
+                "absorbedByDR": 5,
+                "absorbedByHardness": 0,
+                "resisted": 0,
+                "isImmune": false,
+                "isVulnerable": false,
+                "isNonlethal": false
+              },
+              {
+                "originalAmount": 6,
+                "types": ["fire"],
+                "finalAmount": 1,
+                "absorbedByDR": 0,
+                "absorbedByHardness": 0,
+                "resisted": 5,
+                "isImmune": false,
+                "isVulnerable": false,
+                "isNonlethal": false
+              }
+            ]
+          }
+        },
+        {
+          "method": "resolveDamageInstances",
+          "args": [
+            {
+              "instances": "bad"
+            }
+          ],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "grid",
+      "side": "server",
+      "version": 1,
+      "description": "5-10-5 alternating diagonal distance, threatened squares, templates.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/grid.mjs",
+      "contract": "contracts/grid.server.md",
+      "methods": [
+        "measureDistance5105(points, feetPerSquare)",
+        "getThreatenedSquares(options)",
+        "rasterizeTemplate(options)"
+      ],
+      "examples": [
+        {
+          "method": "measureDistance5105",
+          "args": [
+            [
+              { "x": 0, "y": 0 },
+              { "x": 1, "y": 1 }
+            ],
+            5
+          ],
+          "expected": {
+            "feet": 5,
+            "totalSquares": 1,
+            "diagonals": 1,
+            "straights": 0
+          }
+        },
+        {
+          "method": "measureDistance5105",
+          "args": [
+            [
+              { "x": 0, "y": 0 },
+              { "x": 2, "y": 2 }
+            ],
+            5
+          ],
+          "expected": {
+            "feet": 15,
+            "totalSquares": 3,
+            "diagonals": 2,
+            "straights": 0
+          }
+        },
+        {
+          "method": "measureDistance5105",
+          "args": [
+            [
+              { "x": 0, "y": 0 },
+              { "x": 4, "y": 4 }
+            ],
+            5
+          ],
+          "expected": {
+            "feet": 30,
+            "totalSquares": 6,
+            "diagonals": 4,
+            "straights": 0
+          }
+        },
+        {
+          "method": "measureDistance5105",
+          "args": ["invalid"],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "currency",
+      "side": "server",
+      "version": 1,
+      "description": "Multi-denomination coinage conversion, weight, and change-making.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/currency.mjs",
+      "contract": "contracts/currency.server.md",
+      "methods": [
+        "toCopper(coins)",
+        "fromCopper(copper)",
+        "coinWeightLbs(coins, coinsPerLb)",
+        "deductCurrency(wallet, cost, allowHigherDenominationChange)"
+      ],
+      "examples": [
+        {
+          "method": "toCopper",
+          "args": [
+            { "pp": 1, "gp": 2, "sp": 3, "cp": 4 }
+          ],
+          "expected": 1234
+        },
+        {
+          "method": "fromCopper",
+          "args": [1234],
+          "expected": { "pp": 1, "gp": 2, "sp": 3, "cp": 4 }
+        },
+        {
+          "method": "coinWeightLbs",
+          "args": [
+            { "pp": 0, "gp": 50, "sp": 0, "cp": 0 },
+            50
+          ],
+          "expected": 1
+        },
+        {
+          "method": "deductCurrency",
+          "args": [
+            { "pp": 0, "gp": 10, "sp": 0, "cp": 0 },
+            { "pp": 0, "gp": 3, "sp": 5, "cp": 0 },
+            true
+          ],
+          "expected": {
+            "ok": true,
+            "newWallet": { "pp": 0, "gp": 6, "sp": 5, "cp": 0 },
+            "changeGiven": true
+          }
+        },
+        {
+          "method": "toCopper",
+          "args": ["invalid"],
+          "throws": true
+        }
+      ]
+    },
+    {
+      "name": "abilityblock",
+      "side": "client",
+      "version": 1,
+      "description": "Six-ability scores strip, totals, modifiers, roll triggers.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/abilityblock.mjs",
+      "contract": "interfaces/abilityblock.json"
+    },
+    {
+      "name": "defensebanner",
+      "side": "client",
+      "version": 1,
+      "description": "AC and Saving Throws banner.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/defensebanner.mjs",
+      "contract": "interfaces/defensebanner.json"
+    },
+    {
+      "name": "vitality",
+      "side": "client",
+      "version": 1,
+      "description": "HP bar, temp HP, nonlethal damage, damage/heal actions.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/vitality.mjs",
+      "contract": "interfaces/vitality.json"
+    },
+    {
+      "name": "spellbook",
+      "side": "client",
+      "version": 1,
+      "description": "Spell level tabs, prepared slots, cast buttons.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/spellbook.mjs",
+      "contract": "interfaces/spellbook.json"
+    },
+    {
+      "name": "attackcard",
+      "side": "client",
+      "version": 1,
+      "description": "Attack chat card, criticals, damage types, apply damage.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/attackcard.mjs",
+      "contract": "interfaces/attackcard.json"
+    },
+    {
+      "name": "rolldialog",
+      "side": "client",
+      "version": 1,
+      "description": "Roll modifiers prompt modal.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/rolldialog.mjs",
+      "contract": "interfaces/rolldialog.json"
+    },
+    {
+      "name": "equipmentslots",
+      "side": "client",
+      "version": 1,
+      "description": "Magic item body slot equipment list / paper doll.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "client/equipmentslots.mjs",
+      "contract": "interfaces/equipmentslots.json"
+    }
+  ]
+}

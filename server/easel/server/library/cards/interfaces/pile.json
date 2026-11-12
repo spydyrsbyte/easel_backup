@@ -1,0 +1,61 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "data": {
+      "type": "Object",
+      "default": {}
+    },
+    "count": {
+      "type": "Number",
+      "default": 0
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "request": {
+      "payload": {
+        "action": "String",
+        "value": "Object"
+      }
+    },
+    "inspect": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "drag": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "drop": {
+      "payload": {
+        "id": "String",
+        "source": "String",
+        "destination": "String",
+        "x": "Number",
+        "y": "Number"
+      }
+    }
+  },
+  "slots": {}
+}

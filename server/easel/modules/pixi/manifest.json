@@ -1,0 +1,25 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "graphics",
+  "name": "pixi",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "pixi@1",
+        "file": "interfaces/pixi.json",
+        "http-entry": "client/pixi.mjs"
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

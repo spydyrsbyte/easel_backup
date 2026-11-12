@@ -1,0 +1,293 @@
+{
+  "owner": "easel",
+  "host": "economy",
+  "description": "Prices, offers and bids as reusable independent primitives, not a marketplace subsystem.",
+  "members": [
+    {
+      "name": "quote",
+      "side": "server",
+      "version": 1,
+      "description": "Calculate/revalidate a price quote from supplied inputs.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/quote.mjs",
+      "contract": "contracts/quote.server.md",
+      "methods": [
+        "calculate(unitPrice,quantity=1,{discount=0,tax=0}={})",
+        "revalidate(quoted,current)"
+      ],
+      "examples": [
+        {
+          "method": "calculate",
+          "args": [
+            5,
+            2
+          ],
+          "expected": {
+            "unitPrice": 5,
+            "quantity": 2,
+            "subtotal": 10,
+            "discount": 0,
+            "tax": 0,
+            "total": 10
+          }
+        },
+        {
+          "method": "calculate",
+          "args": [
+            5,
+            -1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "offer",
+      "side": "server",
+      "version": 1,
+      "description": "Describe, validate and expire an exchange offer.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/offer.mjs",
+      "contract": "contracts/offer.server.md",
+      "methods": [
+        "validate(offer,now)",
+        "accept(offer,quantity,now)"
+      ],
+      "examples": [
+        {
+          "method": "accept",
+          "args": [
+            {
+              "id": "a",
+              "seller": "s",
+              "price": 2,
+              "quantity": 3
+            },
+            2,
+            0
+          ],
+          "expected": {
+            "quantity": 2,
+            "total": 4,
+            "remaining": {
+              "id": "a",
+              "seller": "s",
+              "price": 2,
+              "quantity": 1
+            }
+          }
+        },
+        {
+          "method": "validate",
+          "args": [
+            {
+              "id": "a",
+              "seller": "s",
+              "price": 2,
+              "quantity": 1,
+              "expires": 1
+            },
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "bid",
+      "side": "server",
+      "version": 1,
+      "description": "Represent bid comparison, winning bid and minimum increment rules.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/bid.mjs",
+      "contract": "contracts/bid.server.md",
+      "methods": [
+        "submit(bids,actor,amount,{minimum=0,increment=1}={})",
+        "winner(bids)"
+      ],
+      "examples": [
+        {
+          "method": "submit",
+          "args": [
+            [],
+            "a",
+            3
+          ],
+          "expected": [
+            {
+              "actor": "a",
+              "amount": 3
+            }
+          ]
+        },
+        {
+          "method": "submit",
+          "args": [
+            [
+              {
+                "actor": "a",
+                "amount": 3
+              }
+            ],
+            "b",
+            3
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "allocation",
+      "side": "server",
+      "version": 1,
+      "description": "Compute distribution for a completed bidding or sale round.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/allocation.mjs",
+      "contract": "contracts/allocation.server.md",
+      "methods": [
+        "distribute(bids,quantity,{price=\"bid\",reserve=0}={})"
+      ],
+      "examples": [
+        {
+          "method": "distribute",
+          "args": [
+            [
+              {
+                "actor": "a",
+                "amount": 3
+              },
+              {
+                "actor": "b",
+                "amount": 5
+              }
+            ],
+            1
+          ],
+          "expected": [
+            {
+              "actor": "b",
+              "amount": 5,
+              "price": 5
+            }
+          ]
+        },
+        {
+          "method": "distribute",
+          "args": [
+            [],
+            -1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "market",
+      "side": "client",
+      "version": 1,
+      "description": "Offer grid/list with quote and buy requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/market.mjs",
+      "contract": "interfaces/market.json",
+      "renderer": "market",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/market.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "offer",
+      "side": "client",
+      "version": 1,
+      "description": "A tradable offer with accepted quantities and response actions.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/offer.mjs",
+      "contract": "interfaces/offer.json",
+      "renderer": "offer",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/offer.client.md",
+      "events": [
+        "close",
+        "change",
+        "request"
+      ]
+    },
+    {
+      "name": "auction",
+      "side": "client",
+      "version": 1,
+      "description": "Auction display with bids, countdown and bid request.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/auction.mjs",
+      "contract": "interfaces/auction.json",
+      "renderer": "auction",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/auction.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "change",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "price",
+      "side": "client",
+      "version": 1,
+      "description": "Compact price/cost display with currency/resource icons.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/price.mjs",
+      "contract": "interfaces/price.json",
+      "renderer": "price",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/price.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "kind": "component",
+  "properties": {},
+  "events": {},
+  "slots": {
+    "content": {}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "component",
+  "properties": {
+    "text": {
+      "type": "String",
+      "default": ""
+    },
+    "visible": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {},
+  "slots": {}
+}

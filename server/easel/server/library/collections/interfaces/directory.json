@@ -1,0 +1,93 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "folders": {
+      "type": "Array",
+      "default": []
+    },
+    "entries": {
+      "type": "Array",
+      "default": []
+    },
+    "activeId": {
+      "type": "String",
+      "default": ""
+    },
+    "searchQuery": {
+      "type": "String",
+      "default": ""
+    },
+    "canCreate": {
+      "type": "Boolean",
+      "default": true
+    },
+    "createLabel": {
+      "type": "String",
+      "default": "Create Entry"
+    },
+    "canManage": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String",
+        "type": "String"
+      }
+    },
+    "create": {
+      "payload": {
+        "folderId": "String",
+        "type": "String"
+      }
+    },
+    "delete": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "duplicate": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "toggleFolder": {
+      "payload": {
+        "folderId": "String",
+        "collapsed": "Boolean"
+      }
+    },
+    "dragStart": {
+      "payload": {
+        "id": "String",
+        "type": "String"
+      }
+    },
+    "search": {
+      "payload": {
+        "query": "String"
+      }
+    }
+  },
+  "slots": {
+    "header": {},
+    "actions": {}
+  }
+}

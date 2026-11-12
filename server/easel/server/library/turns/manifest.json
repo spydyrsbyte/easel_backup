@@ -1,0 +1,58 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "turns",
+  "name": "turns",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "sequence@1",
+        "file": "server/sequence.mjs"
+      },
+      {
+        "name": "phase@1",
+        "file": "server/phase.mjs"
+      },
+      {
+        "name": "priority@1",
+        "file": "server/priority.mjs"
+      },
+      {
+        "name": "simultaneous@1",
+        "file": "server/simultaneous.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "turnorder@1",
+        "file": "interfaces/turnorder.json",
+        "http-entry": "client/turnorder.mjs"
+      },
+      {
+        "name": "phase@1",
+        "file": "interfaces/phase.json",
+        "http-entry": "client/phase.mjs"
+      },
+      {
+        "name": "priority@1",
+        "file": "interfaces/priority.json",
+        "http-entry": "client/priority.mjs"
+      },
+      {
+        "name": "ready@1",
+        "file": "interfaces/ready.json",
+        "http-entry": "client/ready.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

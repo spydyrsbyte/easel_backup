@@ -1,0 +1,210 @@
+{
+  "owner": "easel",
+  "host": "tables",
+  "description": "Lookup, weighted-choice and reference-table utilities, from loot tables to board-game events.",
+  "members": [
+    {
+      "name": "lookup",
+      "side": "server",
+      "version": 1,
+      "description": "Evaluate keyed/ranged table entries.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/lookup.mjs",
+      "contract": "contracts/lookup.server.md",
+      "methods": [
+        "keyed(entries,id,fallback=null)",
+        "ranged(entries,value)"
+      ],
+      "examples": [
+        {
+          "method": "ranged",
+          "args": [
+            [
+              {
+                "min": 1,
+                "max": 3,
+                "value": "low"
+              }
+            ],
+            2
+          ],
+          "expected": "low"
+        },
+        {
+          "method": "ranged",
+          "args": [
+            [
+              {
+                "min": 1,
+                "max": 3
+              },
+              {
+                "min": 2,
+                "max": 4
+              }
+            ],
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "weighted",
+      "side": "server",
+      "version": 1,
+      "description": "Choose weighted entries using approved server randomness.",
+      "status": "tested",
+      "dependencies": [
+        "Easel.Random"
+      ],
+      "entry": "server/weighted.mjs",
+      "contract": "contracts/weighted.server.md",
+      "methods": [
+        "choose(entries,source)"
+      ],
+      "examples": [
+        {
+          "method": "choose",
+          "args": [
+            []
+          ],
+          "throws": true
+        },
+        {
+          "method": "choose",
+          "args": [
+            [
+              {
+                "weight": 0,
+                "value": "a"
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "rolltable",
+      "side": "server",
+      "version": 1,
+      "description": "Interpret a dice outcome against a configured range table.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/rolltable.mjs",
+      "contract": "contracts/rolltable.server.md",
+      "methods": [
+        "resolve(entries,roll)"
+      ],
+      "examples": [
+        {
+          "method": "resolve",
+          "args": [
+            [
+              {
+                "min": 1,
+                "max": 2,
+                "text": "a"
+              }
+            ],
+            1
+          ],
+          "expected": {
+            "min": 1,
+            "max": 2,
+            "text": "a"
+          }
+        },
+        {
+          "method": "resolve",
+          "args": [
+            [],
+            3
+          ],
+          "expected": null
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "table",
+      "side": "client",
+      "version": 1,
+      "description": "Generic sortable reference/lookup table.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/table.mjs",
+      "contract": "interfaces/table.json",
+      "renderer": "table",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/table.client.md",
+      "events": [
+        "close",
+        "select",
+        "change"
+      ]
+    },
+    {
+      "name": "rolltable",
+      "side": "client",
+      "version": 1,
+      "description": "Present an entry, roll request and resolved result.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/rolltable.mjs",
+      "contract": "interfaces/rolltable.json",
+      "renderer": "rolltable",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/rolltable.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "entry",
+      "side": "client",
+      "version": 1,
+      "description": "Compact row/card for a resolved table item.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/entry.mjs",
+      "contract": "interfaces/entry.json",
+      "renderer": "entry",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/entry.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    }
+  ]
+}

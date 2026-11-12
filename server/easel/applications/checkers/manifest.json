@@ -1,0 +1,43 @@
+{
+  "type": "application",
+  "owner": "easel",
+  "host": "checkers",
+  "name": "game",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "application": {
+      "entry": "server/application.mjs",
+      "required": {
+        "modules": [
+          "easel.board.games"
+        ],
+        "interfaces": [
+          "easel.board.game@1"
+        ]
+      }
+    }
+  },
+  "client": {
+    "application": {
+      "http-entry": "client/application.mjs",
+      "required": {
+        "modules": [
+          "easel.board.games"
+        ],
+        "interfaces": [
+          "easel.board.table@1",
+          "easel.board.controller@1"
+        ]
+      }
+    },
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "regions": {
+      "type": "Array",
+      "default": []
+    },
+    "visionMask": {
+      "type": "Object",
+      "default": {}
+    },
+    "visionPolygons": {
+      "type": "Array",
+      "default": []
+    },
+    "ambientLight": {
+      "type": "String",
+      "default": "NORMAL"
+    },
+    "gm": {
+      "type": "Boolean",
+      "default": false
+    },
+    "width": {
+      "type": "Number",
+      "default": 600
+    },
+    "height": {
+      "type": "Number",
+      "default": 400
+    },
+    "opacity": {
+      "type": "Number",
+      "default": 0.9
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

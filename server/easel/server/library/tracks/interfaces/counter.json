@@ -1,0 +1,48 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "value": {
+      "type": "Number",
+      "default": 0
+    },
+    "min": {
+      "type": "Number",
+      "default": 0
+    },
+    "max": {
+      "type": "Number",
+      "default": 100
+    },
+    "step": {
+      "type": "Number",
+      "default": 1
+    },
+    "text": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "change": {
+      "payload": {
+        "value": "Object"
+      }
+    }
+  },
+  "slots": {}
+}

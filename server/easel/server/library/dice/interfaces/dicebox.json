@@ -1,0 +1,53 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "rolls": {
+      "type": "Array",
+      "default": []
+    },
+    "enabled": {
+      "type": "Boolean",
+      "default": true
+    },
+    "quality": {
+      "type": "String",
+      "default": "high"
+    },
+    "speed": {
+      "type": "Number",
+      "default": 1
+    },
+    "theme": {
+      "type": "Object",
+      "default": {}
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "settled": {
+      "payload": {
+        "rollId": "String"
+      }
+    },
+    "clear": {
+      "payload": {}
+    }
+  },
+  "slots": {
+    "overlay": {}
+  }
+}

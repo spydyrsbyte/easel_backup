@@ -1,0 +1,296 @@
+{
+  "owner": "easel",
+  "host": "tracks",
+  "description": "Independent value, progress, segmented-clock and meter primitives.",
+  "members": [
+    {
+      "name": "counter",
+      "side": "server",
+      "version": 1,
+      "description": "Adjust/reset a numeric value with declared bounds and overflow policy.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/counter.mjs",
+      "contract": "contracts/counter.server.md",
+      "methods": [
+        "adjust(value,delta,{min=0,max=Number.MAX_SAFE_INTEGER,overflow=\"clamp\"}={})",
+        "reset(value=0,options={})"
+      ],
+      "examples": [
+        {
+          "method": "adjust",
+          "args": [
+            9,
+            4,
+            {
+              "min": 0,
+              "max": 10
+            }
+          ],
+          "expected": 10
+        },
+        {
+          "method": "adjust",
+          "args": [
+            9,
+            4,
+            {
+              "min": 0,
+              "max": 10,
+              "overflow": "reject"
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "progress",
+      "side": "server",
+      "version": 1,
+      "description": "Advance a linear sequence/track with completion thresholds.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/progress.mjs",
+      "contract": "contracts/progress.server.md",
+      "methods": [
+        "advance(value,amount=1,{min=0,max=10}={})"
+      ],
+      "examples": [
+        {
+          "method": "advance",
+          "args": [
+            8,
+            5,
+            {
+              "max": 10
+            }
+          ],
+          "expected": {
+            "value": 10,
+            "complete": true,
+            "remaining": 0
+          }
+        },
+        {
+          "method": "advance",
+          "args": [
+            1,
+            1,
+            {
+              "min": 5,
+              "max": 1
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "clock",
+      "side": "server",
+      "version": 1,
+      "description": "Advance or reduce segmented progress; supports fiction-first clocks without encoding a specific RPG.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/clock.mjs",
+      "contract": "contracts/clock.server.md",
+      "methods": [
+        "set(filled,segments=4)",
+        "advance(clock,amount=1)"
+      ],
+      "examples": [
+        {
+          "method": "advance",
+          "args": [
+            {
+              "filled": 2,
+              "segments": 4
+            },
+            2
+          ],
+          "expected": {
+            "filled": 4,
+            "segments": 4,
+            "complete": true
+          }
+        },
+        {
+          "method": "set",
+          "args": [
+            5,
+            4
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "threshold",
+      "side": "server",
+      "version": 1,
+      "description": "Find crossings and milestones in a value progression.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/threshold.mjs",
+      "contract": "contracts/threshold.server.md",
+      "methods": [
+        "crossings(before,after,thresholds)"
+      ],
+      "examples": [
+        {
+          "method": "crossings",
+          "args": [
+            0,
+            10,
+            [
+              3,
+              7,
+              12
+            ]
+          ],
+          "expected": [
+            3,
+            7
+          ]
+        },
+        {
+          "method": "crossings",
+          "args": [
+            10,
+            0,
+            [
+              3,
+              7,
+              12
+            ]
+          ],
+          "expected": [
+            7,
+            3
+          ]
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "counter",
+      "side": "client",
+      "version": 1,
+      "description": "Numeric readout with optional plus/minus requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/counter.mjs",
+      "contract": "interfaces/counter.json",
+      "renderer": "counter",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/counter.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "meter",
+      "side": "client",
+      "version": 1,
+      "description": "Horizontal/vertical gauge with bounds, labels and thresholds.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/meter.mjs",
+      "contract": "interfaces/meter.json",
+      "renderer": "meter",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/meter.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "clock",
+      "side": "client",
+      "version": 1,
+      "description": "Segmented radial or linear progress clock with advance/retreat requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/clock.mjs",
+      "contract": "interfaces/clock.json",
+      "renderer": "clock",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/clock.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "track",
+      "side": "client",
+      "version": 1,
+      "description": "Numbered/ordered scoring or advancement track.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/track.mjs",
+      "contract": "interfaces/track.json",
+      "renderer": "track",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/track.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "timer",
+      "side": "client",
+      "version": 1,
+      "description": "Countdown/elapsed-time presentation; scheduling uses existing Server.events.after/cancel.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/timer.mjs",
+      "contract": "interfaces/timer.json",
+      "renderer": "timer",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/timer.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    }
+  ]
+}

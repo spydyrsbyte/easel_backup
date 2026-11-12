@@ -1,0 +1,14 @@
+{
+  "kind": "component",
+  "properties": {
+    "visible": {
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "events": {},
+  "slots": {
+    "content": {},
+    "game": {}
+  }
+}

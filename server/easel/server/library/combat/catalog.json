@@ -1,0 +1,300 @@
+{
+  "owner": "easel",
+  "host": "combat",
+  "description": "Generic tactical/combat calculations and UI, not a required model of combat for all RPGs.",
+  "members": [
+    {
+      "name": "initiative",
+      "side": "server",
+      "version": 1,
+      "description": "Determine order/priority from a supplied system policy.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/initiative.mjs",
+      "contract": "contracts/initiative.server.md",
+      "methods": [
+        "order(participants,{descending=true}={})"
+      ],
+      "examples": [
+        {
+          "method": "order",
+          "args": [
+            [
+              {
+                "id": "a",
+                "initiative": 2
+              },
+              {
+                "id": "b",
+                "initiative": 5
+              }
+            ]
+          ],
+          "expected": [
+            {
+              "id": "b",
+              "initiative": 5
+            },
+            {
+              "id": "a",
+              "initiative": 2
+            }
+          ]
+        },
+        {
+          "method": "order",
+          "args": [
+            [
+              {
+                "id": "a",
+                "initiative": 2
+              },
+              {
+                "id": "a",
+                "initiative": 3
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "attack",
+      "side": "server",
+      "version": 1,
+      "description": "Resolve supplied attack/defense inputs; detailed semantics defined by consuming game.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/attack.mjs",
+      "contract": "contracts/attack.server.md",
+      "methods": [
+        "resolve(attack,defense,{tiesHit=true}={})"
+      ],
+      "examples": [
+        {
+          "method": "resolve",
+          "args": [
+            5,
+            5,
+            {
+              "tiesHit": false
+            }
+          ],
+          "expected": {
+            "attack": 5,
+            "defense": 5,
+            "margin": 0,
+            "hit": false
+          }
+        },
+        {
+          "method": "resolve",
+          "args": [
+            "x",
+            3
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "damage",
+      "side": "server",
+      "version": 1,
+      "description": "Apply deterministic reductions/thresholds to a supplied damage result.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/damage.mjs",
+      "contract": "contracts/damage.server.md",
+      "methods": [
+        "resolve(amount,{reduction=0,multiplier=1,threshold=0}={})"
+      ],
+      "examples": [
+        {
+          "method": "resolve",
+          "args": [
+            7,
+            {
+              "reduction": 2,
+              "multiplier": 2,
+              "threshold": 9
+            }
+          ],
+          "expected": {
+            "amount": 7,
+            "absorbed": 2,
+            "total": 10,
+            "exceedsThreshold": true
+          }
+        },
+        {
+          "method": "resolve",
+          "args": [
+            -1
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "range",
+      "side": "server",
+      "version": 1,
+      "description": "Compute attack distances, arcs and cover from supplied geometry.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/range.mjs",
+      "contract": "contracts/range.server.md",
+      "methods": [
+        "evaluate(origin,target,{min=0,max=10,facing=0,arc=360,walls=[]}={})"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 3,
+              "y": 4
+            }
+          ],
+          "expected": {
+            "distance": 5,
+            "inRange": true,
+            "inArc": true,
+            "cover": false
+          }
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "max": -1
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "encounter",
+      "side": "client",
+      "version": 1,
+      "description": "List participants, encounter status and turn controls.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/encounter.mjs",
+      "contract": "interfaces/encounter.json",
+      "renderer": "turnorder",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/encounter.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "initiative",
+      "side": "client",
+      "version": 1,
+      "description": "Initiative or priority order strip.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/initiative.mjs",
+      "contract": "interfaces/initiative.json",
+      "renderer": "turnorder",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/initiative.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "target",
+      "side": "client",
+      "version": 1,
+      "description": "Show selected targets, ranges and cover.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/target.mjs",
+      "contract": "interfaces/target.json",
+      "renderer": "target",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/target.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "damage",
+      "side": "client",
+      "version": 1,
+      "description": "Damage, armor, resistance and consequence breakdown.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/damage.mjs",
+      "contract": "interfaces/damage.json",
+      "renderer": "damage",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/damage.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

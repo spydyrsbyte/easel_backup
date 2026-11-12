@@ -1,0 +1,49 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "objects",
+  "name": "objects",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "reference@1",
+        "file": "server/reference.mjs"
+      },
+      {
+        "name": "properties@1",
+        "file": "server/properties.mjs"
+      },
+      {
+        "name": "transform@1",
+        "file": "server/transform.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "inspector@1",
+        "file": "interfaces/inspector.json",
+        "http-entry": "client/inspector.mjs"
+      },
+      {
+        "name": "propertylist@1",
+        "file": "interfaces/propertylist.json",
+        "http-entry": "client/propertylist.mjs"
+      },
+      {
+        "name": "objecticon@1",
+        "file": "interfaces/objecticon.json",
+        "http-entry": "client/objecticon.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

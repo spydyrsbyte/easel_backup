@@ -1,0 +1,49 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "networks",
+  "name": "networks",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "graph@1",
+        "file": "server/graph.mjs"
+      },
+      {
+        "name": "route@1",
+        "file": "server/route.mjs"
+      },
+      {
+        "name": "capacity@1",
+        "file": "server/capacity.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "network@1",
+        "file": "interfaces/network.json",
+        "http-entry": "client/network.mjs"
+      },
+      {
+        "name": "route@1",
+        "file": "interfaces/route.json",
+        "http-entry": "client/route.mjs"
+      },
+      {
+        "name": "node@1",
+        "file": "interfaces/node.json",
+        "http-entry": "client/node.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

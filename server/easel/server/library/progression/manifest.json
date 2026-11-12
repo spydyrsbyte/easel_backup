@@ -1,0 +1,58 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "progression",
+  "name": "progression",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "tree@1",
+        "file": "server/tree.mjs"
+      },
+      {
+        "name": "budget@1",
+        "file": "server/budget.mjs"
+      },
+      {
+        "name": "milestone@1",
+        "file": "server/milestone.mjs"
+      },
+      {
+        "name": "allocation@1",
+        "file": "server/allocation.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "tree@1",
+        "file": "interfaces/tree.json",
+        "http-entry": "client/tree.mjs"
+      },
+      {
+        "name": "pointbuy@1",
+        "file": "interfaces/pointbuy.json",
+        "http-entry": "client/pointbuy.mjs"
+      },
+      {
+        "name": "milestones@1",
+        "file": "interfaces/milestones.json",
+        "http-entry": "client/milestones.mjs"
+      },
+      {
+        "name": "buildsummary@1",
+        "file": "interfaces/buildsummary.json",
+        "http-entry": "client/buildsummary.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

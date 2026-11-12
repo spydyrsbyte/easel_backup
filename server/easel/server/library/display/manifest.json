@@ -1,0 +1,48 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "display",
+  "name": "display",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "image@1",
+        "file": "interfaces/image.json",
+        "http-entry": "client/image.mjs"
+      },
+      {
+        "name": "label@1",
+        "file": "interfaces/label.json",
+        "http-entry": "client/label.mjs"
+      },
+      {
+        "name": "badge@1",
+        "file": "interfaces/badge.json",
+        "http-entry": "client/badge.mjs"
+      },
+      {
+        "name": "tooltip@1",
+        "file": "interfaces/tooltip.json",
+        "http-entry": "client/tooltip.mjs"
+      },
+      {
+        "name": "notification@1",
+        "file": "interfaces/notification.json",
+        "http-entry": "client/notification.mjs"
+      },
+      {
+        "name": "portrait@1",
+        "file": "interfaces/portrait.json",
+        "http-entry": "client/portrait.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

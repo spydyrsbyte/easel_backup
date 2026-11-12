@@ -1,0 +1,42 @@
+{
+  "kind": "component",
+  "properties": {
+    "visible": {
+      "type": "Boolean",
+      "default": false
+    },
+    "signup": {
+      "type": "Boolean",
+      "default": false
+    },
+    "busy": {
+      "type": "Boolean",
+      "default": false
+    },
+    "error": {
+      "type": "String",
+      "default": ""
+    },
+    "reset": {
+      "type": "Integer",
+      "default": 0
+    }
+  },
+  "events": {
+    "submitted": {
+      "payload": {
+        "username": "String",
+        "password": "String",
+        "displayName": "String"
+      }
+    },
+    "modeChanged": {
+      "payload": {
+        "signup": "Boolean"
+      }
+    }
+  },
+  "slots": {
+    "providers": {}
+  }
+}

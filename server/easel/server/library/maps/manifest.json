@@ -1,0 +1,97 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "maps",
+  "name": "maps",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "terrain@1",
+        "file": "server/terrain.mjs"
+      },
+      {
+        "name": "geometry@1",
+        "file": "server/geometry.mjs"
+      },
+      {
+        "name": "path@1",
+        "file": "server/path.mjs"
+      },
+      {
+        "name": "vision@1",
+        "file": "server/vision.mjs"
+      },
+      {
+        "name": "template@1",
+        "file": "server/template.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "map@1",
+        "file": "interfaces/map.json",
+        "http-entry": "client/map.mjs",
+        "required": {
+          "modules": ["easel.graphics.pixi"],
+          "interfaces": ["easel.graphics.pixi@1"]
+        }
+      },
+      {
+        "name": "ruler@1",
+        "file": "interfaces/ruler.json",
+        "http-entry": "client/ruler.mjs"
+      },
+      {
+        "name": "fog@1",
+        "file": "interfaces/fog.json",
+        "http-entry": "client/fog.mjs",
+        "required": {
+          "modules": ["easel.graphics.pixi"],
+          "interfaces": ["easel.graphics.pixi@1"]
+        }
+      },
+      {
+        "name": "waypoint@1",
+        "file": "interfaces/waypoint.json",
+        "http-entry": "client/waypoint.mjs"
+      },
+      {
+        "name": "template@1",
+        "file": "interfaces/template.json",
+        "http-entry": "client/template.mjs",
+        "required": {
+          "modules": ["easel.graphics.pixi"],
+          "interfaces": ["easel.graphics.pixi@1"]
+        }
+      },
+      {
+        "name": "shadowbox@1",
+        "file": "interfaces/shadowbox.json",
+        "http-entry": "client/shadowbox.mjs",
+        "required": {
+          "modules": ["easel.graphics.pixi"],
+          "interfaces": ["easel.graphics.pixi@1"]
+        }
+      },
+      {
+        "name": "worldmap@1",
+        "file": "interfaces/worldmap.json",
+        "http-entry": "client/worldmap.mjs",
+        "required": {
+          "modules": ["easel.graphics.pixi"],
+          "interfaces": ["easel.graphics.pixi@1"]
+        }
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

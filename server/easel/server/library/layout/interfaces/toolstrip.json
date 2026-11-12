@@ -1,0 +1,51 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "activeTool": {
+      "type": "String",
+      "default": "select"
+    },
+    "tools": {
+      "type": "Array",
+      "default": []
+    },
+    "gmMode": {
+      "type": "Boolean",
+      "default": false
+    },
+    "vertical": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "tool": "String"
+      }
+    },
+    "action": {
+      "payload": {
+        "action": "String"
+      }
+    }
+  },
+  "slots": {
+    "subtools": {}
+  }
+}

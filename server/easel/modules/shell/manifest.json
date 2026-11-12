@@ -1,0 +1,65 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "easel",
+  "name": "shell",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "revision": 0
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "shell@1",
+        "file": "interfaces/shell.json",
+        "http-entry": "client/shell.mjs"
+      },
+      {
+        "name": "header@1",
+        "file": "interfaces/header.json",
+        "http-entry": "client/header.mjs"
+      },
+      {
+        "name": "signin@1",
+        "file": "interfaces/signin.json",
+        "http-entry": "client/signin.mjs"
+      },
+      {
+        "name": "providers@1",
+        "file": "interfaces/providers.json",
+        "http-entry": "client/providers.mjs"
+      },
+      {
+        "name": "provider@1",
+        "file": "interfaces/provider.json",
+        "http-entry": "client/provider.mjs"
+      },
+      {
+        "name": "status@1",
+        "file": "interfaces/status.json",
+        "http-entry": "client/status.mjs"
+      },
+      {
+        "name": "action@1",
+        "file": "interfaces/action.json",
+        "http-entry": "client/action.mjs"
+      },
+      {
+        "name": "session@1",
+        "file": "interfaces/session.json",
+        "http-entry": "client/session.mjs"
+      },
+      {
+        "name": "menu@1",
+        "file": "interfaces/menu.json",
+        "http-entry": "client/menu.mjs"
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

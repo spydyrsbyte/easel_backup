@@ -1,0 +1,128 @@
+{
+  "owner": "easel",
+  "host": "display",
+  "description": "Small visual components that remain useful in any game genre.",
+  "members": [
+    {
+      "name": "image",
+      "side": "client",
+      "version": 1,
+      "description": "Image renderer with crop, aspect, placeholder and alternate-text properties.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/image.mjs",
+      "contract": "interfaces/image.json",
+      "renderer": "image",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/image.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "label",
+      "side": "client",
+      "version": 1,
+      "description": "Text label with icon, tooltip and style properties.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/label.mjs",
+      "contract": "interfaces/label.json",
+      "renderer": "label",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/label.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "badge",
+      "side": "client",
+      "version": 1,
+      "description": "Compact status/count/keyword indicator.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/badge.mjs",
+      "contract": "interfaces/badge.json",
+      "renderer": "badge",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/badge.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "side": "client",
+      "version": 1,
+      "description": "Accessible hover/focus descriptive overlay.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/tooltip.mjs",
+      "contract": "interfaces/tooltip.json",
+      "renderer": "tooltip",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/tooltip.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "notification",
+      "side": "client",
+      "version": 1,
+      "description": "Dismissible notification/toast queue driven by caller-provided messages.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/notification.mjs",
+      "contract": "interfaces/notification.json",
+      "renderer": "notifications",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/notification.client.md",
+      "events": [
+        "close",
+        "request"
+      ]
+    },
+    {
+      "name": "portrait",
+      "side": "client",
+      "version": 1,
+      "description": "Framed image/avatar with optional status and overlay slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/portrait.mjs",
+      "contract": "interfaces/portrait.json",
+      "renderer": "portrait",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/portrait.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

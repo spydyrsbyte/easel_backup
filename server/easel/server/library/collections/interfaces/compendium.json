@@ -1,0 +1,83 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "packId": {
+      "type": "String",
+      "default": ""
+    },
+    "entries": {
+      "type": "Array",
+      "default": []
+    },
+    "categories": {
+      "type": "Array",
+      "default": []
+    },
+    "selectedCategory": {
+      "type": "String",
+      "default": "all"
+    },
+    "searchQuery": {
+      "type": "String",
+      "default": ""
+    },
+    "levelRange": {
+      "type": "Array",
+      "default": [0, 20]
+    },
+    "itemHeight": {
+      "type": "Number",
+      "default": 36
+    },
+    "viewportHeight": {
+      "type": "Number",
+      "default": 360
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "packId": "String",
+        "entryId": "String"
+      }
+    },
+    "inspect": {
+      "payload": {
+        "packId": "String",
+        "entryId": "String"
+      }
+    },
+    "dragStart": {
+      "payload": {
+        "packId": "String",
+        "entryId": "String"
+      }
+    },
+    "filterChange": {
+      "payload": {
+        "category": "String",
+        "query": "String",
+        "levelRange": "Array"
+      }
+    }
+  },
+  "slots": {
+    "filters": {},
+    "preview": {}
+  }
+}

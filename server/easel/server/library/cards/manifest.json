@@ -1,0 +1,68 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "cards",
+  "name": "cards",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "card@1",
+        "file": "server/card.mjs"
+      },
+      {
+        "name": "deck@1",
+        "file": "server/deck.mjs"
+      },
+      {
+        "name": "hand@1",
+        "file": "server/hand.mjs"
+      },
+      {
+        "name": "shuffle@1",
+        "file": "server/shuffle.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "card@1",
+        "file": "interfaces/card.json",
+        "http-entry": "client/card.mjs"
+      },
+      {
+        "name": "hand@1",
+        "file": "interfaces/hand.json",
+        "http-entry": "client/hand.mjs"
+      },
+      {
+        "name": "pile@1",
+        "file": "interfaces/pile.json",
+        "http-entry": "client/pile.mjs"
+      },
+      {
+        "name": "deck@1",
+        "file": "interfaces/deck.json",
+        "http-entry": "client/deck.mjs"
+      },
+      {
+        "name": "inspector@1",
+        "file": "interfaces/inspector.json",
+        "http-entry": "client/inspector.mjs"
+      },
+      {
+        "name": "fan@1",
+        "file": "interfaces/fan.json",
+        "http-entry": "client/fan.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

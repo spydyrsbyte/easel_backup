@@ -1,0 +1,73 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "dice",
+  "name": "dice",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "roller@1",
+        "file": "server/roller.mjs"
+      },
+      {
+        "name": "pool@1",
+        "file": "server/pool.mjs"
+      },
+      {
+        "name": "notation@1",
+        "file": "server/notation.mjs"
+      },
+      {
+        "name": "results@1",
+        "file": "server/results.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "die@1",
+        "file": "interfaces/die.json",
+        "http-entry": "client/die.mjs"
+      },
+      {
+        "name": "tray@1",
+        "file": "interfaces/tray.json",
+        "http-entry": "client/tray.mjs"
+      },
+      {
+        "name": "results@1",
+        "file": "interfaces/results.json",
+        "http-entry": "client/results.mjs"
+      },
+      {
+        "name": "poolbuilder@1",
+        "file": "interfaces/poolbuilder.json",
+        "http-entry": "client/poolbuilder.mjs"
+      },
+      {
+        "name": "dicebox@1",
+        "file": "interfaces/dicebox.json",
+        "http-entry": "client/dicebox.mjs"
+      },
+      {
+        "name": "dicesettings@1",
+        "file": "interfaces/dicesettings.json",
+        "http-entry": "client/dicesettings.mjs"
+      },
+      {
+        "name": "rollcard@1",
+        "file": "interfaces/rollcard.json",
+        "http-entry": "client/rollcard.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

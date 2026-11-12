@@ -1,0 +1,46 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Defenses"
+    },
+    "ac": {
+      "type": "Object",
+      "default": {}
+    },
+    "saves": {
+      "type": "Object",
+      "default": {}
+    },
+    "cmd": {
+      "type": "Number",
+      "default": 10
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "rollSave": {
+      "payload": {
+        "save": "String",
+        "modifier": "Number"
+      }
+    },
+    "inspectDefense": {
+      "payload": {
+        "defense": "String"
+      }
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

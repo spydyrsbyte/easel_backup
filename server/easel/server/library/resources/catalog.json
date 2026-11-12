@@ -1,0 +1,380 @@
+{
+  "owner": "easel",
+  "host": "resources",
+  "description": "Balances, prices and conversions shared by RPGs, card games and Eurogames.",
+  "members": [
+    {
+      "name": "pool",
+      "side": "server",
+      "version": 1,
+      "description": "Balance and debit/credit primitives for fungible resource types.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/pool.mjs",
+      "contract": "contracts/pool.server.md",
+      "methods": [
+        "adjust(balances,changes,{allowNegative=false}={})",
+        "debit(balances,cost)",
+        "credit(balances,amounts)"
+      ],
+      "examples": [
+        {
+          "method": "debit",
+          "args": [
+            {
+              "gold": 5
+            },
+            {
+              "gold": 3
+            }
+          ],
+          "expected": {
+            "gold": 2
+          }
+        },
+        {
+          "method": "debit",
+          "args": [
+            {
+              "gold": 1
+            },
+            {
+              "gold": 2
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "cost",
+      "side": "server",
+      "version": 1,
+      "description": "Validate/quote resource costs and affordability without performing a game-specific purchase.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/cost.mjs",
+      "contract": "contracts/cost.server.md",
+      "methods": [
+        "quote(balances,cost)"
+      ],
+      "examples": [
+        {
+          "method": "quote",
+          "args": [
+            {
+              "gold": 1
+            },
+            {
+              "gold": 3
+            }
+          ],
+          "expected": {
+            "cost": {
+              "gold": 3
+            },
+            "missing": {
+              "gold": 2
+            },
+            "affordable": false
+          }
+        },
+        {
+          "method": "quote",
+          "args": [
+            {},
+            {
+              "gold": -1
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "exchange",
+      "side": "server",
+      "version": 1,
+      "description": "Evaluate resource conversions under supplied price and rounding rules.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/exchange.mjs",
+      "contract": "contracts/exchange.server.md",
+      "methods": [
+        "quote(quantity,{from,to,rate=1,rounding=\"floor\"})"
+      ],
+      "examples": [
+        {
+          "method": "quote",
+          "args": [
+            3,
+            {
+              "from": "gold",
+              "to": "silver",
+              "rate": 2.5
+            }
+          ],
+          "expected": {
+            "debit": {
+              "gold": 3
+            },
+            "credit": {
+              "silver": 7
+            }
+          }
+        },
+        {
+          "method": "quote",
+          "args": [
+            1,
+            {
+              "from": "x",
+              "to": "x"
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "charges",
+      "side": "server",
+      "version": 1,
+      "description": "Track bounded charge/use pools, per-use deduction and period-based restoration.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/charges.mjs",
+      "contract": "contracts/charges.server.md",
+      "methods": [
+        "spend(pool,cost=1)",
+        "restore(pool,{period,amount=null}={})",
+        "evaluateMax(pool,maxValue)"
+      ],
+      "examples": [
+        {
+          "method": "spend",
+          "args": [
+            {
+              "value": 3,
+              "max": 5,
+              "per": "day"
+            },
+            2
+          ],
+          "expected": {
+            "value": 1,
+            "max": 5,
+            "per": "day"
+          }
+        },
+        {
+          "method": "restore",
+          "args": [
+            {
+              "value": 1,
+              "max": 5,
+              "per": "day"
+            },
+            {
+              "period": "day"
+            }
+          ],
+          "expected": {
+            "value": 5,
+            "max": 5,
+            "per": "day"
+          }
+        },
+        {
+          "method": "evaluateMax",
+          "args": [
+            {
+              "value": 6,
+              "max": 6,
+              "per": "day"
+            },
+            4
+          ],
+          "expected": {
+            "value": 4,
+            "max": 4,
+            "per": "day"
+          }
+        },
+        {
+          "method": "restore",
+          "args": [
+            {
+              "value": 1,
+              "max": 5,
+              "per": "day"
+            },
+            {
+              "period": "rest",
+              "amount": 2
+            }
+          ],
+          "expected": {
+            "value": 1,
+            "max": 5,
+            "per": "day"
+          }
+        },
+        {
+          "method": "restore",
+          "args": [
+            {
+              "value": 2,
+              "max": 5,
+              "per": "day"
+            },
+            {
+              "period": "day",
+              "amount": 2
+            }
+          ],
+          "expected": {
+            "value": 4,
+            "max": 5,
+            "per": "day"
+          }
+        },
+        {
+          "method": "spend",
+          "args": [
+            {
+              "value": 1,
+              "max": 3,
+              "per": "day"
+            },
+            2
+          ],
+          "throws": true
+        },
+        {
+          "method": "spend",
+          "args": [
+            {
+              "value": 3,
+              "max": 3,
+              "per": "day"
+            },
+            -1
+          ],
+          "throws": true
+        },
+        {
+          "method": "restore",
+          "args": [
+            {
+              "value": 1,
+              "max": 5,
+              "per": "day"
+            },
+            null
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "resource",
+      "side": "client",
+      "version": 1,
+      "description": "Single resource icon/count with tooltip.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/resource.mjs",
+      "contract": "interfaces/resource.json",
+      "renderer": "counter",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/resource.client.md",
+      "events": [
+        "close",
+        "change"
+      ]
+    },
+    {
+      "name": "pool",
+      "side": "client",
+      "version": 1,
+      "description": "Display several resource balances.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/pool.mjs",
+      "contract": "interfaces/pool.json",
+      "renderer": "meterlist",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/pool.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "cost",
+      "side": "client",
+      "version": 1,
+      "description": "List resource requirements with available/unavailable presentation.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/cost.mjs",
+      "contract": "interfaces/cost.json",
+      "renderer": "cost",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/cost.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "exchange",
+      "side": "client",
+      "version": 1,
+      "description": "Choose quantities and preview a conversion.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/exchange.mjs",
+      "contract": "interfaces/exchange.json",
+      "renderer": "exchange",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/exchange.client.md",
+      "events": [
+        "close",
+        "change",
+        "request"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": { "type": "String", "default": "Game" },
+    "match": { "type": "Object", "default": {} },
+    "user": { "type": "String", "default": "" },
+    "canPlay": { "type": "Boolean", "default": false },
+    "canManage": { "type": "Boolean", "default": false },
+    "busy": { "type": "Boolean", "default": false },
+    "error": { "type": "String", "default": "" }
+  },
+  "events": {
+    "seat": { "payload": { "side": "String" } },
+    "move": {
+      "payload": { "from": "Integer", "to": "Integer", "revision": "Integer" }
+    },
+    "refresh": { "payload": {} },
+    "reset": { "payload": {} }
+  },
+  "slots": {}
+}

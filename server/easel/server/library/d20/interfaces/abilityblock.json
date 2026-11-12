@@ -1,0 +1,44 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Abilities"
+    },
+    "abilities": {
+      "type": "Object",
+      "default": {}
+    },
+    "editable": {
+      "type": "Boolean",
+      "default": false
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "rollAbility": {
+      "payload": {
+        "ability": "String",
+        "score": "Number",
+        "modifier": "Number"
+      }
+    },
+    "updateAbility": {
+      "payload": {
+        "ability": "String",
+        "score": "Number"
+      }
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

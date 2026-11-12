@@ -1,0 +1,54 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "inventory",
+  "name": "inventory",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "capacity@1",
+        "file": "server/capacity.mjs"
+      },
+      {
+        "name": "equipment@1",
+        "file": "server/equipment.mjs"
+      },
+      {
+        "name": "container@1",
+        "file": "server/container.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "inventory@1",
+        "file": "interfaces/inventory.json",
+        "http-entry": "client/inventory.mjs"
+      },
+      {
+        "name": "equipment@1",
+        "file": "interfaces/equipment.json",
+        "http-entry": "client/equipment.mjs"
+      },
+      {
+        "name": "container@1",
+        "file": "interfaces/container.json",
+        "http-entry": "client/container.mjs"
+      },
+      {
+        "name": "item@1",
+        "file": "interfaces/item.json",
+        "http-entry": "client/item.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

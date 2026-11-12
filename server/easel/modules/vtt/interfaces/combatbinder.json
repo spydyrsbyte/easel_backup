@@ -1,0 +1,18 @@
+{
+  "kind": "service",
+  "methods": {
+    "bind": {
+      "parameters": [
+        "options"
+      ]
+    },
+    "update": {
+      "parameters": [
+        "state"
+      ]
+    },
+    "destroy": {
+      "parameters": []
+    }
+  }
+}

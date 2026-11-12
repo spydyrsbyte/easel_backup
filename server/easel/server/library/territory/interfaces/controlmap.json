@@ -1,0 +1,40 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "regions": {
+      "type": "Array",
+      "default": []
+    },
+    "width": {
+      "type": "Number",
+      "default": 600
+    },
+    "height": {
+      "type": "Number",
+      "default": 400
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

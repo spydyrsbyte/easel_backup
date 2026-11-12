@@ -1,0 +1,57 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "rules",
+  "name": "rules",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "predicate@1",
+        "file": "server/predicate.mjs"
+      },
+      {
+        "name": "modifier@1",
+        "file": "server/modifier.mjs"
+      },
+      {
+        "name": "threshold@1",
+        "file": "server/threshold.mjs"
+      },
+      {
+        "name": "lookup@1",
+        "file": "server/lookup.mjs"
+      },
+      {
+        "name": "formula@1",
+        "file": "server/formula.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "modifierlist@1",
+        "file": "interfaces/modifierlist.json",
+        "http-entry": "client/modifierlist.mjs"
+      },
+      {
+        "name": "outcome@1",
+        "file": "interfaces/outcome.json",
+        "http-entry": "client/outcome.mjs"
+      },
+      {
+        "name": "condition@1",
+        "file": "interfaces/condition.json",
+        "http-entry": "client/condition.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

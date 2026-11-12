@@ -1,0 +1,359 @@
+[
+  {
+    ".name": "Actor",
+    "name": {
+      ".type": "string",
+      ".default": ""
+    },
+    "portrait": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "tokenImage": {
+      ".type": "string",
+      ".default": "",
+      ".required": false
+    },
+    "ownerUserIds": {
+      ".type": "array",
+      ".default": [],
+      ".validate": {
+        ".type": "string"
+      }
+    },
+    "viewerUserIds": {
+      ".type": "array",
+      ".default": [],
+      ".validate": {
+        ".type": "string"
+      }
+    },
+    "controllerUserIds": {
+      ".type": "array",
+      ".default": [],
+      ".validate": {
+        ".type": "string"
+      }
+    },
+    "defaultTokenId": {
+      ".type": "*Token",
+      ".required": false
+    }
+  },
+  {
+    ".name": "Scene",
+    "name": {
+      ".type": "string",
+      ".validate": {
+        ".length": {
+          "min": 1,
+          "max": 120
+        }
+      }
+    },
+    "folderId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "map": {
+      ".type": "map",
+      ".default": {}
+    },
+    "active": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "navigation": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "sort": {
+      ".type": "integer",
+      ".default": 0
+    }
+  },
+  {
+    ".name": "DoorState",
+    "sceneId": {
+      ".type": "*Scene"
+    },
+    "wallId": {
+      ".type": "string"
+    },
+    "open": {
+      ".type": "boolean",
+      ".default": false
+    }
+  },
+  {
+    ".name": "Token",
+    "sceneId": {
+      ".type": "*Scene",
+      ".required": false
+    },
+    "groundId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "actorType": {
+      ".type": "string",
+      ".default": ""
+    },
+    "actorId": {
+      ".type": "*Actor",
+      ".required": false
+    },
+    "name": {
+      ".type": "string",
+      ".validate": {
+        ".length": {
+          "min": 1,
+          "max": 120
+        }
+      }
+    },
+    "image": {
+      ".type": "string",
+      ".default": ""
+    },
+    "x": {
+      ".type": "number",
+      ".default": 0
+    },
+    "y": {
+      ".type": "number",
+      ".default": 0
+    },
+    "width": {
+      ".type": "number",
+      ".default": 64,
+      ".validate": {
+        ".min": 1
+      }
+    },
+    "height": {
+      ".type": "number",
+      ".default": 64,
+      ".validate": {
+        ".min": 1
+      }
+    },
+    "rotation": {
+      ".type": "number",
+      ".default": 0
+    },
+    "hidden": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "disposition": {
+      ".type": "string",
+      ".default": "neutral",
+      ".validate": {
+        ".in": [
+          "friendly",
+          "neutral",
+          "hostile",
+          "secret"
+        ]
+      }
+    },
+    "vision": {
+      ".type": "map",
+      ".default": {}
+    },
+    "isDefault": {
+      ".type": "boolean",
+      ".required": false,
+      ".default": false
+    }
+  },
+  {
+    ".name": "Combat",
+    "sceneId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "round": {
+      ".type": "integer",
+      ".default": 0,
+      ".validate": {
+        ".min": 0
+      }
+    },
+    "turnIndex": {
+      ".type": "integer",
+      ".default": 0,
+      ".validate": {
+        ".min": 0
+      }
+    },
+    "started": {
+      ".type": "boolean",
+      ".default": false
+    }
+  },
+  {
+    ".name": "Combatant",
+    "combatId": {
+      ".type": "*Combat"
+    },
+    "tokenId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "actorType": {
+      ".type": "string",
+      ".default": ""
+    },
+    "actorId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "name": {
+      ".type": "string",
+      ".validate": {
+        ".length": {
+          "min": 1,
+          "max": 120
+        }
+      }
+    },
+    "hasInitiative": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "initiative": {
+      ".type": "number",
+      ".default": 0
+    },
+    "defeated": {
+      ".type": "boolean",
+      ".default": false
+    },
+    "hidden": {
+      ".type": "boolean",
+      ".default": false
+    }
+  },
+  {
+    ".name": "ChatMessage",
+    "userId": {
+      ".type": "string"
+    },
+    "speakerName": {
+      ".type": "string",
+      ".default": ""
+    },
+    "speakerActorType": {
+      ".type": "string",
+      ".default": ""
+    },
+    "speakerActorId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "speakerTokenId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "rollMode": {
+      ".type": "string",
+      ".default": "public",
+      ".validate": {
+        ".in": [
+          "public",
+          "gm",
+          "blind",
+          "self"
+        ]
+      }
+    },
+    "whisperUserIds": {
+      ".type": "array",
+      ".default": [],
+      ".validate": {
+        ".type": "string"
+      }
+    },
+    "timestamp": {
+      ".type": "integer"
+    },
+    "text": {
+      ".type": "string",
+      ".default": "",
+      ".validate": {
+        ".length": {
+          "max": 4000
+        }
+      }
+    },
+    "card": {
+      ".type": "map",
+      ".default": {}
+    }
+  },
+  {
+    ".name": "JournalEntry",
+    "name": {
+      ".type": "string",
+      ".validate": {
+        ".length": {
+          "min": 1,
+          "max": 120
+        }
+      }
+    },
+    "folderId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "content": {
+      ".type": "string",
+      ".default": "",
+      ".validate": {
+        ".length": {
+          "max": 200000
+        }
+      }
+    },
+    "playerVisible": {
+      ".type": "boolean",
+      ".default": false
+    }
+  },
+  {
+    ".name": "Folder",
+    "name": {
+      ".type": "string",
+      ".validate": {
+        ".length": {
+          "min": 1,
+          "max": 120
+        }
+      }
+    },
+    "kind": {
+      ".type": "string"
+    },
+    "parentId": {
+      ".type": "string",
+      ".default": ""
+    },
+    "sort": {
+      ".type": "integer",
+      ".default": 0
+    }
+  },
+  {
+    ".name": "DiceSettings",
+    "userId": {
+      ".type": "string"
+    },
+    "settings": {
+      ".type": "map",
+      ".default": {}
+    }
+  }
+]

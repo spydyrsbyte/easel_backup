@@ -1,0 +1,233 @@
+{
+  "owner": "easel",
+  "host": "networks",
+  "description": "Graph and route primitives for train games, trade paths, skill trees and map navigation.",
+  "members": [
+    {
+      "name": "graph",
+      "side": "server",
+      "version": 1,
+      "description": "Nodes, edges, adjacency and connectivity operations.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/graph.mjs",
+      "contract": "contracts/graph.server.md",
+      "methods": [
+        "create(nodes,edges=[])",
+        "neighbors(network,id)",
+        "connected(network,start,end)"
+      ],
+      "examples": [
+        {
+          "method": "neighbors",
+          "args": [
+            {
+              "nodes": [
+                "a",
+                "b"
+              ],
+              "edges": [
+                {
+                  "from": "a",
+                  "to": "b"
+                }
+              ]
+            },
+            "a"
+          ],
+          "expected": [
+            "b"
+          ]
+        },
+        {
+          "method": "create",
+          "args": [
+            [
+              "a"
+            ],
+            [
+              {
+                "from": "a",
+                "to": "b"
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "route",
+      "side": "server",
+      "version": 1,
+      "description": "Find/test routes under supplied restrictions and costs.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/route.mjs",
+      "contract": "contracts/route.server.md",
+      "methods": [
+        "find(network,start,end)",
+        "validate(network,nodes)"
+      ],
+      "examples": [
+        {
+          "method": "find",
+          "args": [
+            {
+              "nodes": [
+                "a",
+                "b"
+              ],
+              "edges": [
+                {
+                  "from": "a",
+                  "to": "b"
+                }
+              ]
+            },
+            "a",
+            "b"
+          ],
+          "expected": {
+            "nodes": [
+              "a",
+              "b"
+            ],
+            "cost": 1
+          }
+        },
+        {
+          "method": "validate",
+          "args": [
+            {
+              "nodes": [
+                "a",
+                "b"
+              ],
+              "edges": []
+            },
+            [
+              "a",
+              "b"
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "capacity",
+      "side": "server",
+      "version": 1,
+      "description": "Evaluate edge/node capacity and utilization.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/capacity.mjs",
+      "contract": "contracts/capacity.server.md",
+      "methods": [
+        "evaluate(capacity,usage,requested=0)"
+      ],
+      "examples": [
+        {
+          "method": "evaluate",
+          "args": [
+            5,
+            3,
+            3
+          ],
+          "expected": {
+            "capacity": 5,
+            "usage": 3,
+            "remaining": 2,
+            "available": false,
+            "overflow": 1
+          }
+        },
+        {
+          "method": "evaluate",
+          "args": [
+            -1,
+            0
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "network",
+      "side": "client",
+      "version": 1,
+      "description": "Render nodes and edges with selection/connect request events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/network.mjs",
+      "contract": "interfaces/network.json",
+      "renderer": "network",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/network.client.md",
+      "events": [
+        "close",
+        "select",
+        "request"
+      ]
+    },
+    {
+      "name": "route",
+      "side": "client",
+      "version": 1,
+      "description": "Highlight a selected path and alternative links.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/route.mjs",
+      "contract": "interfaces/route.json",
+      "renderer": "route",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/route.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "node",
+      "side": "client",
+      "version": 1,
+      "description": "Standalone labeled node/connection anchor widget.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/node.mjs",
+      "contract": "interfaces/node.json",
+      "renderer": "piece",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/node.client.md",
+      "events": [
+        "close",
+        "select",
+        "drag"
+      ]
+    }
+  ]
+}

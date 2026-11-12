@@ -1,0 +1,279 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Character Sheet"
+    },
+    "actor": {
+      "type": "Object",
+      "default": {}
+    },
+    "derived": {
+      "type": "Object",
+      "default": {}
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    },
+    "classes": {
+      "type": "Array",
+      "default": []
+    },
+    "features": {
+      "type": "Array",
+      "default": []
+    },
+    "spellbooks": {
+      "type": "Array",
+      "default": []
+    },
+    "spells": {
+      "type": "Array",
+      "default": []
+    },
+    "buffs": {
+      "type": "Array",
+      "default": []
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "race": {
+      "type": "Object",
+      "default": {}
+    },
+    "isGM": {
+      "type": "Boolean",
+      "default": false
+    },
+    "activeTab": {
+      "type": "String",
+      "default": "summary"
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "id": {
+      "type": "String",
+      "default": ""
+    },
+    "name": {
+      "type": "String",
+      "default": ""
+    },
+    "type": {
+      "type": "String",
+      "default": "character"
+    },
+    "canEdit": {
+      "type": "Boolean",
+      "default": false
+    },
+    "canControl": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "tabChange": {
+      "payload": {
+        "tab": "String"
+      }
+    },
+    "rollAbility": {
+      "payload": {
+        "ability": "String",
+        "score": "Number",
+        "modifier": "Number"
+      }
+    },
+    "rollSave": {
+      "payload": {
+        "save": "String",
+        "modifier": "Number"
+      }
+    },
+    "rollSkill": {
+      "payload": {
+        "skillId": "String",
+        "ability": "String",
+        "modifier": "Number",
+        "take": "Number"
+      }
+    },
+    "rollInitiative": {
+      "payload": {
+        "actorId": "String"
+      }
+    },
+    "useAction": {
+      "payload": {
+        "actionId": "String",
+        "mode": "String",
+        "take": "Number",
+        "conditionalModifiers": "Array",
+        "actionData": "Object"
+      }
+    },
+    "castSpell": {
+      "payload": {
+        "spellId": "String",
+        "level": "Number"
+      }
+    },
+    "rollConcentration": {
+      "payload": {
+        "casterLevel": "Number"
+      }
+    },
+    "rollCasterLevel": {
+      "payload": {
+        "casterLevel": "Number"
+      }
+    },
+    "applyDamage": {
+      "payload": {
+        "amount": "Number",
+        "isNonlethal": "Boolean"
+      }
+    },
+    "applyHealing": {
+      "payload": {
+        "amount": "Number"
+      }
+    },
+    "rest": {
+      "payload": {
+        "actorId": "String",
+        "isFullBedrest": "Boolean"
+      }
+    },
+    "equipItem": {
+      "payload": {
+        "slot": "String",
+        "itemId": "String"
+      }
+    },
+    "unequipItem": {
+      "payload": {
+        "slot": "String",
+        "itemId": "String"
+      }
+    },
+    "inspectSlot": {
+      "payload": {
+        "slot": "String"
+      }
+    },
+    "editRecord": {
+      "payload": {
+        "recordType": "String",
+        "recordId": "String"
+      }
+    },
+    "toggleIdentified": {
+      "payload": {
+        "itemId": "String",
+        "identified": "Boolean"
+      }
+    },
+    "identifyItem": {
+      "payload": {
+        "itemId": "String"
+      }
+    },
+    "toggleBuff": {
+      "payload": {
+        "buffId": "String",
+        "active": "Boolean"
+      }
+    },
+    "toggleCondition": {
+      "payload": {
+        "condition": "String",
+        "active": "Boolean"
+      }
+    },
+    "updateSkillRanks": {
+      "payload": {
+        "skillId": "String",
+        "ranks": "Number"
+      }
+    },
+    "updateSkillClassSkill": {
+      "payload": {
+        "skillId": "String",
+        "isClassSkill": "Boolean"
+      }
+    },
+    "addCustomSkill": {
+      "payload": {
+        "parentKey": "String",
+        "name": "String"
+      }
+    },
+    "selectSpellbook": {
+      "payload": {
+        "spellbookId": "String"
+      }
+    },
+    "addSpell": {
+      "payload": {
+        "spellId": "String",
+        "spellbookId": "String",
+        "spell": "Object"
+      }
+    },
+    "addClassLevel": {
+      "payload": {
+        "className": "String",
+        "hpRolled": "Number",
+        "fcv": "String"
+      }
+    },
+    "updateCurrency": {
+      "payload": {
+        "currency": "Object"
+      }
+    },
+    "updateSettings": {
+      "payload": {
+        "settings": "Object"
+      }
+    },
+    "updateActor": {
+      "payload": {
+        "changes": "Object"
+      }
+    },
+    "createRecord": {
+      "payload": {
+        "recordType": "String"
+      }
+    }
+  },
+  "slots": {
+    "summaryVitality": {},
+    "summaryDefenses": {},
+    "attributesAbilities": {},
+    "attributesDefenses": {},
+    "attributesModifiers": {},
+    "inventoryEquipment": {},
+    "spellbooksSlot": {},
+    "biographyRichText": {},
+    "notesRichText": {},
+    "gmNotesRichText": {},
+    "rollDialog": {}
+  }
+}

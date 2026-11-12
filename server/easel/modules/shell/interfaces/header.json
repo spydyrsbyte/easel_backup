@@ -1,0 +1,14 @@
+{
+  "kind": "component",
+  "properties": {
+    "user": { "type": "String", "default": "" },
+    "admin": { "type": "Boolean", "default": false },
+    "title": { "type": "String", "default": "My Games" }
+  },
+  "events": { "navigate": { "payload": { "view": "String" } } },
+  "slots": {
+    "actions": {},
+    "navigation": {},
+    "status": {}
+  }
+}

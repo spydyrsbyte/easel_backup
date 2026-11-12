@@ -1,0 +1,54 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "bindings": {
+      "type": "Array",
+      "default": []
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "selection": {
+      "payload": {
+        "ids": "Array"
+      }
+    },
+    "action": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "request": {
+      "payload": {
+        "action": "String",
+        "value": "Object"
+      }
+    },
+    "reorder": {
+      "payload": {
+        "id": "String",
+        "before": "String"
+      }
+    }
+  },
+  "slots": {}
+}

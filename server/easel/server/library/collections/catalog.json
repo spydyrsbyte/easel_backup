@@ -1,0 +1,356 @@
+{
+  "owner": "easel",
+  "host": "collections",
+  "description": "Independent ordered/unordered member containers, membership queries and transfer primitives.",
+  "members": [
+    {
+      "name": "ordered",
+      "side": "server",
+      "version": 1,
+      "description": "Create, query, insert, remove and reorder members in an ordered container.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/ordered.mjs",
+      "contract": "contracts/ordered.server.md",
+      "methods": [
+        "create(members=[])",
+        "insert(members,id,index=members.length)",
+        "remove(members,id)",
+        "move(members,id,index)",
+        "query(members,offset=0,count=members.length)"
+      ],
+      "examples": [
+        {
+          "method": "move",
+          "args": [
+            [
+              "a",
+              "b",
+              "c"
+            ],
+            "a",
+            2
+          ],
+          "expected": [
+            "b",
+            "c",
+            "a"
+          ]
+        },
+        {
+          "method": "insert",
+          "args": [
+            [
+              "a"
+            ],
+            "a"
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "set",
+      "side": "server",
+      "version": 1,
+      "description": "Create, query, add and remove unordered unique membership.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/set.mjs",
+      "contract": "contracts/set.server.md",
+      "methods": [
+        "create(members=[])",
+        "add(members,id)",
+        "remove(members,id)",
+        "has(members,id)"
+      ],
+      "examples": [
+        {
+          "method": "add",
+          "args": [
+            [
+              "a"
+            ],
+            "a"
+          ],
+          "expected": [
+            "a"
+          ]
+        },
+        {
+          "method": "has",
+          "args": [
+            [
+              "a"
+            ],
+            "b"
+          ],
+          "expected": false
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "transfer",
+      "side": "server",
+      "version": 1,
+      "description": "Atomically move references between participating containers; do not duplicate membership ownership.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/transfer.mjs",
+      "contract": "contracts/transfer.server.md",
+      "methods": [
+        "move(source,destination,id,index=destination.length)"
+      ],
+      "examples": [
+        {
+          "method": "move",
+          "args": [
+            [
+              "a",
+              "b"
+            ],
+            [
+              "c"
+            ],
+            "a",
+            0
+          ],
+          "expected": {
+            "source": [
+              "b"
+            ],
+            "destination": [
+              "a",
+              "c"
+            ]
+          }
+        },
+        {
+          "method": "move",
+          "args": [
+            [
+              "a"
+            ],
+            [
+              "a"
+            ],
+            "a"
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "partition",
+      "side": "server",
+      "version": 1,
+      "description": "Represent paged or partitioned collections without assuming one record per member or one record per game.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/partition.mjs",
+      "contract": "contracts/partition.server.md",
+      "methods": [
+        "create(members,size=100)",
+        "page(partition,index)",
+        "locate(partition,id)"
+      ],
+      "examples": [
+        {
+          "method": "create",
+          "args": [
+            [
+              "a",
+              "b",
+              "c"
+            ],
+            2
+          ],
+          "expected": {
+            "size": 2,
+            "total": 3,
+            "pages": [
+              [
+                "a",
+                "b"
+              ],
+              [
+                "c"
+              ]
+            ]
+          }
+        },
+        {
+          "method": "create",
+          "args": [
+            [],
+            0
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "list",
+      "side": "client",
+      "version": 1,
+      "description": "Render a sequence and emit selection/reorder requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/list.mjs",
+      "contract": "interfaces/list.json",
+      "renderer": "list",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/list.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "strip",
+      "side": "client",
+      "version": 1,
+      "description": "Compact horizontal/vertical member presentation with overflow behavior.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/strip.mjs",
+      "contract": "interfaces/strip.json",
+      "renderer": "strip",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/strip.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "stack",
+      "side": "client",
+      "version": 1,
+      "description": "Visual overlapping collection with count and top-item slots.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/stack.mjs",
+      "contract": "interfaces/stack.json",
+      "renderer": "stack",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/stack.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "browser",
+      "side": "client",
+      "version": 1,
+      "description": "Searchable, sortable, filterable view of caller-supplied collection entries.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/browser.mjs",
+      "contract": "interfaces/browser.json",
+      "renderer": "browser",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/browser.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "directory",
+      "side": "client",
+      "version": 1,
+      "description": "Collapsible nested folder and entity tree with search filtering and drag-and-drop operations.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/directory.mjs",
+      "contract": "interfaces/directory.json",
+      "renderer": "directory",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/directory.client.md",
+      "events": [
+        "close",
+        "select",
+        "create",
+        "delete",
+        "duplicate",
+        "toggleFolder",
+        "dragStart",
+        "search"
+      ]
+    },
+    {
+      "name": "compendium",
+      "side": "client",
+      "version": 1,
+      "description": "Virtualized reference pack browser providing multi-attribute filtering and efficient viewport-sliced rendering.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/compendium.mjs",
+      "contract": "interfaces/compendium.json",
+      "renderer": "compendium",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/compendium.client.md",
+      "events": [
+        "close",
+        "select",
+        "inspect",
+        "dragStart",
+        "filterChange"
+      ]
+    }
+  ]
+}

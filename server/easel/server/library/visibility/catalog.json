@@ -1,0 +1,185 @@
+{
+  "owner": "easel",
+  "host": "visibility",
+  "description": "Viewer-specific projection and disclosure helpers for game information; not database field ACLs.",
+  "members": [
+    {
+      "name": "projection",
+      "side": "server",
+      "version": 1,
+      "description": "Build or assist in building an actor-specific safe representation from authoritative game state.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/projection.mjs",
+      "contract": "contracts/projection.server.md",
+      "methods": [
+        "fields(value,names)",
+        "project(value,viewer,{public:publicFields=[],private:privateFields=[],ownerField=\"owner\"}={})",
+        "collection(values,viewer,options)",
+        "sanitizeMap(map)",
+        "projectBattlemap(map,viewer,options={})",
+        "invalidate(viewer,options={})",
+        "diffProjection(previous,next)"
+      ],
+      "examples": [
+        {
+          "method": "project",
+          "args": [
+            {
+              "id": "a",
+              "owner": "alice",
+              "secret": "hidden"
+            },
+            "bob",
+            {
+              "public": [
+                "id"
+              ],
+              "private": [
+                "secret"
+              ]
+            }
+          ],
+          "expected": {
+            "id": "a"
+          }
+        },
+        {
+          "method": "project",
+          "args": [
+            {
+              "id": "a",
+              "owner": "alice",
+              "secret": "hidden"
+            },
+            "alice",
+            {
+              "public": [
+                "id"
+              ],
+              "private": [
+                "secret"
+              ]
+            }
+          ],
+          "expected": {
+            "id": "a",
+            "secret": "hidden"
+          }
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "disclosure",
+      "side": "server",
+      "version": 1,
+      "description": "Model in-game reveals/concealment and audiences without granting record permissions.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/disclosure.mjs",
+      "contract": "contracts/disclosure.server.md",
+      "methods": [
+        "reveal(state,id,audience)",
+        "conceal(state,id)",
+        "allows(state,id,viewer)"
+      ],
+      "examples": [
+        {
+          "method": "allows",
+          "args": [
+            {
+              "card": [
+                "alice"
+              ]
+            },
+            "card",
+            "bob"
+          ],
+          "expected": false
+        },
+        {
+          "method": "conceal",
+          "args": [
+            {
+              "card": [
+                "alice"
+              ]
+            },
+            "card"
+          ],
+          "expected": {}
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "concealed",
+      "side": "client",
+      "version": 1,
+      "description": "Show an already-projected known/unknown/face-down representation; never receives secret data.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/concealed.mjs",
+      "contract": "interfaces/concealed.json",
+      "renderer": "concealed",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/concealed.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "mask",
+      "side": "client",
+      "version": 1,
+      "description": "Render a visual mask over caller-authorized presentation data.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/mask.mjs",
+      "contract": "interfaces/mask.json",
+      "renderer": "mask",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/mask.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "reveal",
+      "side": "client",
+      "version": 1,
+      "description": "Temporary presentation of disclosed content, with close/request events.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/reveal.mjs",
+      "contract": "interfaces/reveal.json",
+      "renderer": "reveal",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/reveal.client.md",
+      "events": [
+        "close",
+        "select",
+        "inspect"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "owner": "easel",
+  "host": "territory",
+  "description": "Area ownership, influence and control representations, useful beyond wargames.",
+  "members": [
+    {
+      "name": "influence",
+      "side": "server",
+      "version": 1,
+      "description": "Calculate influence distributions from supplied actors, weights and regions.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/influence.mjs",
+      "contract": "contracts/influence.server.md",
+      "methods": [
+        "distribution(entries)"
+      ],
+      "examples": [
+        {
+          "method": "distribution",
+          "args": [
+            [
+              {
+                "region": "r",
+                "actor": "a",
+                "weight": 2
+              },
+              {
+                "region": "r",
+                "actor": "a",
+                "weight": 3
+              }
+            ]
+          ],
+          "expected": {
+            "r": {
+              "a": 5
+            }
+          }
+        },
+        {
+          "method": "distribution",
+          "args": [
+            [
+              {
+                "region": "r",
+                "actor": "a",
+                "weight": -1
+              }
+            ]
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "control",
+      "side": "server",
+      "version": 1,
+      "description": "Determine controller/contested status by a specified deterministic rule.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/control.mjs",
+      "contract": "contracts/control.server.md",
+      "methods": [
+        "determine(influence,{minimum=1,ties=\"contested\"}={})"
+      ],
+      "examples": [
+        {
+          "method": "determine",
+          "args": [
+            {
+              "a": 3,
+              "b": 3
+            }
+          ],
+          "expected": {
+            "controller": null,
+            "contested": true,
+            "leaders": [
+              "a",
+              "b"
+            ]
+          }
+        },
+        {
+          "method": "determine",
+          "args": [
+            {}
+          ],
+          "expected": {
+            "controller": null,
+            "contested": false,
+            "leaders": []
+          }
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "controlmap",
+      "side": "client",
+      "version": 1,
+      "description": "Color or pattern regions by projected ownership/control.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/controlmap.mjs",
+      "contract": "interfaces/controlmap.json",
+      "renderer": "controlmap",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/controlmap.client.md",
+      "events": [
+        "close",
+        "select"
+      ]
+    },
+    {
+      "name": "influence",
+      "side": "client",
+      "version": 1,
+      "description": "Display influence levels and contest indicators.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/influence.mjs",
+      "contract": "interfaces/influence.json",
+      "renderer": "meterlist",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/influence.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "regionmarker",
+      "side": "client",
+      "version": 1,
+      "description": "Overlay an area label, scoring value or owner icon.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/regionmarker.mjs",
+      "contract": "interfaces/regionmarker.json",
+      "renderer": "badge",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/regionmarker.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

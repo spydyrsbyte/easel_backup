@@ -1,0 +1,13 @@
+{
+  "kind": "component",
+  "properties": {
+    "text": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {},
+  "slots": {
+    "content": {}
+  }
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "classic",
+    "name": {
+      "i18n": "easel.mtg.classic"
+    },
+    "url": "classic.json"
+  }
+]

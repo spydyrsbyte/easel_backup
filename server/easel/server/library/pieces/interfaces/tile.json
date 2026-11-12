@@ -1,0 +1,54 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "data": {
+      "type": "Object",
+      "default": {}
+    },
+    "src": {
+      "type": "String",
+      "default": ""
+    },
+    "alt": {
+      "type": "String",
+      "default": ""
+    },
+    "text": {
+      "type": "String",
+      "default": ""
+    },
+    "orientation": {
+      "type": "Number",
+      "default": 0
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "request": {
+      "payload": {
+        "action": "String",
+        "value": "Object"
+      }
+    },
+    "drag": {
+      "payload": {
+        "id": "String"
+      }
+    }
+  },
+  "slots": {}
+}

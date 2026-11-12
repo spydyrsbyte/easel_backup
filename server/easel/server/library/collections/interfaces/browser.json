@@ -1,0 +1,69 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    },
+    "selected": {
+      "type": "Array",
+      "default": []
+    },
+    "multiple": {
+      "type": "Boolean",
+      "default": false
+    },
+    "fields": {
+      "type": "Array",
+      "default": []
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "query": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "selection": {
+      "payload": {
+        "ids": "Array"
+      }
+    },
+    "request": {
+      "payload": {
+        "action": "String",
+        "value": "Object"
+      }
+    },
+    "reorder": {
+      "payload": {
+        "id": "String",
+        "before": "String"
+      }
+    }
+  },
+  "slots": {}
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "component",
+  "properties": {
+    "text": {
+      "type": "String",
+      "default": ""
+    },
+    "visible": {
+      "type": "Boolean",
+      "default": true
+    },
+    "enabled": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "pressed": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

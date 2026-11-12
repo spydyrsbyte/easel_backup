@@ -1,0 +1,13 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "easel",
+  "name": "ui",
+  "client": {
+    "interfaces": [
+      { "name": "panel@1", "file": "interfaces/panel.json", "http-entry": "client/panel.mjs" },
+      { "name": "button@1", "file": "interfaces/button.json", "http-entry": "client/button.mjs" }
+    ],
+    "assets": { "http": ["client/"] }
+  }
+}

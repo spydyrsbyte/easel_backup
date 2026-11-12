@@ -1,0 +1,75 @@
+{
+  "type": "application",
+  "owner": "easel",
+  "host": "mtgtable",
+  "name": "game",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "rules@1",
+        "file": "server/rules-interface.mjs"
+      }
+    ],
+    "security": {
+      "entry": "server/security.mjs"
+    },
+    "application": {
+      "entry": "server/application.mjs",
+      "required": {
+        "interfaces": [
+          "easel.mtgtable.rules@1"
+        ]
+      }
+    },
+    "data": [
+      {
+        ".name": "Table",
+        "state": {
+          ".type": "map",
+          ".default": {}
+        },
+        "revision": {
+          ".type": "integer",
+          ".default": 0
+        }
+      }
+    ]
+  },
+  "client": {
+    "application": {
+      "http-entry": "client/application.mjs",
+      "required": {
+        "interfaces": [
+          "easel.mtgtable.table@1",
+          "easel.surfaces.camera@1",
+          "easel.cards.inspector@1"
+        ]
+      }
+    },
+    "interfaces": [
+      {
+        "name": "table@1",
+        "file": "interfaces/table.json",
+        "http-entry": "client/table.mjs",
+        "required": {
+          "modules": [
+            "easel.graphics.pixi"
+          ],
+          "interfaces": [
+            "easel.graphics.pixi@1"
+          ]
+        }
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

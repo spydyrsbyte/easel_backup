@@ -1,0 +1,62 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": "Spellbook"
+    },
+    "spellbook": {
+      "type": "Object",
+      "default": {}
+    },
+    "activeLevel": {
+      "type": "Number",
+      "default": 0
+    },
+    "casterLevel": {
+      "type": "Number",
+      "default": 1
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    }
+  },
+  "events": {
+    "selectLevel": {
+      "payload": {
+        "level": "Number"
+      }
+    },
+    "castSpell": {
+      "payload": {
+        "spellId": "String",
+        "level": "Number"
+      }
+    },
+    "prepareSpell": {
+      "payload": {
+        "spellId": "String",
+        "level": "Number"
+      }
+    },
+    "rollConcentration": {
+      "payload": {
+        "casterLevel": "Number"
+      }
+    },
+    "rollCasterLevel": {
+      "payload": {
+        "casterLevel": "Number"
+      }
+    },
+    "close": {
+      "payload": {}
+    }
+  },
+  "slots": {}
+}

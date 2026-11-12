@@ -1,0 +1,11 @@
+{
+  "kind": "component",
+  "properties": {
+    "name": {
+      "type": "String",
+      "default": ""
+    }
+  },
+  "events": {},
+  "slots": {}
+}

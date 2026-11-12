@@ -1,0 +1,25 @@
+{
+    "library":{
+        "http-entry":"./library/library-file.mjs"
+        ,"required":{
+            "modules":["<namespace>.<name>","<namespace>.<name>"]
+            ,"interfaces":["<namespace>.<name>@#","<namespace>.<name>@#"]
+        }
+    }
+    ,"application":{
+        "http-entry":"./startup.mjs"
+        ,"required":{
+            "modules":["<namespace>.<name>","<namespace>.<name>"]
+            ,"interfaces":["<namespace>.<name>@#","<namespace>.<name>@#"]
+        }
+    }
+    ,"interfaces":[
+        {"name":"<name>@#","file":"./library/interfaces/name.json"},
+        {"name":"<name>","file":"./library/interfaces/name.json","versions":[2,3]}
+    ]
+    ,"assets":{"http":["./library/"]}
+    ,"implements":[
+        {"name":"<namespace>.<name>@#","file":"./library/interfaces/name.json"},
+        {"name":"<namespace>.<name>","file":"./library/interfaces/name.json","versions":[2,3]}
+    ]
+}

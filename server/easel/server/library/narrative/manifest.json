@@ -1,0 +1,64 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "narrative",
+  "name": "narrative",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "scene@1",
+        "file": "server/scene.mjs"
+      },
+      {
+        "name": "journal@1",
+        "file": "server/journal.mjs"
+      },
+      {
+        "name": "tags@1",
+        "file": "server/tags.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "journal@1",
+        "file": "interfaces/journal.json",
+        "http-entry": "client/journal.mjs"
+      },
+      {
+        "name": "scene@1",
+        "file": "interfaces/scene.json",
+        "http-entry": "client/scene.mjs"
+      },
+      {
+        "name": "handout@1",
+        "file": "interfaces/handout.json",
+        "http-entry": "client/handout.mjs"
+      },
+      {
+        "name": "relationship@1",
+        "file": "interfaces/relationship.json",
+        "http-entry": "client/relationship.mjs"
+      },
+      {
+        "name": "chatlog@1",
+        "file": "interfaces/chatlog.json",
+        "http-entry": "client/chatlog.mjs"
+      },
+      {
+        "name": "richtext@1",
+        "file": "interfaces/richtext.json",
+        "http-entry": "client/richtext.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

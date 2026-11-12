@@ -1,0 +1,72 @@
+{
+  "kind": "component",
+  "properties": {
+    "title": {
+      "type": "String",
+      "default": ""
+    },
+    "disabled": {
+      "type": "Boolean",
+      "default": false
+    },
+    "open": {
+      "type": "Boolean",
+      "default": true
+    },
+    "items": {
+      "type": "Array",
+      "default": []
+    },
+    "selected": {
+      "type": "Array",
+      "default": []
+    },
+    "multiple": {
+      "type": "Boolean",
+      "default": false
+    },
+    "fields": {
+      "type": "Array",
+      "default": []
+    },
+    "actions": {
+      "type": "Array",
+      "default": []
+    },
+    "camera": {
+      "type": "Object",
+      "default": {
+        "x": 0,
+        "y": 0,
+        "zoom": 1,
+        "rotation": 0
+      }
+    }
+  },
+  "events": {
+    "close": {
+      "payload": {}
+    },
+    "select": {
+      "payload": {
+        "id": "String"
+      }
+    },
+    "rotate": {
+      "payload": {
+        "degrees": "Number"
+      }
+    },
+    "zoom": {
+      "payload": {
+        "factor": "Number"
+      }
+    },
+    "view": {
+      "payload": {
+        "seat": "String"
+      }
+    }
+  },
+  "slots": {}
+}

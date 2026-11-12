@@ -1,0 +1,17 @@
+{
+  "kind": "component",
+  "properties": {
+    "state": { "type": "Object", "default": {} },
+    "user": { "type": "String", "default": "" },
+    "revision": { "type": "Integer", "default": 0 },
+    "busy": { "type": "Boolean", "default": false },
+    "error": { "type": "String", "default": "" },
+    "response": { "type": "Object", "default": {} },
+    "inspection": { "type": "Object", "default": {} }
+  },
+  "events": {
+    "action": { "payload": { "request": "String", "payload": "Object" } },
+    "refresh": { "payload": {} }
+  },
+  "slots": {}
+}

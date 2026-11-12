@@ -1,0 +1,58 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "economy",
+  "name": "economy",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "quote@1",
+        "file": "server/quote.mjs"
+      },
+      {
+        "name": "offer@1",
+        "file": "server/offer.mjs"
+      },
+      {
+        "name": "bid@1",
+        "file": "server/bid.mjs"
+      },
+      {
+        "name": "allocation@1",
+        "file": "server/allocation.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "market@1",
+        "file": "interfaces/market.json",
+        "http-entry": "client/market.mjs"
+      },
+      {
+        "name": "offer@1",
+        "file": "interfaces/offer.json",
+        "http-entry": "client/offer.mjs"
+      },
+      {
+        "name": "auction@1",
+        "file": "interfaces/auction.json",
+        "http-entry": "client/auction.mjs"
+      },
+      {
+        "name": "price@1",
+        "file": "interfaces/price.json",
+        "http-entry": "client/price.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

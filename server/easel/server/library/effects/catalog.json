@@ -1,0 +1,343 @@
+{
+  "owner": "easel",
+  "host": "effects",
+  "description": "Status/effect presentation and timing helpers, with game-defined meaning.",
+  "members": [
+    {
+      "name": "duration",
+      "side": "server",
+      "version": 1,
+      "description": "Compute duration/expiry from a declared time or phase basis.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/duration.mjs",
+      "contract": "contracts/duration.server.md",
+      "methods": [
+        "remaining(effect,now)",
+        "expired(effect,now)"
+      ],
+      "examples": [
+        {
+          "method": "remaining",
+          "args": [
+            {
+              "start": 10,
+              "duration": 5
+            },
+            12
+          ],
+          "expected": 3
+        },
+        {
+          "method": "remaining",
+          "args": [
+            {
+              "start": 1,
+              "duration": -1
+            },
+            2
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "stacking",
+      "side": "server",
+      "version": 1,
+      "description": "Combine/reject overlapping effects according to selected policy.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/stacking.mjs",
+      "contract": "contracts/stacking.server.md",
+      "methods": [
+        "combine(effects,incoming,policy=\"replace\")",
+        "resolve(effects,policies={},defaultPolicy=\"strongest\")"
+      ],
+      "examples": [
+        {
+          "method": "combine",
+          "args": [
+            [
+              {
+                "key": "a",
+                "value": 2
+              }
+            ],
+            {
+              "key": "a",
+              "value": 1
+            },
+            "strongest"
+          ],
+          "expected": [
+            {
+              "key": "a",
+              "value": 2
+            }
+          ]
+        },
+        {
+          "method": "combine",
+          "args": [
+            [
+              {
+                "key": "a"
+              }
+            ],
+            {
+              "key": "a"
+            },
+            "reject"
+          ],
+          "throws": true
+        },
+        {
+          "method": "resolve",
+          "args": [
+            [
+              {
+                "id": "e1",
+                "key": "typed",
+                "value": 2
+              },
+              {
+                "id": "e2",
+                "key": "typed",
+                "value": 4
+              },
+              {
+                "id": "e3",
+                "key": "typed",
+                "value": -1
+              },
+              {
+                "id": "e4",
+                "key": "untyped",
+                "value": 1
+              },
+              {
+                "id": "e5",
+                "key": "untyped",
+                "value": 2
+              }
+            ],
+            {
+              "typed": "bonusStrongestPenaltyStack",
+              "untyped": "stack"
+            }
+          ],
+          "expected": {
+            "total": 6,
+            "active": [
+              {
+                "id": "e2",
+                "key": "typed",
+                "value": 4
+              },
+              {
+                "id": "e3",
+                "key": "typed",
+                "value": -1
+              },
+              {
+                "id": "e4",
+                "key": "untyped",
+                "value": 1
+              },
+              {
+                "id": "e5",
+                "key": "untyped",
+                "value": 2
+              }
+            ],
+            "suppressed": [
+              {
+                "id": "e1",
+                "key": "typed",
+                "value": 2
+              }
+            ]
+          }
+        },
+        {
+          "method": "combine",
+          "args": [
+            [
+              {
+                "key": "circumstance",
+                "source": "flank",
+                "value": 2
+              },
+              {
+                "key": "circumstance",
+                "source": "cover",
+                "value": 1
+              }
+            ],
+            {
+              "key": "circumstance",
+              "source": "cover",
+              "value": 4
+            },
+            {
+              "circumstance": "sumBySource"
+            }
+          ],
+          "expected": [
+            {
+              "key": "circumstance",
+              "source": "flank",
+              "value": 2
+            },
+            {
+              "key": "circumstance",
+              "source": "cover",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "method": "resolve",
+          "args": [
+            [],
+            {
+              "a": "unknown"
+            }
+          ],
+          "throws": true
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "status",
+      "side": "server",
+      "version": 1,
+      "description": "Read/project the current effect descriptors of a subject.",
+      "status": "tested",
+      "dependencies": [],
+      "entry": "server/status.mjs",
+      "contract": "contracts/status.server.md",
+      "methods": [
+        "project(effects,subject,viewer)"
+      ],
+      "examples": [
+        {
+          "method": "project",
+          "args": [
+            [
+              {
+                "id": "a",
+                "subject": "s",
+                "audience": [
+                  "alice"
+                ]
+              }
+            ],
+            "s",
+            "bob"
+          ],
+          "expected": []
+        },
+        {
+          "method": "project",
+          "args": [
+            [
+              {
+                "id": "a",
+                "subject": "s"
+              }
+            ],
+            "s",
+            "bob"
+          ],
+          "expected": [
+            {
+              "id": "a",
+              "name": "a",
+              "icon": null,
+              "duration": null,
+              "value": null
+            }
+          ]
+        }
+      ],
+      "checks": [
+        "scripts/test-kits.mjs",
+        "internal/session/kit_test.go"
+      ]
+    },
+    {
+      "name": "status",
+      "side": "client",
+      "version": 1,
+      "description": "Status icon/chip with details and duration.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/status.mjs",
+      "contract": "interfaces/status.json",
+      "renderer": "badge",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/status.client.md",
+      "events": [
+        "close"
+      ]
+    },
+    {
+      "name": "effectlist",
+      "side": "client",
+      "version": 1,
+      "description": "List active effects with dispel/inspect requests.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/effectlist.mjs",
+      "contract": "interfaces/effectlist.json",
+      "renderer": "list",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/effectlist.client.md",
+      "events": [
+        "close",
+        "select",
+        "selection",
+        "request",
+        "reorder"
+      ]
+    },
+    {
+      "name": "duration",
+      "side": "client",
+      "version": 1,
+      "description": "Human-friendly remaining-duration badge.",
+      "status": "tested",
+      "dependencies": [
+        "browser DOM"
+      ],
+      "entry": "client/duration.mjs",
+      "contract": "interfaces/duration.json",
+      "renderer": "duration",
+      "checks": [
+        "scripts/test-kit-browser.mjs"
+      ],
+      "documentation": "contracts/duration.client.md",
+      "events": [
+        "close"
+      ]
+    }
+  ]
+}

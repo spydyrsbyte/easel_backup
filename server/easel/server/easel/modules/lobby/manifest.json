@@ -1,0 +1,25 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "easel",
+  "name": "lobby",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "lobby@1",
+        "file": "interfaces/lobby.json",
+        "http-entry": "client/lobby.mjs"
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

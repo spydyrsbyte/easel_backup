@@ -1,0 +1,71 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "characters",
+  "name": "characters",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "attributes@1",
+        "file": "server/attributes.mjs"
+      },
+      {
+        "name": "skills@1",
+        "file": "server/skills.mjs"
+      },
+      {
+        "name": "traits@1",
+        "file": "server/traits.mjs"
+      },
+      {
+        "name": "derived@1",
+        "file": "server/derived.mjs",
+        "required": {
+          "interfaces": [
+            "easel.rules.formula@1",
+            "easel.effects.stacking@1"
+          ]
+        }
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "sheet@1",
+        "file": "interfaces/sheet.json",
+        "http-entry": "client/sheet.mjs"
+      },
+      {
+        "name": "attribute@1",
+        "file": "interfaces/attribute.json",
+        "http-entry": "client/attribute.mjs"
+      },
+      {
+        "name": "skilllist@1",
+        "file": "interfaces/skilllist.json",
+        "http-entry": "client/skilllist.mjs"
+      },
+      {
+        "name": "traitlist@1",
+        "file": "interfaces/traitlist.json",
+        "http-entry": "client/traitlist.mjs"
+      },
+      {
+        "name": "playbook@1",
+        "file": "interfaces/playbook.json",
+        "http-entry": "client/playbook.mjs"
+      }
+    ],
+    "assets": {
+      "http": [
+        "client/"
+      ]
+    }
+  }
+}

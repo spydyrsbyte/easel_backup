@@ -1,0 +1,56 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "input",
+  "name": "input",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "intent@1",
+        "file": "server/intent.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "selection@1",
+        "file": "interfaces/selection.json",
+        "http-entry": "client/selection.mjs"
+      },
+      {
+        "name": "dragdrop@1",
+        "file": "interfaces/dragdrop.json",
+        "http-entry": "client/dragdrop.mjs"
+      },
+      {
+        "name": "contextmenu@1",
+        "file": "interfaces/contextmenu.json",
+        "http-entry": "client/contextmenu.mjs"
+      },
+      {
+        "name": "targetpicker@1",
+        "file": "interfaces/targetpicker.json",
+        "http-entry": "client/targetpicker.mjs"
+      },
+      {
+        "name": "shortcut@1",
+        "file": "interfaces/shortcut.json",
+        "http-entry": "client/shortcut.mjs"
+      },
+      {
+        "name": "popover@1",
+        "file": "interfaces/popover.json",
+        "http-entry": "client/popover.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "type": "kit",
+  "owner": "easel",
+  "host": "visibility",
+  "name": "visibility",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "projection@1",
+        "file": "server/projection.mjs"
+      },
+      {
+        "name": "disclosure@1",
+        "file": "server/disclosure.mjs"
+      }
+    ]
+  },
+  "client": {
+    "interfaces": [
+      {
+        "name": "concealed@1",
+        "file": "interfaces/concealed.json",
+        "http-entry": "client/concealed.mjs"
+      },
+      {
+        "name": "mask@1",
+        "file": "interfaces/mask.json",
+        "http-entry": "client/mask.mjs"
+      },
+      {
+        "name": "reveal@1",
+        "file": "interfaces/reveal.json",
+        "http-entry": "client/reveal.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}
