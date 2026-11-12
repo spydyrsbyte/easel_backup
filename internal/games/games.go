@@ -63,6 +63,7 @@ type Manager struct {
 
 	OwnershipLost func(games []string, cause error)
 	Packages      *PackageControl
+	Slots         *Slots
 
 	mu                 sync.Mutex
 	catalogMu          sync.RWMutex
@@ -263,26 +264,6 @@ func newSessionID() (string, error) {
 	return hex.EncodeToString(raw), nil
 }
 
-func (m *Manager) Stop(id string) error {
-	m.mu.Lock()
-	game := m.running[id]
-	delete(m.running, id)
-	m.mu.Unlock()
-	if game == nil {
-		return ErrNotRunning
-	}
-	for _, watchers := range game.departure {
-		for departed := range watchers {
-			close(departed)
-		}
-	}
-	err := game.runtime.Close()
-	if game.release != nil {
-		game.release()
-	}
-	return err
-}
-
 func (m *Manager) Delete(ctx context.Context, id string) error {
 	if _, err := m.Get(ctx, id); err != nil {
 		return err
@@ -324,7 +305,7 @@ func (m *Manager) Close() {
 	}
 	m.mu.Unlock()
 	for _, id := range ids {
-		_ = m.Stop(id)
+		_ = m.halt(id, "", true)
 	}
 	m.mu.Lock()
 	release := m.storageRelease

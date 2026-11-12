@@ -69,6 +69,10 @@ func Load(dir string) (*Definition, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read %s: %w", ConfigFile, err)
 	}
+	return load(dir, data)
+}
+
+func load(dir string, data []byte) (*Definition, error) {
 	var settings config
 	if err := decodeStrict(data, &settings); err != nil {
 		return nil, fmt.Errorf("invalid %s: %w", ConfigFile, err)
@@ -331,4 +335,28 @@ func Plan(packages, globals []manifest.Package) (manifest.Plan, error) {
 		return manifest.Plan{}, fmt.Errorf("resolve packages: %w", err)
 	}
 	return plan, nil
+}
+
+func LoadStartup(dir, startup string) (*Definition, error) {
+	if startup == "" {
+		return Load(dir)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, ConfigFile))
+	if err != nil {
+		return nil, fmt.Errorf("read %s: %w", ConfigFile, err)
+	}
+	var settings map[string]json.RawMessage
+	if err := json.Unmarshal(data, &settings); err != nil {
+		return nil, fmt.Errorf("invalid %s: %w", ConfigFile, err)
+	}
+	encoded, err := json.Marshal(startup)
+	if err != nil {
+		return nil, err
+	}
+	settings["startup"] = encoded
+	rewritten, err := json.Marshal(settings)
+	if err != nil {
+		return nil, err
+	}
+	return load(dir, rewritten)
 }

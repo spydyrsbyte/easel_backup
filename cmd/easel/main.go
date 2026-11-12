@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,12 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"easel/internal/accounts"
 	"easel/internal/database"
 	"easel/internal/games"
+	"easel/internal/hosting"
 	"easel/internal/packages"
 	"easel/internal/platform"
-	"easel/internal/server"
 )
 
 var commands = map[string]func(context.Context, []string) error{
@@ -31,6 +31,15 @@ var commands = map[string]func(context.Context, []string) error{
 	"import":   importCommand,
 	"accounts": accountsCommand,
 	"packages": packagesCommand,
+	"version":  versionCommand,
+}
+
+func versionCommand(context.Context, []string) error {
+	limit := "unlimited"
+	if maxActiveGames > 0 {
+		limit = fmt.Sprint(maxActiveGames)
+	}
+	return printJSON(map[string]any{"edition": editionName, "activeGames": limit, "databaseSchema": database.SchemaVersion})
 }
 
 func main() {
@@ -59,13 +68,14 @@ func main() {
 }
 
 func run(args []string) error {
-	flag := flag.NewFlagSet("easel", flag.ExitOnError)
-	addr := flag.String("addr", "127.0.0.1:5000", "HTTP listen address")
-	databaseConfigPath := flag.String("database-config", "config/database.json", "database settings file")
-	authConfigPath := flag.String("auth-config", "config/auth.json", "sign-in settings file; optional")
-	easelDir := flag.String("easel-dir", "easel", "Easel resources directory")
-	gamesDir := flag.String("games-dir", "games", "folder holding one folder per game")
-	_ = flag.Parse(args)
+	flags := flag.NewFlagSet("easel", flag.ExitOnError)
+	addr := flags.String("addr", "127.0.0.1:5000", "HTTP listen address when config/servers.json is absent")
+	databaseConfigPath := flags.String("database-config", "config/database.json", "database settings file")
+	authConfigPath := flags.String("auth-config", "config/auth.json", "sign-in settings file; optional")
+	easelDir := flags.String("easel-dir", "easel", "Easel resources directory")
+	gamesDir := flags.String("games-dir", "games", "folder holding one folder per game")
+	_ = flags.Parse(args)
+	configDir := filepath.Dir(*databaseConfigPath)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -86,25 +96,18 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
-	slog.Info("database ready")
+	slog.Info("database ready", "schema", database.SchemaVersion)
 
-	signIn := accounts.Config{PublicURL: "http://" + *addr}
-	if loaded, err := accounts.LoadConfig(*authConfigPath); err == nil {
-		signIn = loaded
-	} else if !errors.Is(err, os.ErrNotExist) {
-		return err
-	}
-	providers, err := signIn.Build()
+	configured, err := hosting.LoadServers(configDir, *addr, *authConfigPath)
 	if err != nil {
 		return err
 	}
-	slog.Info("sign-in configured", "public_url", signIn.PublicURL, "providers", len(providers))
 	definition, err := platform.Load(filepath.Join(*easelDir, "server"))
 	if err != nil {
 		return err
 	}
 	installer := &packages.Installer{EaselDir: *easelDir, Globals: definition.Libraries, Compatible: games.CompatibilityCheck(databasePool, *easelDir, definition.Libraries)}
-	preferencesFile := preferencesPath(filepath.Dir(*databaseConfigPath))
+	preferencesFile := preferencesPath(configDir)
 	if preferences, err := packages.LoadPreferences(preferencesFile); err != nil {
 		slog.Error("package preferences ignored", "error", err)
 	} else {
@@ -116,68 +119,70 @@ func run(args []string) error {
 			}
 		}
 	}
-	catalog, err := platform.LoadCatalog(*easelDir)
-	if err != nil {
-		return err
+	shared := hosting.Shared{
+		Pool: databasePool, EaselDir: *easelDir, GamesDir: *gamesDir, ConfigDir: configDir,
+		Slots: &games.Slots{Max: maxActiveGames}, Installer: installer, Preferences: preferencesFile,
+		ReportError: func(r *http.Request, err error) {
+			slog.Error("request failed", "method", r.Method, "path", r.URL.Path, "error", err)
+		},
+		Lost: func(server string, lost []string, cause error) {
+			slog.Error("lost the database connection that holds game ownership; the games were halted and keep their state", "server", server, "games", len(lost), "error", cause)
+		},
 	}
-	manager := &games.Manager{Pool: databasePool, Catalog: catalog, Globals: definition.Libraries, Folder: *gamesDir, Packages: &games.PackageControl{Installer: installer, Preferences: preferencesFile}}
-	defer manager.Close()
-	accountService := &accounts.Service{Pool: databasePool}
-	serverApplication, err := manager.StartServer(ctx, definition, games.ServerHost{
-		Users:           server.ScriptedUsersNotifying(accountService, manager.SyncServerPrincipal),
-		AuthorizeClient: server.SignedInClient,
-	})
-	if err != nil {
-		return fmt.Errorf("start server application %s: %w", definition.Server.ID(), err)
-	}
-	defer serverApplication.Close()
-	slog.Info("server application started", "server", definition.Server.ID(), "libraries", len(definition.Libraries), "applications", len(catalog.Applications), "modules", len(catalog.Modules), "running games", len(manager.Running()))
-	router, err := server.NewServerRouter(manager, serverApplication)
-	if err != nil {
-		return fmt.Errorf("serve server application %s: %w", definition.Server.ID(), err)
-	}
+	slog.Info("starting Easel", "edition", editionName, "servers", len(configured))
 
-	srv := &http.Server{
-		Addr: *addr,
-		Handler: server.NewHandler(server.Config{
-			FrontendDir:   *easelDir,
-			Router:        router,
-			Accounts:      accountService,
-			Providers:     providers,
-			Policy:        router.Application,
-			PublicURL:     signIn.PublicURL,
-			SecureCookies: signIn.SecureCookies(),
-			ReportError: func(r *http.Request, err error) {
-				slog.Error("request failed", "method", r.Method, "path", r.URL.Path, "error", err)
-			},
-		}),
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       15 * time.Second,
-		WriteTimeout:      15 * time.Second,
-		IdleTimeout:       60 * time.Second,
+	type listening struct {
+		hosted *hosting.Server
+		http   *http.Server
 	}
-	errs := make(chan error, 1)
-	go func() {
-		slog.Info("starting Easel", "address", srv.Addr)
-		errs <- srv.ListenAndServe()
-	}()
+	running := []listening{}
+	errs := make(chan error, len(configured))
+	closeAll := func() {
+		for _, entry := range running {
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			if err := entry.http.Shutdown(shutdownCtx); err != nil {
+				_ = entry.http.Close()
+			}
+			cancel()
+		}
+		for _, entry := range running {
+			entry.hosted.Close()
+		}
+	}
+	for _, config := range configured {
+		hosted, err := hosting.Start(ctx, shared, config)
+		if err != nil {
+			closeAll()
+			return err
+		}
+		listener, err := net.Listen("tcp", config.Addr)
+		if err != nil {
+			hosted.Close()
+			closeAll()
+			return fmt.Errorf("server %s: %w", config.Name, err)
+		}
+		srv := &http.Server{
+			Handler:           hosted.Handler,
+			ReadHeaderTimeout: 5 * time.Second,
+			ReadTimeout:       15 * time.Second,
+			WriteTimeout:      15 * time.Second,
+			IdleTimeout:       60 * time.Second,
+		}
+		running = append(running, listening{hosted, srv})
+		slog.Info("server started", "server", config.Name, "address", config.Addr, "public_url", hosted.PublicURL, "application", hosted.Definition.Server.ID(), "providers", hosted.Providers, "running games", len(hosted.Manager.Running()))
+		go func(name string) {
+			if err := srv.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
+				errs <- fmt.Errorf("server %s: %w", name, err)
+			}
+		}(config.Name)
+	}
 
 	select {
-	case err := <-errs:
-		return err
+	case err = <-errs:
 	case <-ctx.Done():
 		stop()
 		slog.Info("shutting down Easel")
 	}
-
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(shutdownCtx); err != nil {
-		_ = srv.Close()
-		return err
-	}
-	if err := <-errs; !errors.Is(err, http.ErrServerClosed) {
-		return err
-	}
-	return nil
+	closeAll()
+	return err
 }

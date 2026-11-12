@@ -8,11 +8,13 @@ if (Server.games.list().length === 0)
     modules: ["easel.easel.ui", "easel.table.style"],
     access: "open",
   });
+Server.games.startAutomatic();
 
 Application.events.register("lobby.refresh", { valid: 2 });
 Application.events.register("lobby.join", { valid: 2, game: "string" });
 Application.events.register("lobby.start", { valid: 2, game: "string" });
 Application.events.register("lobby.stop", { valid: 2, game: "string" });
+Application.events.register("lobby.suspend", { valid: 2, game: "string" });
 Application.events.register("lobby.delete", { valid: 2, game: "string" });
 Application.events.register("lobby.create", {
   valid: 2,
@@ -103,6 +105,9 @@ Application.events.on("lobby.start", ({ game }, connection) =>
 );
 Application.events.on("lobby.stop", ({ game }, connection) =>
   administer(connection, () => Server.games.stop(game)),
+);
+Application.events.on("lobby.suspend", ({ game }, connection) =>
+  administer(connection, () => Server.games.suspend(game)),
 );
 Application.events.on("lobby.delete", ({ game }, connection) =>
   administer(connection, () => Server.games.delete(game)),

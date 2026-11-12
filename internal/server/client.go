@@ -472,7 +472,7 @@ func (h *handler) clientSocket(w http.ResponseWriter, r *http.Request) {
 			_ = c.SetReadDeadline(time.Now().Add(challengeLifetime))
 			token = f.Token
 			if token == "" && client == "http" {
-				token = sessionToken(r)
+				token = h.sessionToken(r)
 			}
 			if token != "" {
 				user, err = h.config.Accounts.SessionUser(connCtx, token)

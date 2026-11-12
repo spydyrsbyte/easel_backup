@@ -26,7 +26,7 @@ type ServerHost struct {
 	AuthorizeClient func(context.Context, string, json.RawMessage, bool) error
 }
 
-func (m *Manager) boot(ctx context.Context, id, name string, packages []manifest.Package, plan manifest.Plan, host *ServerHost) (session.Runtime, error) {
+func (m *Manager) boot(ctx context.Context, id, name string, packages []manifest.Package, plan manifest.Plan, host *ServerHost, scheduled []session.ScheduledEvent) (session.Runtime, error) {
 	composed := &schema.Schema{}
 	revision, err := (&pgstore.Revisions{Pool: m.Pool}).CurrentRevision(ctx, id, plan, composed)
 	if err != nil {
@@ -72,6 +72,7 @@ func (m *Manager) boot(ctx context.Context, id, name string, packages []manifest
 		AutomationService: automation.New(repository, records, access),
 		RecordType:        records.RecordType,
 		Files:             m.fileService(id, host != nil),
+		Scheduled:         scheduled,
 	}
 	if host != nil {
 		game.Server = true
@@ -111,15 +112,31 @@ func (m *Manager) Start(ctx context.Context, id string) error {
 	if m.running[id] != nil {
 		return ErrRunning
 	}
+	if game.Lifecycle == Relocated {
+		return ErrRelocated
+	}
 	packages, plan, err := m.resolveSaved(ctx, game)
 	if err != nil {
 		return err
 	}
-	release, err := m.Claim(ctx, id)
-	if err != nil {
+	if err := m.Slots.acquire(id, game.Name); err != nil {
 		return err
 	}
-	runtime, err := m.boot(ctx, id, "game "+game.Name, packages, plan, nil)
+	claimed, err := m.Claim(ctx, id)
+	if err != nil {
+		m.Slots.release(id)
+		return err
+	}
+	release := func() {
+		m.Slots.release(id)
+		claimed()
+	}
+	pending, err := m.scheduled(ctx, id)
+	if err != nil {
+		release()
+		return err
+	}
+	runtime, err := m.boot(ctx, id, "game "+game.Name, packages, plan, nil, pending)
 	if err != nil {
 		release()
 		return err
@@ -130,10 +147,15 @@ func (m *Manager) Start(ctx context.Context, id string) error {
 		release()
 		return fmt.Errorf("game %s cannot serve clients", game.Name)
 	}
+	if err := m.settle(ctx, id, Automatic, nil); err != nil {
+		runtime.Close()
+		release()
+		return fmt.Errorf("record the start of game %s: %w", game.Name, err)
+	}
 	if m.running == nil {
 		m.running = map[string]*runningGame{}
 	}
-	m.running[id] = &runningGame{runtime: client, release: release, departure: map[string]map[chan struct{}]bool{}}
+	m.running[id] = &runningGame{runtime: client, release: claimed, departure: map[string]map[chan struct{}]bool{}}
 	return nil
 }
 
@@ -176,7 +198,11 @@ func (m *Manager) StartServer(ctx context.Context, definition *platform.Definiti
 		release()
 		return nil, err
 	}
-	runtime, err := m.boot(ctx, id, "server application "+definition.Server.ID(), packages, plan, &host)
+	pending, err := m.scheduled(ctx, id)
+	if err != nil {
+		return fail(err)
+	}
+	runtime, err := m.boot(ctx, id, "server application "+definition.Server.ID(), packages, plan, &host, pending)
 	if err != nil {
 		return fail(err)
 	}

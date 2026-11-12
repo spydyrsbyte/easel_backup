@@ -104,8 +104,9 @@ func (bridge *EventBridge) InstallServerAPI(games ServerGames, users ServerUsers
 		"installed": bridge.installedPackages,
 		"roles":     bridge.gameRoles, "setRole": bridge.setGameRole,
 		"setModules": bridge.setGameModules,
-		"on":         bridge.onGameServerEvent,
-		"emit":       bridge.emitToGameFromGames,
+		"suspend":    bridge.suspendGame, "resume": bridge.startGame, "limit": bridge.gameLimit, "startAutomatic": bridge.startAutomaticGames,
+		"on":   bridge.onGameServerEvent,
+		"emit": bridge.emitToGameFromGames,
 	}
 	for method, implementation := range methods {
 		if err := gamesObject.DefineDataProperty(method, bridge.vm.ToValue(implementation), sobek.FLAG_FALSE, sobek.FLAG_FALSE, sobek.FLAG_TRUE); err != nil {
@@ -227,6 +228,32 @@ func (bridge *EventBridge) packageUpdates(sobek.FunctionCall) sobek.Value {
 
 func (bridge *EventBridge) updatePackage(call sobek.FunctionCall) sobek.Value {
 	return bridge.plain(bridge.packaged().UpdatePackage(bridge.ctx, bridge.text(call.Argument(0), "package id")))
+}
+
+type lifecycleGames interface {
+	Suspend(context.Context, string) error
+	Limit() any
+	StartAutomatic(context.Context) any
+}
+
+func (bridge *EventBridge) lifecycle() lifecycleGames {
+	manager, ok := bridge.games.(lifecycleGames)
+	if !ok {
+		bridge.fail(fmt.Errorf("game suspension is unsupported"))
+	}
+	return manager
+}
+
+func (bridge *EventBridge) suspendGame(call sobek.FunctionCall) sobek.Value {
+	return bridge.done(bridge.lifecycle().Suspend(bridge.ctx, bridge.text(call.Argument(0), "game id")))
+}
+
+func (bridge *EventBridge) gameLimit(sobek.FunctionCall) sobek.Value {
+	return bridge.plain(bridge.lifecycle().Limit(), nil)
+}
+
+func (bridge *EventBridge) startAutomaticGames(sobek.FunctionCall) sobek.Value {
+	return bridge.plain(bridge.lifecycle().StartAutomatic(bridge.ctx), nil)
 }
 
 type managedGames interface {

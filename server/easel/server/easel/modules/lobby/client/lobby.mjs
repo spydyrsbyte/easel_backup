@@ -270,7 +270,13 @@ export default class Lobby {
           element(
             "span",
             game.running ? "status live" : "status",
-            game.running ? "Ready to play" : "Stopped",
+            game.running
+              ? "Ready to play"
+              : game.lifecycle === "suspended"
+                ? "Suspended"
+                : game.lifecycle === "relocated"
+                  ? "Relocated"
+                  : "Stopped",
           ),
         );
         const title = element("h3", "", game.name);
@@ -455,6 +461,11 @@ export default class Lobby {
             }),
         );
         lifecycle.disabled = props.busy;
+        const suspend = control("Suspend table", "button secondary", () =>
+          this.onEvent?.("suspend", { game: game.id }),
+        );
+        suspend.disabled = props.busy;
+        suspend.hidden = !game.running;
         const group = element("section", "settings-group");
         group.append(
           element("h3", "", "Table session"),
@@ -462,10 +473,13 @@ export default class Lobby {
             "p",
             "muted",
             game.running
-              ? "This table is running and can accept players."
-              : "Start the table to let players join.",
+              ? "This table is running and can accept players. Suspending frees its place and keeps its timers for later."
+              : game.lifecycle === "suspended"
+                ? "This table is suspended. Start it to pick up where it left off."
+                : "Start the table to let players join.",
           ),
           lifecycle,
+          suspend,
         );
         const remove = control("Delete table", "button secondary", () => {
           if (

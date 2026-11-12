@@ -24,6 +24,7 @@ type Config struct {
 	Providers     map[string]*accounts.Provider
 	PublicURL     string
 	SecureCookies bool
+	CookieName    string
 	Logins        *accounts.Limiter
 	Policy        SignInPolicy
 	ReportError   func(*http.Request, error)
@@ -38,6 +39,9 @@ type handler struct {
 func NewHandler(config Config) http.Handler {
 	if config.FrontendDir == "" {
 		config.FrontendDir = "easel"
+	}
+	if config.CookieName == "" {
+		config.CookieName = sessionCookie
 	}
 	mux := http.NewServeMux()
 	if config.Accounts == nil {
@@ -111,7 +115,7 @@ func (h *handler) decode(w http.ResponseWriter, r *http.Request, target any) boo
 }
 
 func (h *handler) setSession(w http.ResponseWriter, result AuthResult) {
-	http.SetCookie(w, &http.Cookie{Name: sessionCookie, Value: result.Token, Path: "/", Expires: result.Expires, HttpOnly: true, Secure: h.config.SecureCookies, SameSite: http.SameSiteLaxMode})
+	http.SetCookie(w, &http.Cookie{Name: h.config.CookieName, Value: result.Token, Path: "/", Expires: result.Expires, HttpOnly: true, Secure: h.config.SecureCookies, SameSite: http.SameSiteLaxMode})
 }
 
 func (h *handler) authFail(w http.ResponseWriter, r *http.Request, err error) {
@@ -134,11 +138,11 @@ func (h *handler) respond(w http.ResponseWriter, r *http.Request, status int, re
 }
 
 func (h *handler) clearSession(w http.ResponseWriter) {
-	http.SetCookie(w, &http.Cookie{Name: sessionCookie, Value: "", Path: "/", MaxAge: -1, HttpOnly: true, Secure: h.config.SecureCookies, SameSite: http.SameSiteLaxMode})
+	http.SetCookie(w, &http.Cookie{Name: h.config.CookieName, Value: "", Path: "/", MaxAge: -1, HttpOnly: true, Secure: h.config.SecureCookies, SameSite: http.SameSiteLaxMode})
 }
 
-func sessionToken(r *http.Request) string {
-	cookie, err := r.Cookie(sessionCookie)
+func (h *handler) sessionToken(r *http.Request) string {
+	cookie, err := r.Cookie(h.config.CookieName)
 	if err != nil {
 		return ""
 	}
@@ -146,7 +150,7 @@ func sessionToken(r *http.Request) string {
 }
 
 func (h *handler) currentUser(r *http.Request) (accounts.User, error) {
-	return h.config.Accounts.SessionUser(r.Context(), sessionToken(r))
+	return h.config.Accounts.SessionUser(r.Context(), h.sessionToken(r))
 }
 
 func clientAddress(r *http.Request) string {
@@ -195,7 +199,7 @@ func (h *handler) logIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) logOut(w http.ResponseWriter, r *http.Request) {
-	if token := sessionToken(r); token != "" {
+	if token := h.sessionToken(r); token != "" {
 		if err := h.config.Accounts.EndSession(r.Context(), token); err != nil {
 			h.fail(w, r, http.StatusInternalServerError, "internal error", err)
 			return

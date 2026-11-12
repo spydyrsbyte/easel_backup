@@ -87,7 +87,7 @@ CREATE TABLE game_data.games (
     active_revision_id uuid,
     access text NOT NULL DEFAULT 'invite' CHECK (access IN ('open', 'invite')),
     modules text[] NOT NULL DEFAULT '{}',
-    lifecycle text NOT NULL DEFAULT 'auto' CHECK (lifecycle IN ('auto', 'stopped', 'suspended')),
+    lifecycle text NOT NULL DEFAULT 'auto' CHECK (lifecycle IN ('auto', 'stopped', 'suspended', 'relocated')),
     suspended_at timestamptz,
     created_at timestamptz NOT NULL DEFAULT now(),
     CHECK ((lifecycle = 'suspended') = (suspended_at IS NOT NULL))

@@ -23,6 +23,7 @@ export function initialize() {
   lobby.on("join", ({ game }) => request("lobby.join", { game }));
   lobby.on("start", ({ game }) => request("lobby.start", { game }));
   lobby.on("stop", ({ game }) => request("lobby.stop", { game }));
+  lobby.on("suspend", ({ game }) => request("lobby.suspend", { game }));
   lobby.on("delete", ({ game }) => request("lobby.delete", { game }));
   lobby.on("create", (settings) => request("lobby.create", settings));
   lobby.on("refresh", () => request("lobby.refresh", {}));

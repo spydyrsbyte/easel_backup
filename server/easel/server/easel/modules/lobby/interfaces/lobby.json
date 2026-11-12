@@ -27,6 +27,7 @@
     "join": { "payload": { "game": "String" } },
     "start": { "payload": { "game": "String" } },
     "stop": { "payload": { "game": "String" } },
+    "suspend": { "payload": { "game": "String" } },
     "delete": { "payload": { "game": "String" } },
     "create": {
       "payload": {

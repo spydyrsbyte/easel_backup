@@ -30,6 +30,8 @@ type Runtime interface {
 	ListAutomations(context.Context) ([]automation.Saved, error)
 	DeleteAutomation(context.Context, string) error
 	Warnings() []string
+	PendingEvents() []ScheduledEvent
+	HoldEvents() []ScheduledEvent
 	Close() error
 }
 
@@ -52,6 +54,7 @@ type Game struct {
 	Debug             bool
 	EmitServerEvent   func(ctx context.Context, gameID string, eventName string, payload json.RawMessage) error
 	Files             *jsapi.FilesConfig
+	Scheduled         []ScheduledEvent
 }
 
 type request struct {
@@ -68,7 +71,8 @@ type result struct {
 
 type session struct {
 	timerMu         sync.Mutex
-	timers          map[int64]*time.Timer
+	timers          map[int64]*scheduled
+	timersHeld      bool
 	nextTimer       int64
 	plan            manifest.Plan
 	authorizeClient func(context.Context, string, json.RawMessage, bool) error
@@ -282,6 +286,13 @@ func (s *session) run(ctx context.Context, game Game, plan manifest.Plan, global
 		return
 	}
 	s.engine.FinishLoading()
+	for _, event := range game.Scheduled {
+		delay := event.Remaining
+		if delay < time.Millisecond {
+			delay = time.Millisecond
+		}
+		s.schedule(delay, event.Name, event.Payload)
+	}
 	ready <- nil
 	for {
 		select {

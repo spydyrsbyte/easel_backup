@@ -147,7 +147,7 @@ func (m *Manager) watchOwnership(conn *pgxpool.Conn, stop chan struct{}) {
 		o.conn, o.stop = nil, nil
 		o.mu.Unlock()
 		for _, id := range lost {
-			_ = m.Stop(id)
+			_ = m.halt(id, "", true)
 		}
 		if m.OwnershipLost != nil {
 			m.OwnershipLost(lost, err)
