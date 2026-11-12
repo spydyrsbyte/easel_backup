@@ -1,0 +1,20 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": { "type": "Boolean", "default": false },
+    "box": { "type": "Object", "default": {} },
+    "boxKey": { "type": "String", "default": "" },
+    "editing": { "type": "Boolean", "default": false },
+    "canRun": { "type": "Boolean", "default": false },
+    "selectedId": { "type": "String", "default": "" },
+    "previewId": { "type": "String", "default": "" },
+    "insets": { "type": "Object", "default": {} }
+  },
+  "events": {
+    "toggle": { "payload": { "id": "String", "on": "Boolean" } },
+    "select": { "payload": { "id": "String" } },
+    "boxChange": { "payload": { "box": "Object", "action": "String" } },
+    "drop": { "payload": { "data": "Object", "x": "Number", "y": "Number" } }
+  },
+  "slots": {}
+}

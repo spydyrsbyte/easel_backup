@@ -53,6 +53,15 @@
         }
       },
       {
+        "name": "shadowbox@2",
+        "file": "interfaces/shadowbox2.json",
+        "http-entry": "client/shadowbox2.mjs",
+        "required": {
+          "modules": ["easel.graphics.pixi"],
+          "interfaces": ["easel.graphics.pixi@1"]
+        }
+      },
+      {
         "name": "ruler@1",
         "file": "interfaces/ruler.json",
         "http-entry": "client/ruler.mjs"
