@@ -19,19 +19,22 @@ import (
 	"easel/internal/hosting"
 	"easel/internal/packages"
 	"easel/internal/platform"
+	"easel/internal/seal"
 )
 
 var commands = map[string]func(context.Context, []string) error{
-	"backup":   backupCommand,
-	"restore":  restoreCommand,
-	"games":    gamesCommand,
-	"schema":   schemaCommand,
-	"files":    filesCommand,
-	"export":   exportCommand,
-	"import":   importCommand,
-	"accounts": accountsCommand,
-	"packages": packagesCommand,
-	"version":  versionCommand,
+	"backup":    backupCommand,
+	"restore":   restoreCommand,
+	"games":     gamesCommand,
+	"schema":    schemaCommand,
+	"files":     filesCommand,
+	"export":    exportCommand,
+	"import":    importCommand,
+	"accounts":  accountsCommand,
+	"packages":  packagesCommand,
+	"version":   versionCommand,
+	"publisher": publisherCommand,
+	"license":   licenseCommand,
 }
 
 func versionCommand(context.Context, []string) error {
@@ -76,6 +79,7 @@ func run(args []string) error {
 	gamesDir := flags.String("games-dir", "games", "folder holding one folder per game")
 	_ = flags.Parse(args)
 	configDir := filepath.Dir(*databaseConfigPath)
+	seal.Configure(licenseStore(configDir))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

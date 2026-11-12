@@ -28,8 +28,8 @@ func NewModuleLoader(vm *sobek.Runtime) *ModuleLoader {
 }
 
 func (loader *ModuleLoader) Run(pkg manifest.Package, file string) (*sobek.Object, error) {
-	if pkg.Manifest.Encrypt.Enabled {
-		return nil, fmt.Errorf("package %s is encrypted; encrypted packages are not supported yet", pkg.ID())
+	if pkg.Manifest.Encrypt.Enabled && !pkg.Unsealed {
+		return nil, fmt.Errorf("package %s asks for protection but is installed unsealed; install the sealed archive its publisher distributes", pkg.ID())
 	}
 	record, err := loader.load(pkg, file)
 	if err != nil {

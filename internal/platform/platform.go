@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"easel/internal/manifest"
+	"easel/internal/seal"
 )
 
 const ConfigFile = "server.json"
@@ -57,7 +58,7 @@ func loadPackage(dir, relative string) (manifest.Package, error) {
 		return manifest.Package{}, fmt.Errorf("%s must name a %s", relative, manifest.FileName)
 	}
 	root := filepath.Join(dir, filepath.FromSlash(path.Dir(cleaned)))
-	pkg, err := manifest.Load(os.DirFS(root))
+	pkg, err := seal.Load(os.DirFS(root))
 	if err != nil {
 		return manifest.Package{}, fmt.Errorf("load %s: %w", relative, err)
 	}
@@ -133,9 +134,14 @@ func load(dir string, data []byte) (*Definition, error) {
 type Catalog struct {
 	Applications map[string]manifest.Package
 	Modules      map[string]manifest.Package
+	Unlicensed   map[string]string
 }
 
 func loadFolder(dir string) (map[string]manifest.Package, error) {
+	return loadLicensed(dir, nil)
+}
+
+func loadLicensed(dir string, unlicensed map[string]string) (map[string]manifest.Package, error) {
 	packages := map[string]manifest.Package{}
 	entries, err := os.ReadDir(dir)
 	if errors.Is(err, fs.ErrNotExist) {
@@ -148,7 +154,11 @@ func loadFolder(dir string) (map[string]manifest.Package, error) {
 		if !entry.IsDir() {
 			continue
 		}
-		pkg, err := manifest.Load(os.DirFS(filepath.Join(dir, entry.Name())))
+		pkg, err := seal.Load(os.DirFS(filepath.Join(dir, entry.Name())))
+		if err != nil && unlicensed != nil && errors.Is(err, seal.ErrNoLicense) {
+			unlicensed[entry.Name()] = err.Error()
+			continue
+		}
 		if err != nil {
 			return nil, fmt.Errorf("installed package %s: %w", entry.Name(), err)
 		}
@@ -161,11 +171,12 @@ func loadFolder(dir string) (map[string]manifest.Package, error) {
 }
 
 func LoadCatalog(easelDir string) (*Catalog, error) {
-	applications, err := loadFolder(filepath.Join(easelDir, "applications"))
+	unlicensed := map[string]string{}
+	applications, err := loadLicensed(filepath.Join(easelDir, "applications"), unlicensed)
 	if err != nil {
 		return nil, err
 	}
-	modules, err := loadFolder(filepath.Join(easelDir, "modules"))
+	modules, err := loadLicensed(filepath.Join(easelDir, "modules"), unlicensed)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +190,7 @@ func LoadCatalog(easelDir string) (*Catalog, error) {
 			return nil, fmt.Errorf("%s is in modules but is an application", id)
 		}
 	}
-	return &Catalog{Applications: applications, Modules: modules}, nil
+	return &Catalog{Applications: applications, Modules: modules, Unlicensed: unlicensed}, nil
 }
 
 func (c *Catalog) Packages(application string, modules []string) ([]manifest.Package, error) {
@@ -302,7 +313,7 @@ func (c *Catalog) Dependents(id string) []string {
 }
 
 func (c *Catalog) Copy() *Catalog {
-	copied := &Catalog{Applications: map[string]manifest.Package{}, Modules: map[string]manifest.Package{}}
+	copied := &Catalog{Applications: map[string]manifest.Package{}, Modules: map[string]manifest.Package{}, Unlicensed: c.Unlicensed}
 	for id, pkg := range c.Applications {
 		copied.Applications[id] = pkg
 	}

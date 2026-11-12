@@ -231,6 +231,7 @@ type Package struct {
 	Files        fs.FS
 	PrivateFiles []string
 	Dependencies []Package
+	Unsealed     bool
 }
 
 func (p Package) ID() string { return p.Manifest.ID() }

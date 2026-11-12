@@ -128,7 +128,7 @@ func TestModuleLoadingFailures(t *testing.T) {
 		}, "missing.mjs"},
 		"encrypted": {func(t *testing.T) []manifest.Package {
 			return kit(t, `{"type":"module","name":"locked","owner":"easel","host":"test","encrypt":{"public":"key.txt"},"server":{"library":{"entry":"index.mjs"},"interfaces":["dice@1"]}}`, ``)
-		}, "not supported yet"},
+		}, "installed unsealed"},
 		"thrown error": {func(t *testing.T) []manifest.Package {
 			return application(t, "", `throw new Error("startup failed");`)
 		}, "startup failed"},

@@ -20,6 +20,7 @@ import (
 
 	"easel/internal/manifest"
 	"easel/internal/platform"
+	"easel/internal/seal"
 )
 
 const (
@@ -251,7 +252,7 @@ func (i *Installer) folderOf(id string) (string, manifest.Package, error) {
 				continue
 			}
 			folder := filepath.Join(i.EaselDir, group, entry.Name())
-			pkg, err := manifest.Load(os.DirFS(folder))
+			pkg, err := seal.Load(os.DirFS(folder))
 			if err == nil && pkg.ID() == id {
 				return folder, pkg, nil
 			}
@@ -360,7 +361,7 @@ func (i *Installer) stage(ctx context.Context, archive string) (string, manifest
 	if err != nil {
 		return "", manifest.Package{}, Inspection{}, err
 	}
-	pkg, err := manifest.Load(os.DirFS(staging))
+	pkg, err := seal.Load(os.DirFS(staging))
 	if err != nil {
 		os.RemoveAll(staging)
 		return "", manifest.Package{}, Inspection{}, fmt.Errorf("invalid package: %w", err)
@@ -512,7 +513,7 @@ func (i *Installer) Rollback(ctx context.Context, id string) (Result, error) {
 		return Result{}, fmt.Errorf("no previous installation of %s is kept", id)
 	}
 	source := filepath.Join(i.EaselDir, previousFolder, id, kept[0])
-	pkg, err := manifest.Load(os.DirFS(source))
+	pkg, err := seal.Load(os.DirFS(source))
 	if err != nil {
 		return Result{}, fmt.Errorf("the kept installation of %s does not load: %w", id, err)
 	}
@@ -558,7 +559,7 @@ func (i *Installer) List(preferences Preferences) ([]Installed, error) {
 				continue
 			}
 			folder := filepath.Join(i.EaselDir, name, entry.Name())
-			pkg, err := manifest.Load(os.DirFS(folder))
+			pkg, err := seal.Load(os.DirFS(folder))
 			if err != nil {
 				listed = append(listed, Installed{Inspection: Inspection{ID: entry.Name(), Requires: []string{}, Clients: []string{}, Channels: []string{}}, Folder: folder, Kept: []string{}, Problem: err.Error()})
 				continue
@@ -651,7 +652,7 @@ func (i *Installer) Check(ctx context.Context, preferences Preferences) ([]Updat
 		}
 		for _, entry := range entries {
 			folder := filepath.Join(i.EaselDir, name, entry.Name())
-			pkg, err := manifest.Load(os.DirFS(folder))
+			pkg, err := seal.Load(os.DirFS(folder))
 			if !entry.IsDir() || err != nil || len(pkg.Manifest.Channels) == 0 {
 				continue
 			}

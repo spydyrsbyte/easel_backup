@@ -16,6 +16,7 @@ import (
 	"easel/internal/games"
 	"easel/internal/platform"
 	"easel/internal/portable"
+	"easel/internal/seal"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -46,6 +47,7 @@ func (i *installation) schemaPath() string {
 func (i *installation) configDir() string { return filepath.Dir(*i.databaseConfig) }
 
 func (i *installation) open(ctx context.Context, initialize bool) (*pgxpool.Pool, error) {
+	seal.Configure(licenseStore(i.configDir()))
 	settings, err := database.LoadConfig(*i.databaseConfig)
 	if err != nil {
 		return nil, err
@@ -168,7 +170,12 @@ func restoreCommand(ctx context.Context, args []string) error {
 }
 
 func gamesCommand(ctx context.Context, args []string) error {
+	release := len(args) > 0 && args[0] == "release"
+	if release {
+		args = args[1:]
+	}
 	i := newInstallation("games")
+	game := i.flags.String("game", "", "game id to release after a relocation was abandoned")
 	if err := i.flags.Parse(args); err != nil {
 		return err
 	}
@@ -180,6 +187,14 @@ func gamesCommand(ctx context.Context, args []string) error {
 	manager, err := i.manager(ctx, pool)
 	if err != nil {
 		return err
+	}
+	if release {
+		if err := need(i.flags, map[string]*string{"game": game}); err != nil {
+			return err
+		}
+		if err := manager.Release(ctx, *game); err != nil {
+			return err
+		}
 	}
 	listed, err := manager.List(ctx)
 	if err != nil {
@@ -304,6 +319,7 @@ func exportCommand(ctx context.Context, args []string) error {
 	i := newInstallation("export")
 	game := i.flags.String("game", "", "game id")
 	out := i.flags.String("out", "", "archive to write")
+	relocate := i.flags.Bool("relocate", false, "hand the game over: refuse if it is running anywhere, and keep it from starting here afterwards")
 	if err := i.flags.Parse(args); err != nil {
 		return err
 	}
@@ -315,13 +331,32 @@ func exportCommand(ctx context.Context, args []string) error {
 		return err
 	}
 	defer pool.Close()
-	server, err := i.serverID(ctx, pool)
+	manager, err := i.manager(ctx, pool)
 	if err != nil {
 		return err
 	}
-	header, err := portable.Export(ctx, pool, *game, *out, portable.ExportOptions{GamesDir: *i.gamesDir, ServerID: server})
+	defer manager.Close()
+	if *relocate {
+		if _, err := manager.Get(ctx, *game); err != nil {
+			return err
+		}
+		release, err := manager.Claim(ctx, *game)
+		if errors.Is(err, games.ErrOwnedElsewhere) {
+			return fmt.Errorf("the game is running; stop or suspend it before relocating it")
+		}
+		if err != nil {
+			return err
+		}
+		defer release()
+	}
+	header, err := portable.Export(ctx, pool, *game, *out, portable.ExportOptions{GamesDir: *i.gamesDir, ServerID: manager.ServerID})
 	if err != nil {
 		return err
+	}
+	if *relocate {
+		if err := manager.MarkRelocated(ctx, *game); err != nil {
+			return fmt.Errorf("the archive was written, but the game could not be marked as relocated: %w", err)
+		}
 	}
 	return printJSON(header)
 }
