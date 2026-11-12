@@ -273,7 +273,7 @@ func (h *handler) finishSignIn(w http.ResponseWriter, r *http.Request) {
 	case err != nil:
 		h.authFail(w, r, err)
 	case result.Refused != "":
-		h.fail(w, r, http.StatusForbidden, result.Refused, nil)
+		http.Redirect(w, r, "/#"+url.Values{"error": {result.Refused}}.Encode(), http.StatusFound)
 	case result.Challenge != "":
 		http.Redirect(w, r, "/#"+url.Values{"challenge": {result.Challenge}, "challengeToken": {result.ChallengeToken}}.Encode(), http.StatusFound)
 	default:

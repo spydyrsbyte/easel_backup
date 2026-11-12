@@ -622,8 +622,44 @@ export function createRuntime(root, status = () => {}, options = {}) {
     Interfaces: registry.api,
     Components: components.api,
   });
+  let level = null;
+  const files = Object.freeze({
+    url(id) {
+      return "/files/" + (level || "server") + "/" + encodeURIComponent(id);
+    },
+    async upload(contents, settings = {}) {
+      if (!(contents instanceof Blob))
+        throw new Error("Upload a File or a Blob");
+      const name = settings.name ?? contents.name ?? "";
+      const type = settings.mediaType || contents.type;
+      if (!type) throw new Error("The file has no media type");
+      const target =
+        "/files/" +
+        (level || "server") +
+        (settings.replace ? "/" + encodeURIComponent(settings.replace) : "") +
+        "?name=" +
+        encodeURIComponent(name);
+      const headers = { "Content-Type": type };
+      if (settings.replace && settings.hash)
+        headers["If-Match"] = '"' + settings.hash + '"';
+      const response = await fetch(target, {
+        method: settings.replace ? "PUT" : "POST",
+        headers,
+        body: contents,
+      });
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {}
+      if (!response.ok)
+        throw Object.assign(new Error(data?.error || "Upload failed"), {
+          status: response.status,
+        });
+      return data.file;
+    },
+  });
   const readyHandlers = new Set();
-  const application = Object.freeze({ events, onReady(handler) {
+  const application = Object.freeze({ events, files, onReady(handler) {
     readyHandlers.add(handler);
     return () => readyHandlers.delete(handler);
   } });
@@ -650,6 +686,7 @@ export function createRuntime(root, status = () => {}, options = {}) {
     )
       throw new Error("Invalid welcome");
     phase = "bootstrapping";
+    level = plan.game ?? null;
     globalThis.Easel = easel;
     globalThis.Application = application;
     await loadClientPackages(

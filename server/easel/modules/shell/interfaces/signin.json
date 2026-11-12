@@ -20,6 +20,14 @@
     "reset": {
       "type": "Integer",
       "default": 0
+    },
+    "challenge": {
+      "type": "String",
+      "default": ""
+    },
+    "challengeLabel": {
+      "type": "String",
+      "default": ""
     }
   },
   "events": {
@@ -34,6 +42,14 @@
       "payload": {
         "signup": "Boolean"
       }
+    },
+    "responded": {
+      "payload": {
+        "response": "String"
+      }
+    },
+    "challengeCancelled": {
+      "payload": {}
     }
   },
   "slots": {

@@ -176,21 +176,59 @@ export async function startBrowser(root) {
   signin.on("modeChanged", ({ signup }) =>
     signin.setProps({ signup, error: "" }),
   );
+  let challengeToken = "";
+  const challenge = (name, token) => {
+    challengeToken = token || "";
+    signin.setProps({ challenge: challengeToken ? name || "" : "" });
+  };
+  const proceed = async (result) => {
+    if (result?.challengeToken) {
+      challenge(result.challenge, result.challengeToken);
+      return;
+    }
+    challenge("", "");
+    signin.setProps({ reset: signin.props.reset + 1 });
+    stopped = false;
+    await connect();
+  };
   signin.on("submitted", async ({ username, password, displayName }) => {
     signin.setProps({ busy: true, error: "" });
     try {
       const signup = signin.props.signup;
       const body = { username, password };
       if (signup) body.displayName = displayName;
-      await api(signup ? "/api/accounts" : "/api/sessions", "POST", body);
-      signin.setProps({ reset: signin.props.reset + 1 });
-      stopped = false;
-      await connect();
+      await proceed(
+        await api(signup ? "/api/accounts" : "/api/sessions", "POST", body),
+      );
     } catch (error) {
       signin.setProps({ error: error.message });
     } finally {
       signin.setProps({ busy: false });
     }
+  });
+  signin.on("responded", async ({ response }) => {
+    signin.setProps({ busy: true, error: "" });
+    const token = challengeToken;
+    try {
+      await proceed(
+        await api("/api/sessions/response", "POST", {
+          challengeToken: token,
+          response,
+        }),
+      );
+    } catch (error) {
+      challenge("", "");
+      signin.setProps({
+        reset: signin.props.reset + 1,
+        error: error.message.replace(/\.$/, "") + ". Sign in again to retry.",
+      });
+    } finally {
+      signin.setProps({ busy: false });
+    }
+  });
+  signin.on("challengeCancelled", () => {
+    challenge("", "");
+    signin.setProps({ error: "" });
   });
   logout.on("pressed", async () => {
     logout.setProps({ enabled: false });
@@ -206,5 +244,18 @@ export async function startBrowser(root) {
       logout.setProps({ enabled: true });
     }
   });
+  const returned = new URLSearchParams(location.hash.slice(1));
+  if (returned.get("challengeToken")) {
+    history.replaceState(null, "", location.pathname + location.search);
+    showLogin();
+    challenge(returned.get("challenge"), returned.get("challengeToken"));
+    return;
+  }
+  if (returned.get("error")) {
+    history.replaceState(null, "", location.pathname + location.search);
+    showLogin();
+    signin.setProps({ error: returned.get("error") });
+    return;
+  }
   await connect();
 }

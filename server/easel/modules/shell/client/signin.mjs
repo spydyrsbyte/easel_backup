@@ -35,6 +35,7 @@ export default class SignIn {
     const intro = document.createElement("p");
     intro.className = "muted";
     intro.textContent = "Sign in to join your game.";
+    this.intro = intro;
     this.form = document.createElement("form");
     this.form.className = "auth-form";
     const field = (name, text, autocomplete, type = "text") => {
@@ -64,6 +65,9 @@ export default class SignIn {
     this.password.required = true;
     this.display = field("displayName", "Display name", "nickname");
     this.display.input.maxLength = 64;
+    this.response = field("challengeResponse", "Response", "one-time-code");
+    this.response.input.required = true;
+    this.response.input.maxLength = 256;
     this.submit = document.createElement("button");
     this.submit.type = "submit";
     this.submit.className = "button primary wide";
@@ -89,6 +93,10 @@ export default class SignIn {
     );
     this.onSubmit = (event) => {
       event.preventDefault();
+      if (this.challenge) {
+        this.onEvent?.("responded", { response: this.response.input.value });
+        return;
+      }
       this.onEvent?.("submitted", {
         username: this.username.value,
         password: this.password.value,
@@ -96,7 +104,9 @@ export default class SignIn {
       });
     };
     this.onToggle = () =>
-      this.onEvent?.("modeChanged", { signup: !this.signup });
+      this.challenge
+        ? this.onEvent?.("challengeCancelled", {})
+        : this.onEvent?.("modeChanged", { signup: !this.signup });
     this.form.addEventListener("submit", this.onSubmit);
     this.toggle.addEventListener("click", this.onToggle);
   }
@@ -117,6 +127,27 @@ export default class SignIn {
       ? "Already have an account? Sign in"
       : "Create an account";
     this.error.textContent = props.error;
+    const challenged = !!props.challenge;
+    if (challenged && !this.challenge) this.response.input.value = "";
+    this.challenge = props.challenge;
+    for (const input of [this.username, this.password, this.display.input]) {
+      input.disabled = challenged;
+      input.parentElement.hidden = challenged || (input === this.display.input && !props.signup);
+    }
+    this.display.input.hidden = challenged || !props.signup;
+    this.response.label.hidden = !challenged;
+    this.response.input.disabled = !challenged;
+    this.slots.providers.hidden = challenged;
+    if (challenged) {
+      const label =
+        props.challengeLabel ||
+        props.challenge.charAt(0).toUpperCase() + props.challenge.slice(1);
+      this.title.textContent = "One more step";
+      this.intro.textContent = "Enter your " + label.toLowerCase() + " to continue.";
+      this.response.label.firstChild.textContent = label;
+      this.submit.textContent = "Continue";
+      this.toggle.textContent = "Start over";
+    } else this.intro.textContent = "Sign in to join your game.";
     if (this.reset !== props.reset) this.password.value = "";
     this.reset = props.reset;
   }
