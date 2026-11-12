@@ -103,8 +103,9 @@ func (bridge *EventBridge) InstallServerAPI(games ServerGames, users ServerUsers
 		"start": bridge.startGame, "stop": bridge.stopGame, "delete": bridge.deleteGame, "addMember": bridge.addGameMember, "members": bridge.gameMembers, "remove": bridge.removeFromGame,
 		"installed": bridge.installedPackages,
 		"roles":     bridge.gameRoles, "setRole": bridge.setGameRole,
-		"on":   bridge.onGameServerEvent,
-		"emit": bridge.emitToGameFromGames,
+		"setModules": bridge.setGameModules,
+		"on":         bridge.onGameServerEvent,
+		"emit":       bridge.emitToGameFromGames,
 	}
 	for method, implementation := range methods {
 		if err := gamesObject.DefineDataProperty(method, bridge.vm.ToValue(implementation), sobek.FLAG_FALSE, sobek.FLAG_FALSE, sobek.FLAG_TRUE); err != nil {
@@ -112,6 +113,9 @@ func (bridge *EventBridge) InstallServerAPI(games ServerGames, users ServerUsers
 		}
 	}
 	if err := server.DefineDataProperty("games", gamesObject, sobek.FLAG_FALSE, sobek.FLAG_FALSE, sobek.FLAG_TRUE); err != nil {
+		return err
+	}
+	if err := install("packages", map[string]func(sobek.FunctionCall) sobek.Value{"list": bridge.listPackages, "refresh": bridge.refreshPackages, "updates": bridge.packageUpdates, "update": bridge.updatePackage}); err != nil {
 		return err
 	}
 	return bridge.vm.GlobalObject().DefineDataProperty("Games", gamesObject, sobek.FLAG_FALSE, sobek.FLAG_FALSE, sobek.FLAG_TRUE)
@@ -183,6 +187,46 @@ func (bridge *EventBridge) listUsers(sobek.FunctionCall) sobek.Value {
 		bridge.fail(fmt.Errorf("user listing is unsupported"))
 	}
 	return bridge.plain(lister.List(bridge.ctx))
+}
+
+type packagedGames interface {
+	SetModules(context.Context, string, []string) error
+	RefreshPackages(context.Context) (any, error)
+	InstalledPackages(context.Context) (any, error)
+	PackageUpdates(context.Context) (any, error)
+	UpdatePackage(context.Context, string) (any, error)
+}
+
+func (bridge *EventBridge) packaged() packagedGames {
+	manager, ok := bridge.games.(packagedGames)
+	if !ok {
+		bridge.fail(fmt.Errorf("package management is unsupported"))
+	}
+	return manager
+}
+
+func (bridge *EventBridge) setGameModules(call sobek.FunctionCall) sobek.Value {
+	var modules []string
+	if err := json.Unmarshal(bridge.encode(call.Argument(1)), &modules); err != nil {
+		bridge.fail(fmt.Errorf("Server.games.setModules takes a game id and a list of module ids"))
+	}
+	return bridge.done(bridge.packaged().SetModules(bridge.ctx, bridge.text(call.Argument(0), "game id"), modules))
+}
+
+func (bridge *EventBridge) listPackages(sobek.FunctionCall) sobek.Value {
+	return bridge.plain(bridge.packaged().InstalledPackages(bridge.ctx))
+}
+
+func (bridge *EventBridge) refreshPackages(sobek.FunctionCall) sobek.Value {
+	return bridge.plain(bridge.packaged().RefreshPackages(bridge.ctx))
+}
+
+func (bridge *EventBridge) packageUpdates(sobek.FunctionCall) sobek.Value {
+	return bridge.plain(bridge.packaged().PackageUpdates(bridge.ctx))
+}
+
+func (bridge *EventBridge) updatePackage(call sobek.FunctionCall) sobek.Value {
+	return bridge.plain(bridge.packaged().UpdatePackage(bridge.ctx, bridge.text(call.Argument(0), "package id")))
 }
 
 type managedGames interface {

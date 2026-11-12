@@ -45,7 +45,7 @@ func (s scriptedGames) Remove(ctx context.Context, id, userID string) error {
 	return s.manager.Remove(ctx, id, userID)
 }
 
-func (s scriptedGames) Installed() any { return s.manager.Catalog.Installed() }
+func (s scriptedGames) Installed() any { return s.manager.catalog().Installed() }
 
 func (s scriptedGames) OnEvent(eventName string, handler func(gameID string, payload json.RawMessage)) {
 	s.manager.OnGameEvent(eventName, handler)

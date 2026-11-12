@@ -11,7 +11,7 @@ import (
 func (m *Manager) resolveSaved(ctx context.Context, game Game) ([]manifest.Package, manifest.Plan, error) {
 	modules := []string{}
 	for _, id := range game.Modules {
-		if _, installed := m.Catalog.Modules[id]; !installed {
+		if _, installed := m.catalog().Modules[id]; !installed {
 			var known bool
 			if err := m.Pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM game_data.contributors c
  JOIN game_data.revision_contributors r USING(game_id,contributor_id)

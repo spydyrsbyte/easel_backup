@@ -16,6 +16,7 @@ import (
 	"easel/internal/accounts"
 	"easel/internal/database"
 	"easel/internal/games"
+	"easel/internal/packages"
 	"easel/internal/platform"
 	"easel/internal/server"
 )
@@ -29,6 +30,7 @@ var commands = map[string]func(context.Context, []string) error{
 	"export":   exportCommand,
 	"import":   importCommand,
 	"accounts": accountsCommand,
+	"packages": packagesCommand,
 }
 
 func main() {
@@ -101,11 +103,24 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
+	installer := &packages.Installer{EaselDir: *easelDir, Globals: definition.Libraries, Compatible: games.CompatibilityCheck(databasePool, *easelDir, definition.Libraries)}
+	preferencesFile := preferencesPath(filepath.Dir(*databaseConfigPath))
+	if preferences, err := packages.LoadPreferences(preferencesFile); err != nil {
+		slog.Error("package preferences ignored", "error", err)
+	} else {
+		for _, outcome := range installer.Startup(ctx, preferences) {
+			if outcome.Problem != "" {
+				slog.Error("package update skipped; the installed version stays in use", "package", outcome.ID, "channel", outcome.Channel, "error", outcome.Problem)
+			} else if outcome.Result != nil {
+				slog.Info("package updated", "package", outcome.ID, "from", outcome.Installed, "to", outcome.Result.Version)
+			}
+		}
+	}
 	catalog, err := platform.LoadCatalog(*easelDir)
 	if err != nil {
 		return err
 	}
-	manager := &games.Manager{Pool: databasePool, Catalog: catalog, Globals: definition.Libraries, Folder: *gamesDir}
+	manager := &games.Manager{Pool: databasePool, Catalog: catalog, Globals: definition.Libraries, Folder: *gamesDir, Packages: &games.PackageControl{Installer: installer, Preferences: preferencesFile}}
 	defer manager.Close()
 	accountService := &accounts.Service{Pool: databasePool}
 	serverApplication, err := manager.StartServer(ctx, definition, games.ServerHost{

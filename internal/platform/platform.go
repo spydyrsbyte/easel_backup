@@ -266,3 +266,69 @@ func (c *Catalog) Installed() Installed {
 	}
 	return installed
 }
+
+func (c *Catalog) Missing(pkg manifest.Package) []string {
+	missing := []string{}
+	for _, id := range c.requiredModules(pkg) {
+		if _, installed := c.Modules[id]; !installed {
+			missing = append(missing, id)
+		}
+	}
+	return missing
+}
+
+func (c *Catalog) Requires(pkg manifest.Package) []string { return c.requiredModules(pkg) }
+
+func (c *Catalog) Dependents(id string) []string {
+	found := []string{}
+	for _, group := range []map[string]manifest.Package{c.Applications, c.Modules} {
+		for _, other := range sortedIDs(group) {
+			if other == id {
+				continue
+			}
+			for _, required := range c.requiredModules(group[other]) {
+				if required == id {
+					found = append(found, other)
+					break
+				}
+			}
+		}
+	}
+	return found
+}
+
+func (c *Catalog) Copy() *Catalog {
+	copied := &Catalog{Applications: map[string]manifest.Package{}, Modules: map[string]manifest.Package{}}
+	for id, pkg := range c.Applications {
+		copied.Applications[id] = pkg
+	}
+	for id, pkg := range c.Modules {
+		copied.Modules[id] = pkg
+	}
+	return copied
+}
+
+func Plan(packages, globals []manifest.Package) (manifest.Plan, error) {
+	listed := map[string]bool{}
+	for _, pkg := range packages {
+		listed[pkg.ID()] = true
+	}
+	all := append([]manifest.Package(nil), packages...)
+	for _, pkg := range globals {
+		if !listed[pkg.ID()] {
+			listed[pkg.ID()] = true
+			all = append(all, pkg)
+		}
+		for _, dep := range pkg.Dependencies {
+			if !listed[dep.ID()] {
+				listed[dep.ID()] = true
+				all = append(all, dep)
+			}
+		}
+	}
+	plan, err := manifest.Resolve(all)
+	if err != nil {
+		return manifest.Plan{}, fmt.Errorf("resolve packages: %w", err)
+	}
+	return plan, nil
+}

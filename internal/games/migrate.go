@@ -141,8 +141,8 @@ func (m *Manager) SchemaStatus(ctx context.Context, id string) (SchemaStatus, er
 		if err := rows.Scan(&contributor.Name, &contributor.Kind, &contributor.Version, &contributor.Fragments); err != nil {
 			return SchemaStatus{}, err
 		}
-		_, application := m.Catalog.Applications[contributor.Name]
-		_, module := m.Catalog.Modules[contributor.Name]
+		_, application := m.catalog().Applications[contributor.Name]
+		_, module := m.catalog().Modules[contributor.Name]
 		contributor.Installed = application || module
 		for _, global := range m.Globals {
 			if global.ID() == contributor.Name {

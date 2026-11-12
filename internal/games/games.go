@@ -62,8 +62,10 @@ type Manager struct {
 	FileTypes []string
 
 	OwnershipLost func(games []string, cause error)
+	Packages      *PackageControl
 
 	mu                 sync.Mutex
+	catalogMu          sync.RWMutex
 	storage            string
 	storageRelease     func()
 	owned              ownership
@@ -87,7 +89,7 @@ func validAccess(access string) error {
 }
 
 func (m *Manager) resolve(application string, modules []string) ([]manifest.Package, manifest.Plan, error) {
-	packages, err := m.Catalog.Packages(application, modules)
+	packages, err := m.catalog().Packages(application, modules)
 	if err != nil {
 		return nil, manifest.Plan{}, err
 	}
@@ -99,28 +101,19 @@ func (m *Manager) resolve(application string, modules []string) ([]manifest.Pack
 }
 
 func (m *Manager) plan(packages []manifest.Package) (manifest.Plan, error) {
-	listed := map[string]bool{}
-	for _, pkg := range packages {
-		listed[pkg.ID()] = true
-	}
-	all := append([]manifest.Package(nil), packages...)
-	for _, pkg := range m.Globals {
-		if !listed[pkg.ID()] {
-			listed[pkg.ID()] = true
-			all = append(all, pkg)
-		}
-		for _, dep := range pkg.Dependencies {
-			if !listed[dep.ID()] {
-				listed[dep.ID()] = true
-				all = append(all, dep)
-			}
-		}
-	}
-	plan, err := manifest.Resolve(all)
-	if err != nil {
-		return manifest.Plan{}, fmt.Errorf("resolve packages: %w", err)
-	}
-	return plan, nil
+	return platform.Plan(packages, m.Globals)
+}
+
+func (m *Manager) catalog() *platform.Catalog {
+	m.catalogMu.RLock()
+	defer m.catalogMu.RUnlock()
+	return m.Catalog
+}
+
+func (m *Manager) Refresh(catalog *platform.Catalog) {
+	m.catalogMu.Lock()
+	defer m.catalogMu.Unlock()
+	m.Catalog = catalog
 }
 
 func (m *Manager) compose(application string, modules []string) ([]manifest.Package, manifest.Plan, *schema.Schema, error) {
