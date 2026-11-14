@@ -228,7 +228,7 @@
       "side": "client",
       "version": 1,
       "description": "Reusable camera pan/zoom/rotation/focus controls with change events.",
-      "status": "used",
+      "status": "tested",
       "dependencies": [
         "browser DOM"
       ],
@@ -236,11 +236,7 @@
       "contract": "interfaces/camera.json",
       "renderer": "camera",
       "checks": [
-        "scripts/test-kit-browser.mjs",
-        "TestTabletopMagicBrowser"
-      ],
-      "usedBy": [
-        "easel.mtgtable.game"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/camera.client.md",
       "events": [

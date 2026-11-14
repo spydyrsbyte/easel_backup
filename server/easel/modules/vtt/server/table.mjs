@@ -534,8 +534,9 @@ export default class Table {
     if (!token.name) throw new Error("A token needs a name.");
     token.image = actor?.image ?? "";
     const prototype = record?.defaultTokenId ? new easel.vtt.Token(record.defaultTokenId) : null;
-    token.width = actor?.width || ground.grid?.size || 64;
-    token.height = actor?.height || ground.grid?.size || 64;
+    const scale = Math.max(1, Math.min(8, Number(actor?.scale) || 1));
+    token.width = actor?.width || (ground.grid?.size || 64) * scale;
+    token.height = actor?.height || (ground.grid?.size || 64) * scale;
     if (actor?.vision) token.vision = copy(actor.vision);
     if (prototype) for (const key of ["name", "image", "width", "height", "rotation", "disposition", "vision"]) token[key] = copy(prototype[key]);
     token.x = x;
@@ -588,7 +589,10 @@ export default class Table {
   tokenDelete({ tokenId }, connection) {
     this.requireGM(connection);
     for (const combatant of all(easel.vtt.Combatant)) if (combatant.tokenId === tokenId) combatant.remove();
-    new easel.vtt.Token(tokenId).remove();
+    const token = new easel.vtt.Token(tokenId);
+    const data = this.tokenData(token);
+    token.remove();
+    this.hooks.tokenDeleted?.(data);
     this.changed();
   }
 

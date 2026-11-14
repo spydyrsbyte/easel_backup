@@ -37,26 +37,6 @@
   "client": {
     "interfaces": [
       {
-        "name": "scenebinder@1",
-        "file": "interfaces/scenebinder.json",
-        "http-entry": "client/scenebinder.mjs"
-      },
-      {
-        "name": "combatbinder@1",
-        "file": "interfaces/combatbinder.json",
-        "http-entry": "client/combatbinder.mjs"
-      },
-      {
-        "name": "chatbinder@1",
-        "file": "interfaces/chatbinder.json",
-        "http-entry": "client/chatbinder.mjs"
-      },
-      {
-        "name": "directorybinder@1",
-        "file": "interfaces/directorybinder.json",
-        "http-entry": "client/directorybinder.mjs"
-      },
-      {
         "name": "tabletop@1",
         "file": "interfaces/tabletop.json",
         "http-entry": "client/tabletop.mjs"

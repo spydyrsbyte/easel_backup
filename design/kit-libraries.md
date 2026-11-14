@@ -1,8 +1,8 @@
 # Kit tool libraries
 
-The server library directory contains 28 Kit catalogs. Beyond the original 202 v1 members (85 server interfaces and 117 browser components) there is a second generation of 18 browser components and two server interfaces built on a shared UI layer; see `kit-ui.md`. The installed paths are `server/easel/server/library/<host>/`; `server/easel/server/server.json` makes their catalogs available to the server and hosted games. Public members use `easel.<host>.<member>@1` independently of their containing package's release version and package name.
+The server library directory contains 28 Kit catalogs. Beyond 189 v1 members (85 server interfaces and 104 browser components) there is a second generation of 18 browser components and two server interfaces built on a shared UI layer; see `kit-ui.md`. The installed paths are `server/easel/server/library/<host>/`; `server/easel/server/server.json` makes their catalogs available to the server and hosted games. Public members use `easel.<host>.<member>@1` independently of their containing package's release version and package name.
 
-[The library index](../server/easel/server/library/README.md) links each category's inventory, individual contracts and implementation files. Every member is marked `tested`; the camera controls and card inspector are marked `used` by MTG Table. The catalogs contain working tools rather than planned names or placeholder implementations.
+[The library index](../server/easel/server/library/README.md) links each category's inventory, individual contracts and implementation files. Members are marked `tested`, or `used` when a shipped application composes them. The catalogs contain working tools rather than planned names or placeholder implementations.
 
 ## Loading and composition
 
@@ -20,17 +20,11 @@ The native server service `Easel.Random` uses Go's cryptographic random source. 
 
 Visual timers only update their displayed time. Server scheduling remains `Server.events.after/cancel`. Kits install no broad automation policies or autorun automations. The existing `easel.board` package and its automations remain unchanged; generic table tools use `easel.surfaces`.
 
-## MTG Table consumption
-
-MTG Table mounts `easel.surfaces.camera@1` and `easel.cards.inspector@1` in declared component slots. Application wiring translates camera intents into its existing canvas operations and sends only a visible card's projected face to the inspector. The inspector stays upright regardless of table orientation. Alt inspection, pinned context-menu inspection, rotation, player-area focus and private-hand behavior remain covered by the existing two-player browser test.
-
-The application retains its existing authoritative table model. Adding general collection tools does not silently change the storage of existing games.
-
 ## Verification
 
 - `node --test scripts/test-kits.mjs scripts/test-client.mjs` checks each server member's contract/failure examples, input preservation, random-source use, coordinate round trips, manifests and component runtime behavior.
 - `go test ./internal/session -run Kit` runs the same member examples through actual Sobek interfaces, proves no server member file loads on catalog import, checks independent member loading/caching and game isolation, and tests the native random service.
-- `node scripts/test-kit-browser.mjs` renders every catalogued browser component (154 with the kit UI generation) in Edge, validates their emitted events and teardown, checks lazy browser imports, face-down presentation, camera focus and pointer-anchored zoom, shortcut focus handling and cleanup, and phone-width hand layout.
+- `node scripts/test-kit-browser.mjs` renders every catalogued browser component (141 with the kit UI generation) in Edge, validates their emitted events and teardown, checks lazy browser imports, face-down presentation, camera focus and pointer-anchored zoom, shortcut focus handling and cleanup, and phone-width hand layout.
 - `scripts/test-security.ps1` runs PostgreSQL, game, security and browser acceptance tests with an isolated database when Playwright is configured.
 
 ## Partition experiment

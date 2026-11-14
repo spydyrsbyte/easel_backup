@@ -39,19 +39,6 @@
   "client": {
     "interfaces": [
       {
-        "name": "map@1",
-        "file": "interfaces/map.json",
-        "http-entry": "client/map.mjs",
-        "required": {
-          "modules": [
-            "easel.graphics.pixi"
-          ],
-          "interfaces": [
-            "easel.graphics.pixi@1"
-          ]
-        }
-      },
-      {
         "name": "map@2",
         "file": "interfaces/map2.json",
         "http-entry": "client/map2.mjs",
@@ -78,24 +65,6 @@
         }
       },
       {
-        "name": "ruler@1",
-        "file": "interfaces/ruler.json",
-        "http-entry": "client/ruler.mjs"
-      },
-      {
-        "name": "fog@1",
-        "file": "interfaces/fog.json",
-        "http-entry": "client/fog.mjs",
-        "required": {
-          "modules": [
-            "easel.graphics.pixi"
-          ],
-          "interfaces": [
-            "easel.graphics.pixi@1"
-          ]
-        }
-      },
-      {
         "name": "waypoint@1",
         "file": "interfaces/waypoint.json",
         "http-entry": "client/waypoint.mjs"
@@ -104,19 +73,6 @@
         "name": "template@1",
         "file": "interfaces/template.json",
         "http-entry": "client/template.mjs",
-        "required": {
-          "modules": [
-            "easel.graphics.pixi"
-          ],
-          "interfaces": [
-            "easel.graphics.pixi@1"
-          ]
-        }
-      },
-      {
-        "name": "shadowbox@1",
-        "file": "interfaces/shadowbox.json",
-        "http-entry": "client/shadowbox.mjs",
         "required": {
           "modules": [
             "easel.graphics.pixi"

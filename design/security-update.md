@@ -11,4 +11,4 @@ Users and groups are security principals stored in `security_principals`. They a
 
 When PostgreSQL holds the records, `security.RecordResolver(pgstore.RecordView)` gives policies each record's real type and stored fields, read inside the authorization transaction.
 
-Policies and relationships match a record's type and every type it extends. A subtype declared with `.extends` inherits its parent's fields, classes, policies, and relationships: a policy for `easel.vtt.Actor` also covers `easel.pf1e.Character`, which extends it. Every matching policy is evaluated, so a subtype's own policies can add access and a `deny` in any of them removes it. Runtime permissions still match a record's exact type only.
+Policies and relationships match a record's type and every type it extends. A subtype declared with `.extends` inherits its parent's fields, classes, policies, and relationships: a policy for `easel.vtt.Actor` also covers `easel.pf1e.Creature`, which extends it. Every matching policy is evaluated, so a subtype's own policies can add access and a `deny` in any of them removes it. Runtime permissions still match a record's exact type only.

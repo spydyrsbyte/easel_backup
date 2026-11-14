@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "owner": "easel",
+  "host": "pf1ehomebrew",
+  "name": "example",
+  "title": "Pathfinder house rules (example)",
+  "description": "A worked example of house rules for Pathfinder 1e: maximum hit points every level, a Sailing skill, an Inspired condition, a kinder death threshold, and a few extra library entries. Copy it to write your own.",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "implements": [
+      {
+        "name": "easel.wotcogl35.extension@1",
+        "file": "server/rules.mjs"
+      },
+      {
+        "name": "easel.wotcogl35.content@1",
+        "file": "server/content.mjs"
+      }
+    ]
+  }
+}

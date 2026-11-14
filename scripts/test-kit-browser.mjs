@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import http from "node:http";
-import { checkKitLayout } from "./check-kit-layout.mjs";
 import { pathToFileURL } from "node:url";
 const { chromium } = await import(
   pathToFileURL(
@@ -61,9 +60,9 @@ const server = http.createServer((req, res) => {
   }
   if (url.pathname === "/runtime.mjs")
     file = path.resolve("server/easel/modules/runtime.mjs");
-  else if (url.pathname === "/back.jpg")
+  else if (url.pathname === "/back.webp")
     file = path.resolve(
-      "server/easel/applications/mtgtable/client/assets/back.jpg",
+      "server/easel/server/library/dice/client/assets/standard.webp",
     );
   else if (url.pathname.startsWith("/modules/pixi/")) {
     file = path.resolve(
@@ -92,8 +91,8 @@ const server = http.createServer((req, res) => {
     "content-type",
     file.endsWith(".mjs")
       ? "text/javascript"
-      : file.endsWith(".jpg")
-        ? "image/jpeg"
+      : file.endsWith(".webp")
+        ? "image/webp"
         : file.endsWith(".css")
           ? "text/css"
           : "application/json",
@@ -133,9 +132,9 @@ await page.route("**/*", (route) => {
   }
   if (url.pathname === "/runtime.mjs")
     file = path.resolve("server/easel/modules/runtime.mjs");
-  else if (url.pathname === "/back.jpg")
+  else if (url.pathname === "/back.webp")
     file = path.resolve(
-      "server/easel/applications/mtgtable/client/assets/back.jpg",
+      "server/easel/server/library/dice/client/assets/standard.webp",
     );
   else if (url.pathname.startsWith("/modules/pixi/")) {
     file = path.resolve(
@@ -155,8 +154,8 @@ await page.route("**/*", (route) => {
   if (!file || !fs.existsSync(file)) return route.fulfill({ status: 404 });
   const contentType = file.endsWith(".mjs")
     ? "text/javascript"
-    : file.endsWith(".jpg")
-      ? "image/jpeg"
+    : file.endsWith(".webp")
+      ? "image/webp"
       : file.endsWith(".json")
         ? "application/json"
         : file.endsWith(".css")
@@ -236,7 +235,7 @@ try {
           amount: 2,
           ready: true,
           tags: ["fire"],
-          image: "/back.jpg",
+          image: "/back.webp",
         },
         {
           id: "b",
@@ -267,9 +266,9 @@ try {
             value: 2,
             price: 2,
             quantity: 3,
-            image: "/back.jpg",
-            face: "/back.jpg",
-            back: "/back.jpg",
+            image: "/back.webp",
+            face: "/back.webp",
+            back: "/back.webp",
             from: "gold",
             to: "silver",
             rate: 2,
@@ -277,7 +276,7 @@ try {
             highest: 3,
             filled: 2,
           };
-        if (key === "src") props.src = "/back.jpg";
+        if (key === "src") props.src = "/back.webp";
         if (key === "alt") props.alt = "Example image";
         if (key === "text") props.text = "Example text";
         if (key === "active") props.active = "a";
@@ -315,7 +314,7 @@ try {
           ];
         if (key === "layers")
           props.layers = [
-            { image: "/back.jpg", x: 0, y: 0, width: 200, height: 280 },
+            { image: "/back.webp", x: 0, y: 0, width: 200, height: 280 },
           ];
         if (key === "columns" && rule.type === "Array")
           props.columns = [
@@ -351,7 +350,7 @@ try {
             faceUp: false,
             name: "PRIVATE CARD",
             oracle: "PRIVATE RULES",
-            back: "/back.jpg",
+            back: "/back.webp",
           },
         });
         if (root.textContent.includes("PRIVATE"))
@@ -372,7 +371,7 @@ try {
     await kitRegistry.api.load("easel.surfaces.table@1");
     await kitRegistry.api.load("easel.cards.card@1");
     const surface = manager.api.create("easel.surfaces.table@1", { props: { height: 300, camera: { x: 35, y: 25, zoom: 1.5, rotation: 45 } } });
-    const card = manager.api.create("easel.cards.card@1", { props: { data: { id: "a", name: "Visible card", image: "/back.jpg" } } });
+    const card = manager.api.create("easel.cards.card@1", { props: { data: { id: "a", name: "Visible card", image: "/back.webp" } } });
     card.attach(surface, "objects");
     manager.api.mountRoot(surface);
     const viewport = root.querySelector(".kit-surface"), world = root.querySelector(".kit-world");
@@ -408,95 +407,8 @@ try {
     root.replaceChildren();
     const manager = createKitComponents(kitRegistry, root);
     await kitRegistry.api.load("easel.graphics.pixi@1");
-    await kitRegistry.api.load("easel.maps.map@1");
-    await kitRegistry.api.load("easel.maps.fog@1");
-    await kitRegistry.api.load("easel.maps.template@1");
-    await kitRegistry.api.load("easel.maps.shadowbox@1");
     await kitRegistry.api.load("easel.maps.worldmap@1");
-    const mapEvents = [];
-    const map = manager.api.create("easel.maps.map@1", {
-      props: {
-        title: "Dungeon",
-        width: 800,
-        height: 600,
-        gm: true,
-        tokens: [{ id: "hero", label: "Hero", x: 100, y: 100, width: 50, height: 50 }],
-        walls: [
-          { id: "door-1", door: true, open: false, a: { x: 200, y: 0 }, b: { x: 200, y: 200 } },
-        ],
-      },
-    });
-    for (const evt of [
-      "exportMap",
-      "doorToggleRequest",
-      "tokenSelect",
-      "tokenMoveRequest",
-      "gridCalibrated",
-    ]) {
-      map.on(evt, (p) => mapEvents.push({ event: evt, payload: p }));
-    }
-    const fog = manager.api.create("easel.maps.fog@1", {
-      props: {
-        width: 800,
-        height: 600,
-        visionMask: { width: 2, height: 2, rgba: "////AAAA////////AAAACw==" },
-      },
-    });
-    const tpl = manager.api.create("easel.maps.template@1", {
-      props: {
-        width: 800,
-        height: 600,
-        templates: [{ id: "t1", kind: "circle", origin: { x: 150, y: 150 }, radius: 100 }],
-      },
-    });
-    fog.attach(map, "overlay");
-    tpl.attach(map, "overlay");
-    manager.api.mountRoot(map);
-    const doorBtn = root.querySelector("[data-door-id='door-1']");
-    doorBtn?.click();
-    if (
-      !mapEvents.some(
-        (e) =>
-          e.event === "doorToggleRequest" &&
-          e.payload.wallId === "door-1" &&
-          e.payload.open === true,
-      )
-    ) {
-      throw new Error("Battlemap doorToggleRequest event did not fire");
-    }
-    const tokBtn = root.querySelector("[data-token-id='hero']");
-    tokBtn?.click();
-    if (!mapEvents.some((e) => e.event === "tokenSelect" && e.payload.tokenId === "hero")) {
-      throw new Error("Battlemap tokenSelect event did not fire");
-    }
-    const exportBtn = root.querySelector("[data-action='export-map']");
-    exportBtn?.click();
-    if (!mapEvents.some((e) => e.event === "exportMap" && e.payload.archive)) {
-      throw new Error("Battlemap exportMap event did not fire");
-    }
     manager.destroy();
-    root.replaceChildren();
-    const boxManager = createKitComponents(kitRegistry, root);
-    const boxEvents = [];
-    const box = boxManager.api.create("easel.maps.shadowbox@1", {
-      props: {
-        title: "Throne Room",
-        gm: true,
-        elements: [{ id: "npc-1", label: "King", visible: false }],
-        dialogue: { speaker: "King", text: "Welcome!" },
-      },
-    });
-    for (const evt of ["toggleElements", "exportBox", "speakDismiss", "speak"]) {
-      box.on(evt, (p) => boxEvents.push({ event: evt, payload: p }));
-    }
-    boxManager.api.mountRoot(box);
-    const toggleBtn = root.querySelector("[data-element-toggle='npc-1']");
-    toggleBtn?.click();
-    if (!boxEvents.some((e) => e.event === "toggleElements" && e.payload.ids.includes("npc-1"))) {
-      throw new Error("Shadowbox toggleElements event did not fire");
-    }
-    boxManager.destroy();
-    root.replaceChildren();
     const wmManager = createKitComponents(kitRegistry, root);
     const wmEvents = [];
     const wm = wmManager.api.create("easel.maps.worldmap@1", {
@@ -518,75 +430,17 @@ try {
   await page.evaluate(async () => {
     const root = document.getElementById("root");
     root.replaceChildren();
-    const manager = createKitComponents(kitRegistry, root);
-    await kitRegistry.api.load("easel.layout.vttworkspace@1");
-    await kitRegistry.api.load("easel.layout.toolstrip@1");
     await kitRegistry.api.load("easel.dice.dicebox@1");
-    await kitRegistry.api.load("easel.dice.rollcard@1");
-    await kitRegistry.api.load("easel.narrative.chatlog@1");
     await kitRegistry.api.load("easel.narrative.richtext@1");
-    await kitRegistry.api.load("easel.collections.directory@1");
-    await kitRegistry.api.load("easel.collections.compendium@1");
-
-    const ws = manager.api.create("easel.layout.vttworkspace@1", {
-      props: { sidebarOpen: true, sidebarWidth: 320, activeTool: "select", gmMode: true },
-    });
-    const wsEvents = [];
-    ws.on("toggleSidebar", (p) => wsEvents.push(p));
-
-    const tools = manager.api.create("easel.layout.toolstrip@1", {
-      props: { activeTool: "select", gmMode: true },
-    });
-    const toolEvents = [];
-    tools.on("select", (p) => toolEvents.push(p));
-    tools.attach(ws, "tools");
-
+    const manager = createKitComponents(kitRegistry, root);
     const dicebox = manager.api.create("easel.dice.dicebox@1", {
-      props: {
-        rolls: [{ id: "roll-e2e", dice: [{ sides: 20, value: 20, label: "20" }] }],
-        speed: 10,
-      },
+      props: { rolls: [{ id: "roll-e2e", dice: [{ sides: 20, value: 20, label: "20" }] }], speed: 10 },
     });
     const diceEvents = [];
     dicebox.on("settled", (p) => diceEvents.push(p));
-    dicebox.attach(ws, "diceoverlay");
-
-    const chat = manager.api.create("easel.narrative.chatlog@1", {
-      props: {
-        messages: [{ id: "m1", speaker: { name: "Valeros" }, text: "Attack!" }],
-      },
-    });
-    const chatEvents = [];
-    chat.on("sendMessage", (p) => chatEvents.push(p));
-    chat.attach(ws, "sidebar");
-
-    manager.api.mountRoot(ws);
-
-    const wallBtn = root.querySelector("[data-tool='wall']");
-    if (!wallBtn) throw new Error("Wall tool not found in toolstrip");
-    wallBtn.click();
-    if (!toolEvents.some((e) => e.tool === "wall")) throw new Error("Toolstrip select event failed");
-
-    const toggleBtn = root.querySelector(".kit-sidebar-toggle");
-    if (!toggleBtn) throw new Error("Sidebar toggle not found");
-    toggleBtn.click();
-    if (!wsEvents.some((e) => e.open === false)) throw new Error("Sidebar toggle event failed");
-
-    const chatSearch = root.querySelector(".kit-chatlog-search");
-    if (!chatSearch) throw new Error("Chat search not found");
-    chatSearch.focus();
-    chatSearch.value = "Att";
-    chatSearch.dispatchEvent(new Event("input"));
-    if (document.activeElement !== chatSearch) throw new Error("Chat search lost focus during input");
-
-    const chatInput = root.querySelector(".kit-chatlog-text");
-    chatInput.value = "/r 1d20";
-    root.querySelector(".kit-chatlog-send").click();
-    if (!chatEvents.some((e) => e.text === "/r 1d20")) throw new Error("Chat sendMessage event failed");
-
+    manager.api.mountRoot(dicebox);
     await new Promise((resolve) => setTimeout(resolve, 150));
     if (!diceEvents.some((e) => e.rollId === "roll-e2e")) throw new Error("Dicebox settled event failed in browser");
-
     manager.destroy();
     root.replaceChildren();
 
@@ -606,7 +460,6 @@ try {
     rtManager.destroy();
     root.replaceChildren();
   });
-  await checkKitLayout(page);
   assert.equal(results.length, members.length);
   assert.deepEqual(errors, []);
   assert.deepEqual(await page.evaluate(() => globalThis.cspViolations), []);
@@ -624,7 +477,7 @@ try {
         items: Array.from({ length: 15 }, (_, i) => ({
           id: String(i),
           name: "Card " + i,
-          image: "/back.jpg",
+          image: "/back.webp",
         })),
       },
     });

@@ -1,0 +1,37 @@
+{
+  "type": "module",
+  "owner": "easel",
+  "host": "pathofwar",
+  "name": "rules",
+  "title": "Pathfinder: Path of War",
+  "description": "Martial initiators for Pathfinder 1e games: the stalker, warder and warlord, maneuvers that are readied, expended and recovered, stances, and a Maneuvers page on the sheet.",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "implements": [
+      {
+        "name": "easel.wotcogl35.extension@1",
+        "file": "server/extension.mjs"
+      },
+      {
+        "name": "easel.wotcogl35.content@1",
+        "file": "server/content.mjs"
+      }
+    ]
+  },
+  "client": {
+    "implements": [
+      {
+        "name": "easel.pf1e.sheetsection@1",
+        "file": "interfaces/sheetsection.json",
+        "http-entry": "client/sections.mjs"
+      }
+    ],
+    "assets": {
+      "http": ["client/"]
+    }
+  }
+}

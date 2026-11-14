@@ -1415,35 +1415,6 @@ dialog.modal::backdrop {
   margin-left: 0;
   width: 100%;
 }
-.board-shell .workspace:has(.mtg-workspace) {
-  padding: 0;
-}
-
-.board-shell:has(.kit-easel-layout-vttworkspace) .main-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  min-height: 0;
-}
-
-.board-shell:has(.kit-easel-layout-vttworkspace) .shell-header {
-  flex: 0 0 auto;
-}
-
-.board-shell .workspace:has(.kit-easel-layout-vttworkspace) {
-  flex: 1 1 0;
-  min-height: 0;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.board-shell .workspace:has(.kit-easel-layout-vttworkspace) .session,
-.board-shell .workspace:has(.kit-easel-layout-vttworkspace) .session-game {
-  height: 100%;
-  min-height: 0;
-}
 .board-shell:has([data-easel-fill]) .main-shell {
   display: flex;
   flex-direction: column;

@@ -3,76 +3,101 @@
   "owner": "easel",
   "host": "pf1e",
   "name": "game",
-  "title": "Pathfinder First Edition",
-  "description": "A virtual tabletop for Pathfinder First Edition with characters, maps and rules assistance.",
+  "title": "Pathfinder 1e",
+  "description": "First edition Pathfinder on the virtual tabletop: characters built by the rules, monsters from stat blocks, spells, items and effects from expandable libraries, and automated rolls.",
   "version": {
     "major": 0,
     "minor": 1,
     "revision": 0
   },
   "server": {
+    "security": {
+      "entry": "server/security.mjs"
+    },
     "application": {
       "entry": "server/application.mjs",
       "required": {
-        "modules": [
-          "easel.pf1e.rules",
-          "easel.vtt.table"
-        ],
+        "modules": ["easel.vtt.table", "easel.wotcogl35.rules"],
         "interfaces": [
-          "easel.pf1e.game@1",
           "easel.vtt.table@1",
+          "easel.wotcogl35.engine@1",
+          "easel.wotcogl35.extension@1",
+          "easel.wotcogl35.content@1",
           "easel.maps.geometry@1",
+          "easel.maps.sight@1",
           "easel.visibility.projection@1",
-          "easel.d20.check@1",
-          "easel.dice.notation@1"
+          "easel.dice.formula@1",
+          "easel.effects.stacking@1",
+          "easel.rules.formula@1"
         ]
       }
-    }
+    },
+    "data": [
+      {
+        ".name": "Creature",
+        ".extends": "easel.vtt.Actor",
+        "kind": { ".type": "string", ".default": "character", ".validate": { ".in": ["character", "npc"] } },
+        "stamp": { ".type": "string", ".default": "" },
+        "sheet": { ".type": "map", ".default": {} }
+      },
+      {
+        ".name": "Entry",
+        "kind": { ".type": "string", ".validate": { ".length": { "min": 2, "max": 20 } } },
+        "name": { ".type": "string", ".validate": { ".length": { "min": 1, "max": 120 } } },
+        "entryId": { ".type": "string", ".default": "" },
+        "userId": { ".type": "string", ".default": "" },
+        "data": { ".type": "map", ".default": {} }
+      }
+    ]
   },
   "client": {
     "application": {
       "http-entry": "client/application.mjs",
       "required": {
-        "modules": [
-          "easel.pf1e.rules",
-          "easel.vtt.table"
-        ],
+        "modules": ["easel.vtt.table"],
         "interfaces": [
-          "easel.pf1e.controller@1",
-          "easel.layout.tabs@1",
-          "easel.layout.window@1",
-          "easel.layout.toolstrip@1",
-          "easel.collections.directory@1",
-          "easel.collections.compendium@1",
-          "easel.pf1e.charactersheet@1",
-          "easel.pf1e.npcsheet@1",
-          "easel.pf1e.recordeditor@1",
-          "easel.d20.rolldialog@1",
-          "easel.d20.vitality@1",
-          "easel.d20.abilityblock@1",
-          "easel.d20.defensebanner@1",
-          "easel.d20.equipmentslots@1",
-          "easel.d20.spellbook@1",
-          "easel.rules.modifierlist@1",
-          "easel.narrative.richtext@1",
-          "easel.narrative.chatlog@1",
-          "easel.combat.encounter@1",
-          "easel.maps.map@1",
-          "easel.dice.dicebox@1",
-          "easel.dice.dicesettings@1",
-          "easel.vtt.scenebinder@1",
-          "easel.vtt.combatbinder@1",
-          "easel.vtt.chatbinder@1",
-          "easel.vtt.directorybinder@1",
-          "easel.layout.sheet@1",
-          "easel.layout.dialog@1"
+          "easel.vtt.tabletop@1",
+          "easel.layout.tabletop@1",
+          "easel.layout.window@2",
+          "easel.layout.sidebar@1",
+          "easel.input.toolrail@1",
+          "easel.input.hotbar@1",
+          "easel.input.form@1",
+          "easel.maps.map@2",
+          "easel.maps.shadowbox@2",
+          "easel.maps.scenenav@1",
+          "easel.maps.layertree@1",
+          "easel.narrative.chat@1",
+          "easel.narrative.journal@2",
+          "easel.combat.tracker@1",
+          "easel.collections.browser@2",
+          "easel.characters.statsheet@1",
+          "easel.display.players@1",
+          "easel.pf1e.sheet@1",
+          "easel.pf1e.entry@1",
+          "easel.pf1e.sheetsection@1"
         ]
       }
     },
+    "interfaces": [
+      {
+        "name": "sheet@1",
+        "file": "interfaces/sheet.json",
+        "http-entry": "client/sheet.mjs"
+      },
+      {
+        "name": "entry@1",
+        "file": "interfaces/entry.json",
+        "http-entry": "client/entry.mjs"
+      },
+      {
+        "name": "sheetsection@1",
+        "file": "interfaces/sheetsection.json",
+        "http-entry": "client/sections.mjs"
+      }
+    ],
     "assets": {
-      "http": [
-        "client/"
-      ]
+      "http": ["client/"]
     }
   }
 }

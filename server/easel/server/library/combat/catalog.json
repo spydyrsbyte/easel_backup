@@ -205,30 +205,6 @@
       ]
     },
     {
-      "name": "encounter",
-      "side": "client",
-      "version": 1,
-      "description": "List participants, encounter status and turn controls.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/encounter.mjs",
-      "contract": "interfaces/encounter.json",
-      "renderer": "turnorder",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/encounter.client.md",
-      "events": [
-        "close",
-        "select",
-        "selection",
-        "request",
-        "reorder"
-      ]
-    },
-    {
       "name": "initiative",
       "side": "client",
       "version": 1,

@@ -18,9 +18,9 @@ The demo's package manifests, client entries, interface definitions, and server 
 
 ## Develop
 
-Chess and Checkers are available when creating a game in the lobby. Both use a shared PixiJS board component and persisted Go-interpreted Automations for gameplay. Chess implements piece movement and turns; Checkers includes mandatory captures, multiple jumps, crowning, and wins. Lobby management includes invitations, game roles, and installation administrators. See [board games](design/board-games.md) for usage, contracts, rule limits, asset rebuilding, and verification.
+The lobby offers five applications: Pathfinder 1e, Easel Tabletop, Chess, Checkers and the demo table. Pathfinder 1e adds a rules engine, character sheets and expandable libraries of monsters, items and spells on top of the tabletop; see [Pathfinder 1e](design/pf1e.md). Easel Tabletop is a system-neutral virtual tabletop with battle maps, shadowbox stages, line-of-sight fog, chat, journals and combat tracking; see [kit UI](design/kit-ui.md). Chess and Checkers share a board table built from kit components, with persisted Go-interpreted Automations for gameplay; see [board games](design/board-games.md) for usage, rule limits and verification. Lobby management includes invitations, game roles, and installation administrators.
 
-The frontend follows the old Easel screen structure, with My Games, an Applications library, game cards and search, create dialogs, tabbed settings, and an account menu. Select **Applications → Magic: The Gathering → Start a table** to use the port of the old multiplayer Magic game. It retains private hands and libraries, deck import and Scryfall lookup, playmats, counters, casting and the stack, combat assistance, card effects, and resets. See [Magic](design/magic.md) for architecture and verification. **Applications → MTG** duplicates the scripted six-player Tabletop Simulator Magic table from `Mods/`, including its seats, table buttons, life trackers, counters, bags and importers; see [MTG](design/mtgtable.md).
+The frontend follows the old Easel screen structure, with My Games, an Applications library, game cards and search, create dialogs, tabbed settings, and an account menu.
 
 ```powershell
 .\scripts\build.ps1

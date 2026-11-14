@@ -333,77 +333,6 @@
       ]
     },
     {
-      "name": "map",
-      "side": "client",
-      "version": 1,
-      "description": "PixiJS v8 multi-level battlemap viewport with camera, grid calibration, tokens, walls/doors/columns, lighting/fog, overhead roofs, AoE templates, and .map archive import/export.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM",
-        "easel.graphics.pixi@1"
-      ],
-      "entry": "client/map.mjs",
-      "contract": "interfaces/map.json",
-      "renderer": "map",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/map.client.md",
-      "events": [
-        "close",
-        "cameraChanged",
-        "tokenSelect",
-        "tokenMoveRequest",
-        "doorToggleRequest",
-        "gridCalibrated",
-        "mapEditChange",
-        "exportMap",
-        "importMap"
-      ]
-    },
-    {
-      "name": "ruler",
-      "side": "client",
-      "version": 1,
-      "description": "Measure distance or path length with interactive endpoints.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/ruler.mjs",
-      "contract": "interfaces/ruler.json",
-      "renderer": "ruler",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/ruler.client.md",
-      "events": [
-        "close",
-        "measure"
-      ]
-    },
-    {
-      "name": "fog",
-      "side": "client",
-      "version": 1,
-      "description": "Render server-projected known/unknown map areas and vision masks using PixiJS v8; not a security boundary itself.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM",
-        "easel.graphics.pixi@1"
-      ],
-      "entry": "client/fog.mjs",
-      "contract": "interfaces/fog.json",
-      "renderer": "fog",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/fog.client.md",
-      "events": [
-        "close"
-      ]
-    },
-    {
       "name": "waypoint",
       "side": "client",
       "version": 1,
@@ -447,33 +376,6 @@
         "move",
         "remove",
         "select"
-      ]
-    },
-    {
-      "name": "shadowbox",
-      "side": "client",
-      "version": 1,
-      "description": "PixiJS v8 16:9 theatrical stage with hierarchical group visibility, visual filters, dialogue boxes, GM reveal toggles, and .box zip archives.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM",
-        "easel.graphics.pixi@1"
-      ],
-      "entry": "client/shadowbox.mjs",
-      "contract": "interfaces/shadowbox.json",
-      "renderer": "shadowbox",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/shadowbox.client.md",
-      "events": [
-        "close",
-        "speak",
-        "toggleElements",
-        "select",
-        "change",
-        "exportBox",
-        "importBox"
       ]
     },
     {

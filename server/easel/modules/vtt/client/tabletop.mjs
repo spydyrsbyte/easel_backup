@@ -51,7 +51,7 @@ export default class Tabletop {
     this.unread = 0;
     this.offs = [];
     const E = this.Easel;
-    await Promise.all(REQUIRED.map((name) => E.Interfaces.load(name)));
+    await Promise.all([...REQUIRED, ...(options.require || [])].map((name) => E.Interfaces.load(name)));
     const make = (name, props = {}) => E.Components.create(name, { props });
     this.frame = make("easel.layout.tabletop@1");
     this.map = make("easel.maps.map@2");
@@ -63,7 +63,7 @@ export default class Tabletop {
     this.side = make("easel.layout.sidebar@1");
     this.chat = make("easel.narrative.chat@1", { quickDice: this.system.quickDice || ["d4", "d6", "d8", "d10", "d12", "d20", "d100"] });
     this.tracker = make("easel.combat.tracker@1");
-    this.actors = make("easel.collections.browser@2", { kind: "actors", icon: "user", createLabel: "New character", emptyTitle: "No characters yet", emptyText: "Create one, then drag it onto the map.", placeholder: "Search characters" });
+    this.actors = make("easel.collections.browser@2", { kind: "actors", icon: "user", createLabel: "New character", emptyTitle: "No characters yet", emptyText: "Create one, then drag it onto the map.", placeholder: "Search characters", ...(this.system.actorBrowser || {}) });
     this.journals = make("easel.collections.browser@2", { kind: "journal", icon: "book", createLabel: "New page", emptyTitle: "The journal is empty", emptyText: "Notes, handouts and lore live here.", placeholder: "Search the journal", draggable: false });
     this.scenes = make("easel.collections.browser@2", { kind: "scenes", icon: "map", createLabel: "New scene", emptyTitle: "No scenes yet", emptyText: "A scene is a battle map or a stage.", placeholder: "Search scenes", draggable: false });
     this.tree = make("easel.maps.layertree@1");
@@ -102,7 +102,11 @@ export default class Tabletop {
   }
 
   send(name, payload = {}) {
-    return this.Application.events.emit("easel.vtt." + name, payload).catch((error) => this.toast(error.message, "error"));
+    try {
+      return this.Application.events.emit("easel.vtt." + name, payload).catch((error) => this.toast(error.message, "error"));
+    } catch {
+      return Promise.resolve();
+    }
   }
 
   refresh() {
@@ -461,6 +465,7 @@ export default class Tabletop {
 
   dropped({ data, x, y, groundId }) {
     if (!this.scene) return;
+    if (this.system.drop?.({ data, x, y, groundId }, this)) return;
     if (data.kind === "actors" && data.id) {
       if (!this.gm) return this.toast("Only the game master places tokens.");
       const actor = (this.state.actors || []).find((entry) => entry.id === data.id);
@@ -494,6 +499,7 @@ export default class Tabletop {
     const inCombat = combat?.combatants.find((entry) => entry.tokenId === id);
     const items = [];
     if (token.actorId) items.push({ id: "sheet", label: "Open character sheet", icon: "user" });
+    items.push(...(this.system.tokenMenu?.(token, this) || []));
     if (this.gm) {
       items.push({ id: "configure", label: "Token settings", icon: "settings" });
       items.push({ id: "hidden", label: token.hidden ? "Reveal to players" : "Hide from players", icon: token.hidden ? "eye" : "eyeOff" });
@@ -508,6 +514,7 @@ export default class Tabletop {
       else if (action === "join") this.send("combatantAdd", { combatId: combat.id, tokenId: id });
       else if (action === "leave") this.send("combatantRemove", { combatantId: inCombat.id });
       else if (action === "delete") this.send("tokenDelete", { tokenId: id });
+      else this.system.tokenAction?.(action, token, this);
     });
   }
 
@@ -651,16 +658,19 @@ export default class Tabletop {
     const describe = () => this.system.sheet?.(actorId, this) || null;
     const sheet = describe();
     if (!sheet) return this.toast("You cannot open that character.");
-    const entry = this.window("sheet:" + actorId, { title: sheet.actor.name || "Character", icon: "user", width: 460, height: 600 }, (created) => {
-      created.sheet = this.Easel.Components.create("easel.characters.statsheet@1", { props: sheet });
+    const title = (props) => this.system.sheetTitle?.(actorId, this) || props.actor?.name || "Character";
+    const entry = this.window("sheet:" + actorId, { title: title(sheet), icon: "user", width: 460, height: 600, ...(this.system.sheetWindow || {}) }, (created) => {
+      created.sheet = this.Easel.Components.create(this.system.sheetComponent || "easel.characters.statsheet@1", { props: sheet });
       created.sheet.attach(created.frame, "content");
-      for (const name of ["change", "roll", "image", "rename", "listAdd", "listRemove"]) created.sheet.on(name, (payload) => this.system.sheetEvent?.(actorId, name, payload, this));
+      for (const name of this.system.sheetEvents || ["change", "roll", "image", "rename", "listAdd", "listRemove"]) created.sheet.on(name, (payload) => this.system.sheetEvent?.(actorId, name, payload, this));
+      this.system.sheetOpened?.(actorId, this);
     });
+    entry.closed = () => this.system.sheetClosed?.(actorId, this);
     entry.update = () => {
       const next = describe();
       if (!next) return this.closeWindow("sheet:" + actorId);
       entry.sheet.setProps(next);
-      entry.frame.setProps({ title: next.actor.name || "Character" });
+      entry.frame.setProps({ title: title(next) });
     };
   }
 
@@ -827,6 +837,7 @@ export default class Tabletop {
       { id: "actors", label: "Characters", icon: "users", panel: this.actors.id },
       { id: "journal", label: "Journal", icon: "book", panel: this.journals.id },
     ];
+    tabs.push(...(this.system.tabs?.(this) || []));
     if (gm) tabs.push({ id: "scenes", label: "Scenes", icon: "map", panel: this.scenes.id });
     if (this.editing) tabs.push({ id: "edit", label: stage ? "Stage editor" : "Map editor", icon: "edit", panel: this.editHost.id });
     if (!tabs.some((tab) => tab.id === this.sideTab)) this.sideTab = "chat";
@@ -835,7 +846,7 @@ export default class Tabletop {
     this.chat.setProps({ messages: state.messages.map((message) => ({ ...message, card: this.cardOf(message) })), members: (state.members || []).map((member) => ({ ...member, color: this.colorOf(member.id) })), userId: state.userId, mode: this.chatMode, modes: gm ? ["public", "gm", "self"] : ["public", "gm", "blind", "self"] });
     this.tracker.setProps({ combat: state.combat || {}, gm });
     const actorItems = this.system.actors?.(this) || (state.actors || []).map((actor) => ({ id: actor.id, name: actor.name }));
-    this.actors.setProps({ items: actorItems, folders: [], allowFolders: false, canCreate: this.system.canCreateActor ? this.system.canCreateActor(this) : true, canManage: gm, actions: [{ id: "open", label: "Open sheet", icon: "user" }, ...(this.system.actorActions?.(this) || []), { separator: true }, { id: "delete", label: "Delete", icon: "trash", danger: true }] });
+    this.actors.setProps({ items: actorItems, folders: this.system.actorFolders?.(this) || [], allowFolders: false, canCreate: this.system.canCreateActor ? this.system.canCreateActor(this) : true, canManage: gm, actions: [{ id: "open", label: "Open sheet", icon: "user" }, ...(this.system.actorActions?.(this) || []), { separator: true }, { id: "delete", label: "Delete", icon: "trash", danger: true }] });
     this.journals.setProps({ items: state.journals.map((journal) => ({ id: journal.id, name: journal.name, folderId: journal.folderId, icon: "scroll", detail: (journal.content || "").replace(/[#*]/g, "").slice(0, 60), badges: gm && journal.playerVisible ? [{ label: "Shared", kind: "primary" }] : [] })), folders: state.folders.filter((folder) => folder.kind === "journal"), canCreate: gm, canManage: gm, actions: gm ? [{ id: "share", label: "Share or unshare with players", icon: "eye" }, { separator: true }, { id: "delete", label: "Delete", icon: "trash", danger: true }] : [] });
     this.scenes.setProps({ items: state.scenes.map((entry) => ({ id: entry.id, name: entry.name, icon: entry.kind === "stage" ? "theater" : "map", detail: entry.kind === "stage" ? "Stage" : "Battle map", badges: entry.active ? [{ label: "Players are here", kind: "primary" }] : [] })), selected: scene?.id || "", canCreate: gm, canManage: gm, allowFolders: false, actions: [{ id: "activate", label: "Show to players", icon: "play" }, { id: "edit", label: "Edit", icon: "edit" }, { id: "settings", label: "Rename", icon: "settings" }, { id: "duplicate", label: "Duplicate", icon: "copy" }, { separator: true }, { id: "delete", label: "Delete", icon: "trash", danger: true }] });
     this.renderEditor();

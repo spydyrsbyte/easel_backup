@@ -77,29 +77,41 @@ export default class Chat extends Component {
     this.pinned = true;
   }
 
-  card(message) {
-    const card = message.card || {};
-    const node = h("div", { class: "ez-roll" });
-    if (card.title) node.append(h("div", { class: "ez-roll-title", text: card.title }));
-    if (card.formula) node.append(h("div", { class: "ez-roll-formula", text: card.formula }));
-    if (card.text) node.append(h("div", { class: "ez-msg-text", text: card.text }));
-    const dice = Array.isArray(card.dice) ? card.dice : [];
-    if (dice.length || card.total !== undefined) {
+  roll(part, node) {
+    if (part.formula) node.append(h("div", { class: "ez-roll-formula", text: part.formula }));
+    const dice = Array.isArray(part.dice) ? part.dice : [];
+    if (dice.length || (part.total !== undefined && part.total !== null)) {
       const row = h("div", { class: "ez-roll-dice" });
       for (const die of dice.slice(0, 40)) {
         const sides = Number(die.sides) || 0;
         row.append(h("span", { class: "ez-die", title: sides ? "d" + sides : "", dataset: { crit: sides > 1 && die.value === sides ? "high" : sides > 1 && die.value === 1 ? "low" : "", dropped: String(!!die.dropped) }, text: die.label ?? die.value }));
       }
-      node.append(h("div", { class: "ez-roll-line" }, row, card.total !== undefined ? h("div", { class: "ez-roll-total", text: card.total }) : null));
+      node.append(h("div", { class: "ez-roll-line" }, row, part.total !== undefined && part.total !== null ? h("div", { class: "ez-roll-total", text: part.total }) : null));
     }
+    if (part.note) node.append(h("div", { class: "ez-roll-note", text: part.note }));
+  }
+
+  card(message) {
+    const card = message.card || {};
+    const node = h("div", { class: "ez-roll" });
+    if (card.title) node.append(h("div", { class: "ez-roll-title" }, h("span", { text: card.title }), card.subtitle ? h("span", { class: "ez-roll-subtitle", text: card.subtitle }) : null));
+    this.roll(card, node);
+    for (const section of (Array.isArray(card.sections) ? card.sections : []).slice(0, 16)) {
+      const block = h("div", { class: "ez-roll-section", dataset: { tone: section.tone || "" } });
+      if (section.title) block.append(h("div", { class: "ez-eyebrow", text: section.title }));
+      this.roll(section, block);
+      node.append(block);
+    }
+    if (card.text) node.append(h("div", { class: "ez-msg-text ez-roll-text", text: card.text }));
     if (Array.isArray(card.rows) && card.rows.length) {
       const list = h("div", { class: "ez-rows", style: { marginTop: "8px" } });
       for (const row of card.rows.slice(0, 20)) list.append(h("div", { class: "ez-row" }, h("span", { class: "ez-row-main", text: row.label }), h("strong", { text: row.value })));
       node.append(list);
     }
+    if (card.detail) node.append(h("div", { class: "ez-roll-detail", text: card.detail }));
     if (Array.isArray(card.actions) && card.actions.length) {
       const actions = h("div", { class: "ez-roll-actions" });
-      for (const action of card.actions.slice(0, 6)) {
+      for (const action of card.actions.slice(0, 12)) {
         const button = h("button", { type: "button", class: "ez-btn ez-btn-small", text: action.label || action.id });
         button.addEventListener("click", () => this.emit("cardAction", { messageId: String(message.id), action: String(action.id), payload: action.payload || {} }));
         actions.append(button);

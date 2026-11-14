@@ -1,0 +1,22 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": { "type": "Boolean", "default": false },
+    "loading": { "type": "Boolean", "default": false },
+    "sheet": { "type": "Object", "default": {} },
+    "system": { "type": "Object", "default": {} }
+  },
+  "events": {
+    "set": { "payload": { "path": "String", "value": "Object" } },
+    "rename": { "payload": { "name": "String" } },
+    "image": { "payload": { "file": "Object" } },
+    "roll": { "payload": { "kind": "String", "id": "String", "options": "Object" } },
+    "action": { "payload": { "action": "String", "data": "Object" } },
+    "add": { "payload": { "entryId": "String", "options": "Object" } },
+    "remove": { "payload": { "list": "String", "uid": "String" } },
+    "item": { "payload": { "uid": "String", "changes": "Object" } },
+    "view": { "payload": { "id": "String" } },
+    "request": { "payload": { "what": "String", "data": "Object" } }
+  },
+  "slots": {}
+}

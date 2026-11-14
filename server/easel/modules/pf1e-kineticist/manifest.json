@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "owner": "easel",
+  "host": "pf1ekineticist",
+  "name": "rules",
+  "title": "Pathfinder: Kineticist",
+  "description": "Adds the kineticist class to Pathfinder 1e games: burn, kinetic blasts, gather power, elemental overflow and a library of wild talents. Written entirely as an extension, as a model for other third-party and homebrew subsystems.",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "implements": [
+      {
+        "name": "easel.wotcogl35.extension@1",
+        "file": "server/extension.mjs"
+      },
+      {
+        "name": "easel.wotcogl35.content@1",
+        "file": "server/content.mjs"
+      }
+    ]
+  }
+}

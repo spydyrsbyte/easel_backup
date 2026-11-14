@@ -1,0 +1,14 @@
+- [Kit definition](kit-definition.md) — a kit is a toolbox of building blocks the app composes, not a unified subsystem
+- [Application not thin](application-not-thin.md) — game-specific blocks live in the application; never a thin wrapper
+- [Game roles, not hard permissions](game-roles-not-hard-permissions.md) — owner/viewer/controller are lists checked in server code; server reads all and filters what it sends
+- [No question popup](no-question-popup.md) — never use AskUserQuestion; stop and ask in plain text
+- [No Python](no-python.md) — Python is not installed; script with PowerShell, Go, or Node
+- [Easel concept](easel-concept.md) — VTT platform, developer experience first, Lego-style kits; per-server isolation decisions
+- [Platform completion state](platform-completion-state.md) — what the 2026-11-11 pass built, how to verify it, what is still open
+- [Kit UI generation](kit-ui-generation.md) — 2026-11-12 UI pass: new kit components, Easel Tabletop VTT, board table; dev loop and open items
+- [Pathfinder 1e build](pf1e-build.md) — open extension design (steps, resources, registries), Kineticist proof module, how to verify; design/pf1e.md
+- [Open design, not a plugin slot](open-design-not-plugin-slot.md) — homebrew support means everything is hookable/replaceable, not a homebrew module
+- [Spec is acceptance criteria](spec-is-acceptance-criteria.md) — read pf1e-reqs first; audit against spec before calling done; never overstate status
+- [Tests are not proof](tests-are-not-proof.md) — never cite tests as progress; done = spec checklist + real running program shown
+- [PF1e UI reference](pf1e-ui-reference.md) — Foundry PF1 sheet is the visual acceptance bar; compare screenshots before done
+- [PostgreSQL pipe hang](postgres-pipe-hang.md) — never pipe output of scripts that start PostgreSQL; run test-security.ps1 in foreground

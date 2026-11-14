@@ -1,0 +1,50 @@
+const c = (target, type, value, extra = {}) => ({ target, type, ...(typeof value === "number" ? { value } : { formula: value }), ...extra });
+const note = (target, text) => ({ target, note: text });
+const buff = (name, text, changes, extra = {}) => ({ kind: "buff", name, text, changes, ...extra });
+const ability = (name, key, label) => buff(name, "+4 enhancement bonus to " + label + ".", [c(key, "enhancement", 4)], { group: "Spell" });
+
+const buffs = [
+  buff("Guidance", "+1 competence bonus on one attack roll, saving throw or skill check.", [c("attack", "competence", 1), c("saves", "competence", 1), c("skills", "competence", 1)], { group: "Spell" }),
+  buff("Resistance", "+1 resistance bonus on saving throws.", [c("saves", "resistance", 1)], { group: "Spell" }),
+  buff("Bane", "–1 on attack rolls and on saves against fear.", [c("attack", "untyped", -1), note("saves", "–1 against fear")], { group: "Spell" }),
+  buff("Bless", "+1 morale bonus on attack rolls and on saves against fear.", [c("attack", "morale", 1), note("saves", "+1 morale against fear")], { group: "Spell" }),
+  buff("Divine Favor", "+1 luck bonus on attack and weapon damage rolls per three caster levels (maximum +3).", [c("attack", "luck", "min(3, max(1, floor(@buff.level / 3)))"), c("damage", "luck", "min(3, max(1, floor(@buff.level / 3)))")], { group: "Spell", leveled: true }),
+  buff("Enlarge Person", "One size larger: +2 size bonus to Strength, –2 size penalty to Dexterity, –1 on attack rolls and AC. Weapon damage is not changed automatically.", [c("str", "size", 2), c("dex", "size", -2), c("attack", "size", -1), c("ac", "size", -1)], { group: "Spell" }),
+  buff("Reduce Person", "One size smaller: +2 size bonus to Dexterity, –2 size penalty to Strength, +1 on attack rolls and AC. Weapon damage is not changed automatically.", [c("dex", "size", 2), c("str", "size", -2), c("attack", "size", 1), c("ac", "size", 1)], { group: "Spell" }),
+  buff("Expeditious Retreat", "+30 feet enhancement bonus to base land speed.", [c("speed", "enhancement", 30)], { group: "Spell" }),
+  buff("Longstrider", "+10 feet enhancement bonus to base land speed.", [c("speed", "enhancement", 10)], { group: "Spell" }),
+  buff("Mage Armor", "+4 armor bonus to AC.", [c("ac", "armor", 4)], { group: "Spell" }),
+  buff("Magic Weapon", "+1 enhancement bonus on attack and damage rolls with one weapon.", [c("attack", "enhancement", 1), c("damage", "enhancement", 1)], { group: "Spell" }),
+  buff("Protection from Evil", "+2 deflection bonus to AC and +2 resistance bonus on saves against evil creatures.", [note("ac", "+2 deflection against evil creatures"), note("saves", "+2 resistance against evil creatures")], { group: "Spell" }),
+  buff("Shield", "+4 shield bonus to AC; immune to magic missile.", [c("ac", "shield", 4)], { group: "Spell" }),
+  buff("Shield of Faith", "+2 deflection bonus to AC, +1 more per six caster levels (maximum +5).", [c("ac", "deflection", "min(5, 2 + floor(@buff.level / 6))")], { group: "Spell", leveled: true }),
+  buff("True Strike", "+20 insight bonus on the next attack roll.", [c("attack", "insight", 20)], { group: "Spell" }),
+  buff("Aid", "+1 morale bonus on attack rolls and on saves against fear, plus temporary hit points.", [c("attack", "morale", 1), note("saves", "+1 morale against fear")], { group: "Spell" }),
+  buff("Barkskin", "+2 enhancement bonus to natural armor, +1 more per three caster levels above 3rd (maximum +5).", [c("ac", "naturalEnhancement", "min(5, 2 + max(0, floor((@buff.level - 3) / 3)))")], { group: "Spell", leveled: true }),
+  ability("Bear's Endurance", "con", "Constitution"),
+  ability("Bull's Strength", "str", "Strength"),
+  ability("Cat's Grace", "dex", "Dexterity"),
+  ability("Eagle's Splendor", "cha", "Charisma"),
+  ability("Fox's Cunning", "int", "Intelligence"),
+  ability("Owl's Wisdom", "wis", "Wisdom"),
+  buff("Heroism", "+2 morale bonus on attack rolls, saving throws and skill checks.", [c("attack", "morale", 2), c("saves", "morale", 2), c("skills", "morale", 2)], { group: "Spell" }),
+  buff("Good Hope", "+2 morale bonus on saving throws, attack rolls, ability checks, skill checks and weapon damage rolls.", [c("attack", "morale", 2), c("damage", "morale", 2), c("saves", "morale", 2), c("skills", "morale", 2)], { group: "Spell" }),
+  buff("Haste", "+1 on attack rolls, +1 dodge bonus to AC and Reflex saves, +30 feet of speed, and one extra attack in a full attack.", [c("attack", "untyped", 1), c("ac", "dodge", 1), c("ref", "dodge", 1), c("speed", "enhancement", 30)], { group: "Spell" }),
+  buff("Slow", "Staggered; –1 on attack rolls, AC and Reflex saves; half speed.", [c("attack", "untyped", -1), c("ac", "untyped", -1), c("ref", "untyped", -1)], { group: "Spell", flags: { halfSpeed: true } }),
+  buff("Prayer", "+1 luck bonus on attack rolls, weapon damage rolls, saves and skill checks.", [c("attack", "luck", 1), c("damage", "luck", 1), c("saves", "luck", 1), c("skills", "luck", 1)], { group: "Spell" }),
+  { ...buff("Rage", "+2 morale bonus to Strength and Constitution, +1 morale bonus on Will saves, –2 AC.", [c("str", "morale", 2), c("con", "morale", 2), c("will", "morale", 1), c("ac", "untyped", -2)], { group: "Spell" }), id: "buff:rage-spell" },
+  buff("Divine Power", "+1 luck bonus per three caster levels (maximum +6) on attack rolls, weapon damage rolls, Strength checks and Strength-based skill checks.", [c("attack", "luck", "min(6, max(1, floor(@buff.level / 3)))"), c("damage", "luck", "min(6, max(1, floor(@buff.level / 3)))"), c("skills.str", "luck", "min(6, max(1, floor(@buff.level / 3)))")], { group: "Spell", leveled: true }),
+  buff("Inspire Courage", "A bard's song: competence bonus on attack and weapon damage rolls, and a morale bonus on saves against charm and fear. Set the level to the bonus (+1 to +4).", [c("attack", "competence", "max(1, @buff.level)"), c("damage", "competence", "max(1, @buff.level)"), note("saves", "Morale bonus against charm and fear")], { group: "Class", leveled: true }),
+  buff("Flanking", "+2 on melee attack rolls while an ally threatens the target from the opposite side.", [c("attack.melee", "untyped", 2)], { group: "Combat" }),
+  buff("Charging", "+2 on the melee attack at the end of a charge, –2 AC until the next turn.", [c("attack.melee", "untyped", 2), c("ac", "untyped", -2)], { group: "Combat" }),
+  buff("Fighting Defensively", "–4 on attack rolls for a +2 dodge bonus to AC.", [c("attack", "untyped", -4), c("ac", "dodge", 2)], { group: "Combat" }),
+  buff("Total Defense", "+4 dodge bonus to AC; cannot attack.", [c("ac", "dodge", 4)], { group: "Combat" }),
+  buff("Higher Ground", "+1 on melee attack rolls from above the target.", [c("attack.melee", "untyped", 1)], { group: "Combat" }),
+  buff("Cover", "+4 to AC and +2 on Reflex saves.", [c("ac", "untyped", 4), c("ref", "untyped", 2)], { group: "Combat" }),
+  buff("Two-Weapon Fighting", "Penalties for attacking with two weapons, with the feat and a light off-hand weapon: –2 on all attacks.", [c("attack", "untyped", -2)], { group: "Combat" }),
+  buff("Favored Enemy", "A ranger's bonus on attack and damage rolls against a favored enemy. Set the level to the bonus (+2 to +10).", [c("attack", "untyped", "max(2, @buff.level)"), c("damage", "untyped", "max(2, @buff.level)")], { group: "Class", leveled: true }),
+  buff("Weapon Training", "A fighter's bonus on attack and damage rolls with a trained weapon group. Set the level to the bonus (+1 to +4).", [c("attack", "untyped", "max(1, @buff.level)"), c("damage", "untyped", "max(1, @buff.level)")], { group: "Class", leveled: true }),
+  buff("Negative Levels", "Each negative level gives –1 on attack rolls, saves, skill checks, ability checks and combat maneuvers, and –5 hit points. Set the level to the number of negative levels.", [c("attack", "untyped", "-max(1, @buff.level)"), c("saves", "untyped", "-max(1, @buff.level)"), c("skills", "untyped", "-max(1, @buff.level)"), c("cmd", "untyped", "-max(1, @buff.level)"), c("hp", "untyped", "-5 * max(1, @buff.level)")], { group: "Condition", leveled: true }),
+];
+
+export default buffs;

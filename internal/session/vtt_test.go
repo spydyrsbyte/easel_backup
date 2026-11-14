@@ -17,7 +17,7 @@ import (
 )
 
 type vttTestStore struct {
-	pf1eTestStore
+	memorySecurityStore
 	records *memoryRecords
 	roles   map[string]string
 }
@@ -56,7 +56,7 @@ func TestVTTSecurityPolicies(t *testing.T) {
 		"token-1": {Type: "easel.vtt.Token", ID: "token-1", Data: map[string]any{}},
 		"dice-1":  {Type: "easel.vtt.DiceSettings", ID: "dice-1", Data: map[string]any{"userId": "bob"}},
 	}}
-	store := &vttTestStore{pf1eTestStore: pf1eTestStore{relationships: map[security.Relationship]bool{}}, records: records, roles: map[string]string{"gm": "administrator", "bob": "player", "carol": "player", "sam": "spectator"}}
+	store := &vttTestStore{memorySecurityStore: memorySecurityStore{relationships: map[security.Relationship]bool{}}, records: records, roles: map[string]string{"gm": "administrator", "bob": "player", "carol": "player", "sam": "spectator"}}
 	service, err := jsapi.BuildSecurity(context.Background(), &jsapi.SecurityConfig{BuildID: "vtt-test", Store: store}, "", []manifest.Entry{{Package: pkg, Path: "server/security.mjs"}}, composed)
 	if err != nil {
 		t.Fatalf("build security: %v", err)
@@ -113,7 +113,7 @@ export function handleMessage() { return log; }`
 	}
 	records := &memoryRecords{schema: composed, rows: map[string]automation.Record{"hero": {Type: "easel.vtt.Actor", ID: "hero", Data: map[string]any{"name": "Hero", "ownerUserIds": []any{"bob"}, "viewerUserIds": []any{}, "controllerUserIds": []any{}}, Version: 1}}}
 	roles := map[string]string{"gm": "administrator", "bob": "player", "carol": "player", "dave": "player", "erin": "player", "frank": "player"}
-	store := &vttTestStore{pf1eTestStore: pf1eTestStore{relationships: map[security.Relationship]bool{}}, records: records, roles: roles}
+	store := &vttTestStore{memorySecurityStore: memorySecurityStore{relationships: map[security.Relationship]bool{}}, records: records, roles: roles}
 	runtime, err := NewGame(context.Background(), Game{
 		GameID:    "vtt",
 		SessionID: "vtt",

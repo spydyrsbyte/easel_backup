@@ -31,11 +31,6 @@
   "client": {
     "interfaces": [
       {
-        "name": "encounter@1",
-        "file": "interfaces/encounter.json",
-        "http-entry": "client/encounter.mjs"
-      },
-      {
         "name": "initiative@1",
         "file": "interfaces/initiative.json",
         "http-entry": "client/initiative.mjs"

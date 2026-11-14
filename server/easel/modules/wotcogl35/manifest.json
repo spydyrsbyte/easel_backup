@@ -1,0 +1,36 @@
+{
+  "type": "module",
+  "owner": "easel",
+  "host": "wotcogl35",
+  "name": "rules",
+  "title": "d20 3.x rules engine",
+  "description": "The rules shared by Pathfinder 1e and D&D 3.5: typed bonuses, derived statistics, attacks, damage, spell slots, content libraries and house-rule hooks.",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "revision": 0
+  },
+  "server": {
+    "interfaces": [
+      {
+        "name": "engine@1",
+        "file": "server/engine.mjs",
+        "required": {
+          "interfaces": [
+            "easel.effects.stacking@1",
+            "easel.rules.formula@1",
+            "easel.dice.formula@1"
+          ]
+        }
+      },
+      {
+        "name": "extension@1",
+        "file": "server/extension.mjs"
+      },
+      {
+        "name": "content@1",
+        "file": "server/content.mjs"
+      }
+    ]
+  }
+}

@@ -13,6 +13,5 @@ This Kit is a catalog of independent tools. Its manifest has no library, applica
 | `easel.collections.list@1` | client | [interfaces/list.json](interfaces/list.json) |
 | `easel.collections.strip@1` | client | [interfaces/strip.json](interfaces/strip.json) |
 | `easel.collections.stack@1` | client | [interfaces/stack.json](interfaces/stack.json) |
-| `easel.collections.browser@1` | client | [interfaces/browser.json](interfaces/browser.json) |
 
 Browser properties have defaults in each JSON contract. Components receive already-projected data and emit local intents only. They never call game events, access records, or grant permissions. Destroying a component releases its listeners, observers and timers.

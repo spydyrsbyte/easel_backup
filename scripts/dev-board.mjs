@@ -146,8 +146,8 @@ try {
   await third.evaluate((name) => Application.events.emit("lobby.create", { name, application: "easel.checkers.game", modules: [], access: "open" }), checkers);
   await join(third, checkers);
   await black.goto(base);
-  await black.waitForFunction(() => globalThis.Easel?.Components.get("lobby") || document.querySelector(".ez-gameboard"));
-  if (await black.locator(".ez-gameboard").count()) await black.getByRole("link", { name: "Easel", exact: true }).click();
+  await black.locator(".ez-gameboard .ez-gb-piece").first().waitFor();
+  await black.getByRole("link", { name: "Easel", exact: true }).click();
   await black.waitForFunction(() => Array.isArray(globalThis.Easel?.Components.get("lobby")?.props.games));
   await join(black, checkers);
   await third.getByRole("button", { name: "Play white", exact: true }).click();

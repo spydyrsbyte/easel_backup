@@ -8,7 +8,6 @@ This Kit is a catalog of independent tools. Its manifest has no library, applica
 |---|---|---|
 | `easel.layout.workspace@1` | server | [contracts/workspace.server.md](contracts/workspace.server.md) |
 | `easel.layout.panel@1` | client | [interfaces/panel.json](interfaces/panel.json) |
-| `easel.layout.window@1` | client | [interfaces/window.json](interfaces/window.json) |
 | `easel.layout.tabs@1` | client | [interfaces/tabs.json](interfaces/tabs.json) |
 | `easel.layout.dialog@1` | client | [interfaces/dialog.json](interfaces/dialog.json) |
 | `easel.layout.split@1` | client | [interfaces/split.json](interfaces/split.json) |

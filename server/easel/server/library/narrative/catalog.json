@@ -160,27 +160,6 @@
       ]
     },
     {
-      "name": "journal",
-      "side": "client",
-      "version": 1,
-      "description": "Rich journal/notes reader with edit requests.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/journal.mjs",
-      "contract": "interfaces/journal.json",
-      "renderer": "journal",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/journal.client.md",
-      "events": [
-        "close",
-        "change"
-      ]
-    },
-    {
       "name": "scene",
       "side": "client",
       "version": 1,
@@ -244,30 +223,6 @@
         "close",
         "select",
         "request"
-      ]
-    },
-    {
-      "name": "chatlog",
-      "side": "client",
-      "version": 1,
-      "description": "Scrollable RPG chat and roll history stream supporting speaker headers, whisper badges, roll mode selection, and interactive card slots.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/chatlog.mjs",
-      "contract": "interfaces/chatlog.json",
-      "renderer": "chatlog",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/chatlog.client.md",
-      "events": [
-        "close",
-        "sendMessage",
-        "rollModeChanged",
-        "cardAction",
-        "clear"
       ]
     },
     {

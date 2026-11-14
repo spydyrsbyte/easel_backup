@@ -1,0 +1,13 @@
+{
+  "kind": "component",
+  "properties": {
+    "disabled": { "type": "Boolean", "default": false },
+    "entry": { "type": "Object", "default": {} },
+    "system": { "type": "Object", "default": {} },
+    "actions": { "type": "Array", "default": [] }
+  },
+  "events": {
+    "action": { "payload": { "action": "String", "id": "String" } }
+  },
+  "slots": {}
+}

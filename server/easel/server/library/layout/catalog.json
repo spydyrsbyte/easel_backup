@@ -73,28 +73,6 @@
       ]
     },
     {
-      "name": "window",
-      "side": "client",
-      "version": 1,
-      "description": "Movable/resizable window with content and toolbar slots; emits move, resize and close requests.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/window.mjs",
-      "contract": "interfaces/window.json",
-      "renderer": "window",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/window.client.md",
-      "events": [
-        "close",
-        "move",
-        "resize"
-      ]
-    },
-    {
       "name": "tabs",
       "side": "client",
       "version": 1,
@@ -176,49 +154,6 @@
       "events": [
         "close",
         "change"
-      ]
-    },
-    {
-      "name": "vttworkspace",
-      "side": "client",
-      "version": 1,
-      "description": "Full-bleed tabletop workspace layout dock for canvas, dice overlay, floating HUD, toolstrip, hotbar, collapsible sidebar, and floating windows.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/vttworkspace.mjs",
-      "contract": "interfaces/vttworkspace.json",
-      "renderer": "vttworkspace",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/vttworkspace.client.md",
-      "events": [
-        "close",
-        "toggleSidebar"
-      ]
-    },
-    {
-      "name": "toolstrip",
-      "side": "client",
-      "version": 1,
-      "description": "Left-hand layer and tool selector strip for tabletop tools.",
-      "status": "tested",
-      "dependencies": [
-        "browser DOM"
-      ],
-      "entry": "client/toolstrip.mjs",
-      "contract": "interfaces/toolstrip.json",
-      "renderer": "toolstrip",
-      "checks": [
-        "scripts/test-kit-browser.mjs"
-      ],
-      "documentation": "contracts/toolstrip.client.md",
-      "events": [
-        "close",
-        "select",
-        "action"
       ]
     },
     {

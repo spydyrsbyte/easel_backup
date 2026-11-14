@@ -24,7 +24,7 @@ func TestVTTActorInheritedPolicies(t *testing.T) {
 	records := &memoryRecords{schema: composed, rows: map[string]automation.Record{
 		"actor": {Type: "easel.probe.Character", ID: "actor", Data: map[string]any{"ownerUserIds": []any{"owner"}}},
 	}}
-	store := &vttTestStore{pf1eTestStore: pf1eTestStore{relationships: map[security.Relationship]bool{}}, records: records, roles: map[string]string{"gm": "administrator", "player": "player", "spectator": "spectator"}}
+	store := &vttTestStore{memorySecurityStore: memorySecurityStore{relationships: map[security.Relationship]bool{}}, records: records, roles: map[string]string{"gm": "administrator", "player": "player", "spectator": "spectator"}}
 	service, err := jsapi.BuildSecurity(context.Background(), &jsapi.SecurityConfig{BuildID: "actor-inheritance", Store: store}, "", []manifest.Entry{{Package: vtt, Path: "server/security.mjs"}}, composed)
 	if err != nil {
 		t.Fatal(err)

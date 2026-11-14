@@ -328,7 +328,7 @@
       "side": "client",
       "version": 1,
       "description": "Upright card examination independent of tabletop camera rotation.",
-      "status": "used",
+      "status": "tested",
       "dependencies": [
         "browser DOM"
       ],
@@ -336,11 +336,7 @@
       "contract": "interfaces/inspector.json",
       "renderer": "cardinspect",
       "checks": [
-        "scripts/test-kit-browser.mjs",
-        "TestTabletopMagicBrowser"
-      ],
-      "usedBy": [
-        "easel.mtgtable.game"
+        "scripts/test-kit-browser.mjs"
       ],
       "documentation": "contracts/inspector.client.md",
       "events": [

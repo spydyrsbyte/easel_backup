@@ -1,6 +1,6 @@
 # Kit UI, the virtual tabletop and the board table
 
-This describes the second generation of browser kit components, and the two complete game interfaces assembled from them: the virtual tabletop (`easel.tabletop.game`) and the board table (chess and checkers). The first-generation components are unchanged in behaviour and still used by Pathfinder and Magic.
+This describes the second generation of browser kit components, and the two complete game interfaces assembled from them: the virtual tabletop (`easel.tabletop.game`) and the board table (chess and checkers). First-generation components that these replaced (`map@1`, `shadowbox@1`, `fog@1`, `ruler@1`, `vttworkspace@1`, `toolstrip@1`, `window@1`, `chatlog@1`, `journal@1`, `browser@1`, `directory@1`, `compendium@1`, `encounter@1`) were removed with the old Pathfinder and Magic applications. The rest of the first-generation toolbox remains and is restyled from the same tokens.
 
 ## Shared layer
 
@@ -38,6 +38,8 @@ Server side: `easel.maps.sight@1` (wall segments, visibility polygons, line of s
 
 `easel.vtt.table` (module) owns the rules-neutral table: scenes, tokens, actors, journal, chat, encounters, permissions. Its browser service `easel.vtt.tabletop@1` assembles the components above into the interface and exposes a small `system` hook object so a game supplies only what is specific to it: how to list actors, what a sheet looks like, what a roll means. `easel.tabletop.game` is the reference application: a system-neutral character sheet, demo scenes, and about sixty lines of browser code.
 
+A game system that needs more than the layout-driven sheet uses further `system` members: `sheetComponent`, `sheetEvents`, `sheetWindow`, `sheetTitle`, `sheetOpened` and `sheetClosed` replace the sheet with its own component; `tabs` adds sidebar tabs; `drop` takes drops on the map; `actorFolders` and `actorBrowser` shape the character list; `tokenMenu` and `tokenAction` extend the token menu; `require` on `mount` loads extra interfaces. On the server, the actor hook may return `scale` for creatures larger than one square, and `tokenDeleted` is called after a token is removed. `easel.pf1e.game` uses all of these; see `pf1e.md`.
+
 A scene is either a battle map or a stage (shadowbox). The data models follow the earlier Node prototype:
 
 - Map: `size`, snap settings, `fogEnabled`, and `layers` of ground floors. Each ground has an image, a grid (`size`, `offset`, colour, real-world size and unit), ambient light, and child layers of type object, drawing, wall, token, light or roof. Walls are segments (optionally doors: open, locked, secret) or round columns. Tokens are separate `easel.vtt.Token` records.
@@ -45,7 +47,7 @@ A scene is either a battle map or a stage (shadowbox). The data models follow th
 
 Who sees what is decided on the server. The game master receives everything. A player receives only tokens that are not hidden and, when the application enables `lineOfSight`, only those a token they control can see; the server also refuses moves through walls and opening locked doors. The browser's fog is presentation of the same geometry.
 
-Known limits: square grids only (the model has a grid type, hex is not drawn); wall geometry is sent to players' browsers so their fog can be drawn, which a determined player could read; layer `shape` masks and light masks from the prototype are not carried over; Pathfinder still uses the first-generation map and workspace.
+Known limits: square grids only (the model has a grid type, hex is not drawn); wall geometry is sent to players' browsers so their fog can be drawn, which a determined player could read; layer `shape` masks and light masks from the prototype are not carried over.
 
 ## The board table
 
